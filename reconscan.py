@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import subprocess
-import multiprocessing
 import argparse
 import os
 import sys
@@ -15,7 +14,7 @@ import scripts.snmprecon as snmprecon
 import scripts.sshrecon as sshrecon
 import scripts.medusa as medusa
 
-from multiprocessing import Process, Queue, Pool
+from multiprocessing import Pool
 
 crackPWs = False
 useMSF = False
@@ -42,14 +41,32 @@ def main(argv):
     pool = Pool(processes=procs)
     jobs = [pool.apply_async(nmapScan, args=(ip,portarg)) for ip in f]
     serviceDict = {}
+    
     for p in jobs:
-        serviceDict.update(p.get())
+        temp = p.get()
+        for key in temp:
+            if key in serviceDict:
+                serviceDict[key] = serviceDict[key]+ temp[key]
+            else:
+                serviceDict[key] = temp[key]
 
     subprocess.check_output("cat discovery"+sep+"nmap"+sep+"*.csv >> discovery"+sep+"nmap"+sep+"nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
     subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - discovery"+sep+"nmap"+sep+"nmap_all.csv > temp && mv temp discovery"+sep+"nmap"+sep+"nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
     print("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
 
-    knownServices = {"http":"httpEnum" , "ssl/http":"httpsEnum", "https":"httpsEnum", "ssh":"sshEnum", "snmp":"snmpEnum", "smtp":"smtpEnum", "domain":"dnsEnum", "ftp":"ftpEnum", "microsoft-ds":"smbEnum", "ms-sql":"mssqlEnum", "mysql":"mysqlEnum"}
+    knownServices = {
+        "http":httpEnum , 
+        "ssl/http":httpsEnum, 
+        "https":httpsEnum, 
+        "ssh":sshEnum, 
+        "snmp":snmpEnum, 
+        "smtp":smtpEnum, 
+        "domain":dnsEnum, 
+        "ftp":ftpEnum, 
+        "microsoft-ds":smbEnum, 
+        "ms-sql":mssqlEnum, 
+        "mysql":mysqlEnum
+    }
 
     print("No enum tool for following services:")
     for serv in serviceDict:
@@ -61,30 +78,8 @@ def main(argv):
     # go through the service dictionary to call additional targeted enumeration functions
     for services in serviceDict:
         if services in knownServices:
-            for serv in serviceDict[services]:
-                print("calling enum for "+knownServices[services])
-                if knownServices[services] == "httpEnum":
-                    jobs.append(pool.apply_async(httpEnum, args=(serv[0], serv[1])))
-                elif knownServices[services] == "httpsEnum":
-                    jobs.append(pool.apply_async(httpsEnum, args=(serv[0], serv[1])))
-                elif knownServices[services] == "httpsEnum":
-                    jobs.append(pool.apply_async(httpsEnum, args=(serv[0], serv[1])))
-                elif knownServices[services] == "sshEnum":
-                    jobs.append(pool.apply_async(sshEnum, args=(serv[0], serv[1])))
-                elif knownServices[services] == "snmpEnum":
-                    jobs.append(pool.apply_async(snmpEnum, args=(serv[0], serv[1])))
-                elif knownServices[services] == "smtpEnum":
-                    jobs.append(pool.apply_async(smtpEnum, args=(serv[0], serv[1])))
-                elif knownServices[services] == "dnsEnum":
-                    jobs.append(pool.apply_async(dnsEnum, args=(serv[0], serv[1])))
-                elif knownServices[services] == "ftpEnum":
-                    jobs.append(pool.apply_async(ftpEnum, args=(serv[0], serv[1])))
-                elif knownServices[services] == "ftpEnum":
-                    jobs.append(pool.apply_async(smbEnum, args=(serv[0], serv[1])))
-                elif knownServices[services] == "mssqlEnum":
-                    jobs.append(pool.apply_async(mssqlEnum, args=(serv[0], serv[1])))
-                elif knownServices[services] == "mysqlEnum":
-                    jobs.append(pool.apply_async(mysqlEnum, args=(serv[0], serv[1])))
+            print("calling enum for "+knownServices[services])
+            jobs.append(pool.apply_async(knownServices[services], args=(serv[0], serv[1])))
 
     for p in jobs:
         p.get()

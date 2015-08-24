@@ -7,8 +7,8 @@ def sshCrack(ip_address, port):
     results = subprocess.check_output(MEDUSA, shell=True)
     results = results.split("\n")
     for line in results:
-        if "success" in line:
-            print(line)
+        if "SUCCESS" in line:
+            print("PASSWORD FOUND for "+ip_address+":"+port+ " - "+line)
 
     return
 
@@ -17,8 +17,8 @@ def mssqlCrack(ip_address, port):
     results = subprocess.check_output(MEDUSA, shell=True)
     results = results.split("\n")
     for line in results:
-        if "success" in line:
-            print(line)
+        if "SUCCESS" in line:
+            print("PASSWORD FOUND for "+ip_address+":"+port+ " - "+line)
 
     return
 
@@ -27,8 +27,8 @@ def mysqlCrack(ip_address, port):
     results = subprocess.check_output(MEDUSA, shell=True)
     results = results.split("\n")
     for line in results:
-        if "success" in line:
-            print(line)
+        if "SUCCESS" in line:
+            print("PASSWORD FOUND for "+ip_address+":"+port+ " - "+line)
 
     return
 
@@ -37,8 +37,8 @@ def webformCrack(ip_address, port):
     results = subprocess.check_output(MEDUSA, shell=True)
     results = results.split("\n")
     for line in results:
-        if "success" in line:
-            print(line)
+        if "SUCCESS" in line:
+            print("PASSWORD FOUND for "+ip_address+":"+port+ " - "+line)
 
     return
 
@@ -47,8 +47,8 @@ def ftpCrack(ip_address, port):
     results = subprocess.check_output(MEDUSA, shell=True)
     results = results.split("\n")
     for line in results:
-        if "success" in line:
-            print(line)
+        if "SUCCESS" in line:
+            print("PASSWORD FOUND for "+ip_address+":"+port+ " - "+line)
 
     return
 
@@ -57,7 +57,7 @@ def vncCrack(ip_address, port):
     results = subprocess.check_output(MEDUSA, shell=True)
     results = results.split("\n")
     for line in results:
-        if "success" in line:
-            print(line)
+        if "SUCCESS" in line:
+            print("PASSWORD FOUND for "+ip_address+":"+port+ " - "+line)
 
     return
