@@ -10,27 +10,25 @@ smbrecon.py
 smtprecon.py  
 snmprecon.py  
 sshrecon.py
+medusa.py
 
 This collection of scripts is intended to be executed remotely against a list of IPs to enumerate discovered 
 services such as smb, smtp, snmp, ftp and other.
 
 Author: 
-Mike Czumak (T_v3rn1x) -- @SecuritySift
+Tucker Pettis
 
 How to use:
 reconscan.py is the main script which calls all other scripts. Simply run it and it should do the work for you.
-Since I wrote this for a very specific use case I hard-coded all paths so be sure you change them accordingly.
-You'll also need to check the directories used for writing and modify accordingly as well. I intentionally kept 
-these scripts modular so that each script could also be run on its own.
 
-Warning:
-These scripts comes as-is with no promise of functionality or accuracy.  I strictly wrote them for personal use
-I have no plans to maintain updates, I did not write them to be efficient and in some cases you may find the 
-functions may not produce the desired results so use at your own risk/discretion. I wrote these scripts to 
-target machines in a lab environment so please only use them against systems for which you have permission!!  
+-i 1/2/3 for nmap scan intensity light/medium/full
+-c use medusa to crack passwords for discovered services
+-m use metasploit to attack (not yet implemented)
+-p number of concurrent process to run (default = 4)
 
-Modification, Distribution, and Attribution:
-You are free to modify and/or distribute this script as you wish.  I only ask that you maintain original
-author attribution and not attempt to sell it or incorporate it into any commercial offering (as if it's 
-worth anything anyway :)
+in order to use medusa username and password files need to be located at
+    /root/wordlists/admin_usernames.txt and /root/wordlists/rockyou.txt
 
+directory structure will be created from where script is run
+targets.txt needs to be in directory where script will be run
+    1 ip or range per line, no commas
