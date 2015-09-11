@@ -245,12 +245,12 @@ def nmapScan(ip_address,portnum):
     TCPSCAN = "nmap -vvv -Pn -A --open -sS -T 4 -p "+ports+" -oA discovery%snmap%stcp_%s %s"  % (sep, sep, ip_address, ip_address)
     UDPSCAN = "nmap -vvv -Pn -A --open -sU -T 4 --top-ports 200 -oA discovery%snmap%sudp_%s %s" % (sep, sep, ip_address, ip_address)
 
-	if TCPSCAN:
+	if TCPSCAN == True:
 		subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
 		fo = open("discovery"+sep+"nmap"+sep+"tcp_"+ip_address+".csv", 'w+')
 		serviceDict = nmapparser.process("discovery"+sep+"nmap"+sep+"tcp_"+ip_address+".xml", fo)
 
-	if UDPSCAN:
+	if UDPSCAN == True:
 		subprocess.check_output(UDPSCAN, shell=True, stderr=subprocess.STDOUT)
 		fo = open("discovery"+sep+"nmap"+sep+"udp_"+ip_address+".csv", 'w+')
 		serviceDict.update(nmapparser.process("discovery"+sep+"nmap"+sep+"udp_"+ip_address+".xml", fo))
