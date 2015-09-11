@@ -19,6 +19,8 @@ from multiprocessing import Pool
 crackPWs = False
 useMSF = False
 sep = os.path.sep
+TCP = False
+UDP = False
 
 def main(argv):
     parser = argparse.ArgumentParser(description="Scan and Enumerate all services on a network")
@@ -26,6 +28,9 @@ def main(argv):
     parser.add_argument('-c', '--crackPWs', default=False, action='store_true', help='Use medusa to crack passwords for known services')
     parser.add_argument('-m', '--metasploit', default=False, action='store_true', help="Use metasploit modules for enumeration")
     parser.add_argument('-p', '--processes', default=4, help='Number of concurrent processes to run. default = 4')
+    parser.add_argument('-u', '--udpscan', default=False, action='store_true', help="Run UDP Scan"
+    parser.add_argument('-t', '--tcpscan', default=False, action='store_true', help="Run TCP Scan"
+    
 
     args = parser.parse_args()
     portarg = args.intensity
@@ -34,6 +39,10 @@ def main(argv):
     global useMSF
     useMSF = args.metasploit
     procs=args.processes
+    global TCP
+    TCP = args.tcpscan
+    global UDP
+    UDP - args.udpscan
 
     init()
     f = open('targets.txt', 'r')
@@ -236,13 +245,15 @@ def nmapScan(ip_address,portnum):
     TCPSCAN = "nmap -vvv -Pn -A --open -sS -T 4 -p "+ports+" -oA discovery%snmap%stcp_%s %s"  % (sep, sep, ip_address, ip_address)
     UDPSCAN = "nmap -vvv -Pn -A --open -sU -T 4 --top-ports 200 -oA discovery%snmap%sudp_%s %s" % (sep, sep, ip_address, ip_address)
 
-    subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
-    fo = open("discovery"+sep+"nmap"+sep+"tcp_"+ip_address+".csv", 'w+')
-    serviceDict = nmapparser.process("discovery"+sep+"nmap"+sep+"tcp_"+ip_address+".xml", fo)
+	if TCPSCAN:
+		subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
+		fo = open("discovery"+sep+"nmap"+sep+"tcp_"+ip_address+".csv", 'w+')
+		serviceDict = nmapparser.process("discovery"+sep+"nmap"+sep+"tcp_"+ip_address+".xml", fo)
 
-    subprocess.check_output(UDPSCAN, shell=True, stderr=subprocess.STDOUT)
-    fo = open("discovery"+sep+"nmap"+sep+"udp_"+ip_address+".csv", 'w+')
-    serviceDict.update(nmapparser.process("discovery"+sep+"nmap"+sep+"udp_"+ip_address+".xml", fo))
+	if UDPSCAN:
+		subprocess.check_output(UDPSCAN, shell=True, stderr=subprocess.STDOUT)
+		fo = open("discovery"+sep+"nmap"+sep+"udp_"+ip_address+".csv", 'w+')
+		serviceDict.update(nmapparser.process("discovery"+sep+"nmap"+sep+"udp_"+ip_address+".xml", fo))
 
     print("INFO: TCP/UDP Nmap scans completed for " + ip_address)
     return serviceDict
