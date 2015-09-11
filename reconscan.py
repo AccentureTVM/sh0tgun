@@ -59,10 +59,13 @@ def main(argv):
             else:
                 serviceDict[key] = temp[key]
 
-    subprocess.check_output("cat discovery"+sep+"nmap"+sep+"tcp_*.csv >> discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
-    subprocess.check_output("cat discovery"+sep+"nmap"+sep+"udp_*.csv >> discovery"+sep+"nmap"+sep+"udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
-    subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv > temp && mv temp discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
-    subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - discovery"+sep+"nmap"+sep+"udp_nmap_all.csv > temp && mv temp discovery"+sep+"nmap"+sep+"udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
+    if TCP:
+        subprocess.check_output("cat discovery"+sep+"nmap"+sep+"tcp_*.csv >> discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
+        subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv > temp && mv temp discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
+
+    if UDP:
+        subprocess.check_output("cat discovery"+sep+"nmap"+sep+"udp_*.csv >> discovery"+sep+"nmap"+sep+"udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
+        subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - discovery"+sep+"nmap"+sep+"udp_nmap_all.csv > temp && mv temp discovery"+sep+"nmap"+sep+"udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
 
     print("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
 
@@ -241,16 +244,17 @@ def nmapScan(ip_address,portnum):
 
     ip_address = ip_address.strip()
 
-    print("INFO: Running "+type+" TCP/UDP nmap scans for " + ip_address)
     TCPSCAN = "nmap -vvv -Pn -A --open -sS -T 4 -p "+ports+" -oA discovery%snmap%stcp_%s %s"  % (sep, sep, ip_address, ip_address)
     UDPSCAN = "nmap -vvv -Pn -A --open -sU -T 4 --top-ports 200 -oA discovery%snmap%sudp_%s %s" % (sep, sep, ip_address, ip_address)
 
     if TCP == True:
+        print("INFO: Running "+type+" TCP nmap scans for " + ip_address)
         subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
         fo = open("discovery"+sep+"nmap"+sep+"tcp_"+ip_address+".csv", 'w+')
         serviceDict = nmapparser.process("discovery"+sep+"nmap"+sep+"tcp_"+ip_address+".xml", fo)
         
     if UDP == True:
+        print("INFO: Running "+type+" UDP nmap scans for " + ip_address)
         subprocess.check_output(UDPSCAN, shell=True, stderr=subprocess.STDOUT)
         fo = open("discovery"+sep+"nmap"+sep+"udp_"+ip_address+".csv", 'w+')
         serviceDict.update(nmapparser.process("discovery"+sep+"nmap"+sep+"udp_"+ip_address+".xml", fo))
