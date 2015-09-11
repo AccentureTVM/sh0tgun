@@ -1,0 +1,39 @@
+DNS
+	DNSrecon
+	zone transfer
+
+HTTP/S
+	Nikto
+	NSE Scripts: http-vhosts,http-userdir-enum,http-apache-negotiation,http-backup-finder,http-config-backup,http-default-accounts,http-email-harvest,http-methods,http-method-tamper,http-passwd,http-robots.txt
+	Dirbuster
+	[sqlmap]
+
+mssql
+	NSE Scripts: ms-sql-info,ms-sql-config,ms-sql-dump-hashes
+	Medusa
+	[metasploit hashdump login enum authbypass]
+
+mysql
+	NSE Scripts: mysql-enum, mysql-empty-password
+	Medusa
+	[metasploit hashdump login]
+
+ssh
+	Medusa
+
+snmp
+	onesixtyone
+	snmpwalk
+	NSE: snmp-netstat,snmp-processes
+
+smtp
+	SMTP VRFY
+
+smb
+	NBTScan
+	Enum5linux
+	NSE= smb-check-vulns
+
+ftp
+	Medusa
+	NSE: ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221
