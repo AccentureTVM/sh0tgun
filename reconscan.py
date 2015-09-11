@@ -80,7 +80,7 @@ def main(argv):
     # go through the service dictionary to call additional targeted enumeration functions
     for services in serviceDict:
         if services in knownServices:
-            print("calling enum for "+knownServices[services])
+            print("calling enum for "+str(knownServices[services]))
             jobs.append(pool.apply_async(knownServices[services], args=(serv[0], serv[1])))
 
     for p in jobs:
