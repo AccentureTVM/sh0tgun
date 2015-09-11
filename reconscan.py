@@ -50,8 +50,11 @@ def main(argv):
             else:
                 serviceDict[key] = temp[key]
 
-    subprocess.check_output("cat discovery"+sep+"nmap"+sep+"*.csv >> discovery"+sep+"nmap"+sep+"nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
-    subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - discovery"+sep+"nmap"+sep+"nmap_all.csv > temp && mv temp discovery"+sep+"nmap"+sep+"nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
+    subprocess.check_output("cat discovery"+sep+"nmap"+sep+"tcp_*.csv >> discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
+    subprocess.check_output("cat discovery"+sep+"nmap"+sep+"udp_*.csv >> discovery"+sep+"nmap"+sep+"udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
+    subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv > temp && mv temp discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
+    subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - discovery"+sep+"nmap"+sep+"udp_nmap_all.csv > temp && mv temp discovery"+sep+"nmap"+sep+"udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
+
     print("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
 
     knownServices = {
@@ -74,7 +77,6 @@ def main(argv):
             print(" -"+serv)
 
     jobs = []
-    print(serviceDict)
     # go through the service dictionary to call additional targeted enumeration functions
     for services in serviceDict:
         if services in knownServices:

