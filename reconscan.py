@@ -93,8 +93,8 @@ def main(argv):
     for services in serviceDict:
         if services in knownServices:
             print("calling enum for "+str(knownServices[services]))
-            print(services)
-            for serv in services:
+            print(serviceDict[services])
+            for serv in serviceDict[services]:
             	jobs.append(pool.apply_async(knownServices[services], args=(serv[0], serv[1])))
             	
     for p in jobs:
