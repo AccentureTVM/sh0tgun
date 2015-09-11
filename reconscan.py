@@ -28,8 +28,8 @@ def main(argv):
     parser.add_argument('-c', '--crackPWs', default=False, action='store_true', help='Use medusa to crack passwords for known services')
     parser.add_argument('-m', '--metasploit', default=False, action='store_true', help="Use metasploit modules for enumeration")
     parser.add_argument('-p', '--processes', default=4, help='Number of concurrent processes to run. default = 4')
-    parser.add_argument('-u', '--udpscan', default=False, action='store_true', help="Run UDP Scan"
-    parser.add_argument('-t', '--tcpscan', default=False, action='store_true', help="Run TCP Scan"
+    parser.add_argument('-u', '--udpscan', default=False, action='store_true', help="Run UDP Scan")
+    parser.add_argument('-t', '--tcpscan', default=False, action='store_true', help="Run TCP Scan")
     
 
     args = parser.parse_args()
