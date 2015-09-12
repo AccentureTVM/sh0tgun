@@ -101,7 +101,7 @@ def main(argv):
     count = 0        	
     for p in jobs:
         counnt += 1
-        print("Getting Process " count)
+        print("Getting Process " + count)
         p.get()
 
     f.close()
