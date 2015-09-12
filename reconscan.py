@@ -95,13 +95,13 @@ def main(argv):
         if services in knownServices:
             for serv in serviceDict[services]:
                 count += 1
-                print("starting process " + count)
+                print("starting process " + str(count))
                 jobs.append(pool.apply_async(knownServices[services], args=(serv[0], serv[1])))
     
     count = 0        	
     for p in jobs:
         counnt += 1
-        print("Getting Process " + count)
+        print("Getting Process " + str(count))
         p.get()
 
     f.close()
