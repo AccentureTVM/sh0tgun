@@ -158,7 +158,7 @@ def httpEnum(ip_address, port):
     # niktoout = open(out, "w+")
     # niktoout.write(NIKTOSCAN)
     # niktoout.close()
-    return
+    return 0
 
 def httpsEnum(ip_address, port, root):
     print("INFO: Detected https on " + ip_address + ":" + port)
@@ -233,7 +233,7 @@ def ftpEnum(ip_address, port):
     if crackPWs:
         print("INFO: Performing Medusa FTP Password crack for " + ip_address + ":" + port + " see directory/ftp for results")
         medusa.ftpCrack(ip_address, port)
-    return
+    return 0
 
 def nmapScan(ip_address,portnum):
     if portnum == "1":
