@@ -100,9 +100,9 @@ def main(argv):
     
     count = 0        	
     for p in jobs:
-        count += 1
-        print("Getting Process " + str(count))
         p.get()
+        count += 1
+        print("Got " + str(count) + "PROCESS(ES)")
 
     f.close()
     return
