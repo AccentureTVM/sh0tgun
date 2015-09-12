@@ -100,7 +100,7 @@ def main(argv):
     
     count = 0        	
     for p in jobs:
-        counnt += 1
+        count += 1
         print("Getting Process " + str(count))
         p.get()
 
