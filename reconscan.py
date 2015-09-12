@@ -83,21 +83,25 @@ def main(argv):
         "mysql":mysqlEnum
     }
 
-    print("No enum tool for following services:")
+    print("No enum tool for the following services:")
     for serv in serviceDict:
         if serv not in knownServices:
             print(" -"+serv)
 
     jobs = []
     # go through the service dictionary to call additional targeted enumeration functions
+    count = 0
     for services in serviceDict:
         if services in knownServices:
-            print("calling enum for "+str(knownServices[services]))
-            print(serviceDict[services])
             for serv in serviceDict[services]:
-            	jobs.append(pool.apply_async(knownServices[services], args=(serv[0], serv[1])))
-            	
+                count += 1
+                print("starting process " + count)
+                jobs.append(pool.apply_async(knownServices[services], args=(serv[0], serv[1])))
+    
+    count = 0        	
     for p in jobs:
+        counnt += 1
+        print("Getting Process " count)
         p.get()
 
     f.close()
