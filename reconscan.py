@@ -30,6 +30,7 @@ def main(argv):
     parser.add_argument('-p', '--processes', default=4, help='Number of concurrent processes to run. default = 4')
     parser.add_argument('-u', '--udpscan', default=False, action='store_true', help="Run UDP Scan")
     parser.add_argument('-t', '--tcpscan', default=False, action='store_true', help="Run TCP Scan")
+    parser.add_argument('-d', '--nodirectories', default=True, action='store_false', help="Don't create directory structure")
     
 
     args = parser.parse_args()
@@ -42,10 +43,17 @@ def main(argv):
     global TCP
     TCP = args.tcpscan
     global UDP
-    UDP - args.udpscan
+    UDP = args.udpscan
+    dirs = arts.nodirectories
 
+    if dirs == True:
+    	checkandmk('issues')
+        checkandmk('lists')
+        checkandmk('password')
+        checkandmk('pillage')
     init()
     f = open('targets.txt', 'r')
+    
     # multiprocessing
     pool = Pool(processes=procs)
     jobs = [pool.apply_async(nmapScan, args=(ip,portarg)) for ip in f]
@@ -96,19 +104,12 @@ def main(argv):
     for services in serviceDict:
         if services in knownServices:
             for serv in serviceDict[services]:
-                count += 1
-                print("starting process " + str(count))
                 jobs.append(pool.apply_async(knownServices[services], args=(serv[0], serv[1])))
+
     pool.close()
     pool.join()
-
-    #count = 0        	
-    #for p in jobs:
-    #    p.join()
-    #    count += 1
-    #    print("Got " + str(count) + "PROCESS(ES)")
-
     f.close()
+
     return
 
 def init():
@@ -129,10 +130,6 @@ def init():
     checkandmk('discovery'+sep+'http')
     checkandmk('discovery'+sep+'vnc')
     checkandmk('discovery'+sep+'mysql')
-    checkandmk('issues')
-    checkandmk('lists')
-    checkandmk('password')
-    checkandmk('pillage')
     return
 
 def checkandmk(path):
