@@ -232,7 +232,7 @@ def smbEnum(ip_address, port):
 
 def ftpEnum(ip_address, port):
     print("INFO: Detected ftp on " + ip_address + ":" + port)
-    ftprecon.main(["",ip_address])
+    ftprecon.main(["",ip_address,port])
     if crackPWs:
         print("INFO: Performing Medusa FTP Password crack for " + ip_address + ":" + port + " see discovery/ftp for results")
         medusa.ftpCrack(ip_address, port)
