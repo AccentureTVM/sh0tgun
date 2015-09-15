@@ -86,8 +86,8 @@ def main(argv):
     print("No enum tool for the following services:")
     for serv in serviceDict:
         if serv not in knownServices:
-        	for ips in serviceDict[serv]:
-        		temp = ips[0]+":"+ips[1]+" "
+            for ips in serviceDict[serv]:
+        	    temp = ips[0]+":"+ips[1]+" "
             print(" -"+serv+": "+ temp)
 
     jobs = []
