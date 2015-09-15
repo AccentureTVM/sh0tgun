@@ -86,7 +86,9 @@ def main(argv):
     print("No enum tool for the following services:")
     for serv in serviceDict:
         if serv not in knownServices:
-            print(" -"+serv)
+        	for ips in serviceDict[serv]:
+        		temp = ips[0]+":"+ips[1]+" "
+            print(" -"+serv+": "+ temp)
 
     jobs = []
     # go through the service dictionary to call additional targeted enumeration functions
@@ -100,7 +102,7 @@ def main(argv):
     
     count = 0        	
     for p in jobs:
-        p.get()
+        p.join()
         count += 1
         print("Got " + str(count) + "PROCESS(ES)")
 
@@ -197,7 +199,7 @@ def mysqlEnum(ip_address, port):
     subprocess.check_output(MYSQLSCAN, shell=True)
 
     if crackPWs:
-        print("INFO: Performing Medusa mySQL Password crack for " + ip_address + ":" + port + " see directory/mysql for results")
+        print("INFO: Performing Medusa mySQL Password crack for " + ip_address + ":" + port + " see discovery/mysql for results")
         medusa.mysqlCrack(ip_address, port)
     return
 
@@ -205,7 +207,7 @@ def sshEnum(ip_address, port):
     print("INFO: Detected SSH on " + ip_address + ":" + port)
     sshrecon.main(["", ip_address, port])
     if crackPWs:
-        print("INFO: Performing Medusa ssh Password crack for " + ip_address + ":" + port + " see directory/ssh for results")
+        print("INFO: Performing Medusa ssh Password crack for " + ip_address + ":" + port + " see discovery/ssh for results")
         medusa.sshCrack(ip_address, port)
     return
 
@@ -231,9 +233,9 @@ def ftpEnum(ip_address, port):
     print("INFO: Detected ftp on " + ip_address + ":" + port)
     ftprecon.main(["",ip_address])
     if crackPWs:
-        print("INFO: Performing Medusa FTP Password crack for " + ip_address + ":" + port + " see directory/ftp for results")
+        print("INFO: Performing Medusa FTP Password crack for " + ip_address + ":" + port + " see discovery/ftp for results")
         medusa.ftpCrack(ip_address, port)
-    return 0
+    return
 
 def nmapScan(ip_address,portnum):
     if portnum == "1":
