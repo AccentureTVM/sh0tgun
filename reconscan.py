@@ -100,11 +100,13 @@ def main(argv):
                 print("starting process " + str(count))
                 jobs.append(pool.apply_async(knownServices[services], args=(serv[0], serv[1])))
     
-    count = 0        	
-    for p in jobs:
-        p.join()
-        count += 1
-        print("Got " + str(count) + "PROCESS(ES)")
+    pool.join()
+    pool.close()
+    #count = 0        	
+    #for p in jobs:
+    #    p.join()
+    #    count += 1
+    #    print("Got " + str(count) + "PROCESS(ES)")
 
     f.close()
     return
