@@ -62,7 +62,7 @@ def NetBIOS(ip, port):
     SCAN = "nmap  -Pn -n -sU --open -p "+ port + " --script=nbstat --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def MS08_067
+def MS08_067(ip, port):
      SCAN = "nmap  -Pn -n --open -p "+ port + " --script=smb-check-vulns --host-timeout 5m --min-hostgroup 100 " + str(ip)   
      return SCAN
      
