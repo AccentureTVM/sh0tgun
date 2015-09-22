@@ -24,17 +24,6 @@ TCP = False
 UDP = False
 
 def main(argv):
-	print("1) Build Directories")
-	print("2) Scan Targets")
-	print("3) View Services")
-	print("4) Enumerate Services/Vulnerability Scan")
-	print("5) View Vulnerabilites")
-	print("6) Password Guess")
-	print("7) View Passwords")
-	print("6) Exploit Vulnerabilities")
-	print("Enter option #: ")
-	
-	
     parser = argparse.ArgumentParser(description="Scan and Enumerate all services on a network")
     parser.add_argument('-i', '--intensity', default=3, help='1, 2, 3 for light, medium, or heavy port scan respectively. default is 3 (all)')
     parser.add_argument('-c', '--crackPWs', default=False, action='store_true', help='Use medusa to crack passwords for known services')
