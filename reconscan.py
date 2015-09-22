@@ -45,7 +45,7 @@ def main(argv):
     TCP = args.tcpscan
     global UDP
     UDP = args.udpscan
-    dirs = args.nodirectories
+    dirs = args.directories
 
     if dirs == True:
     	checkandmk('issues')
