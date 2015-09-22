@@ -13,6 +13,7 @@ import scripts.smtprecon as smtprecon
 import scripts.snmprecon as snmprecon
 import scripts.sshrecon as sshrecon
 import scripts.medusa as medusa
+import scripts.nse as nse
 
 from multiprocessing import Pool
 
@@ -23,14 +24,25 @@ TCP = False
 UDP = False
 
 def main(argv):
+	print("1) Build Directories")
+	print("2) Scan Targets")
+	print("3) View Services")
+	print("4) Enumerate Services/Vulnerability Scan")
+	print("5) View Vulnerabilites")
+	print("6) Password Guess")
+	print("7) View Passwords")
+	print("6) Exploit Vulnerabilities")
+	print("Enter option #: ")
+	
+	
     parser = argparse.ArgumentParser(description="Scan and Enumerate all services on a network")
     parser.add_argument('-i', '--intensity', default=3, help='1, 2, 3 for light, medium, or heavy port scan respectively. default is 3 (all)')
     parser.add_argument('-c', '--crackPWs', default=False, action='store_true', help='Use medusa to crack passwords for known services')
     parser.add_argument('-m', '--metasploit', default=False, action='store_true', help="Use metasploit modules for enumeration")
     parser.add_argument('-p', '--processes', default=4, help='Number of concurrent processes to run. default = 4')
-    parser.add_argument('-u', '--udpscan', default=False, action='store_true', help="Run UDP Scan")
-    parser.add_argument('-t', '--tcpscan', default=False, action='store_true', help="Run TCP Scan")
-    parser.add_argument('-d', '--nodirectories', default=True, action='store_false', help="Don't create directory structure")
+    parser.add_argument('-u', '--udpscan', default=False, action='store_true', help="Run UDP Scans")
+    parser.add_argument('-t', '--tcpscan', default=False, action='store_true', help="Run TCP Scans")
+    parser.add_argument('-d', '--directories', default=False, action='store_true', help="Create Penetration Testing directory structure")
     
 
     args = parser.parse_args()
@@ -44,7 +56,7 @@ def main(argv):
     TCP = args.tcpscan
     global UDP
     UDP = args.udpscan
-    dirs = arts.nodirectories
+    dirs = args.nodirectories
 
     if dirs == True:
     	checkandmk('issues')
@@ -146,7 +158,8 @@ def dnsEnum(ip_address, port):
 def httpEnum(ip_address, port):
     print("INFO: Detected http on " + ip_address + ":" + port)
     print("INFO: Performing nmap web script scan for " + ip_address + ":" + port + " see directory/http for results")
-    HTTPSCAN = "nmap -Pn -vv -p %s --script=http-vhosts,http-userdir-enum,http-apache-negotiation,http-backup-finder,http-config-backup,http-default-accounts,http-email-harvest,http-methods,http-method-tamper,http-passwd,http-robots.txt -oN discovery/http/%s_http.nmap %s" % (port, ip_address, ip_address)
+    #HTTPSCAN = "nmap -Pn -vv -p %s --script=http-vhosts,http-userdir-enum,http-apache-negotiation,http-backup-finder,http-config-backup,http-default-accounts,http-email-harvest,http-methods,http-method-tamper,http-passwd,http-robots.txt -oN discovery/http/%s_http.nmap %s" % (port, ip_address, ip_address)
+    HTTPSCAN = nse.http(ip_address, port)
     subprocess.check_output(HTTPSCAN, shell=True)
 
     print("INFO: Using Dirbuster for " + ip_address + ":" + port + " see directory/http for results")
