@@ -126,7 +126,7 @@ def SOCKS(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=socks-auth-info --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def RMI Registry(ip, port):
+def RMI_Registry(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=rmi-dumpregistry --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
