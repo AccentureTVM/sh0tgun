@@ -278,7 +278,7 @@ def Bitcoin(ip, port):
     return SCAN
 
 def Lexmark(ip, port):
-    SCAN = "nmap  -Pn -n --open -p "+ port + " " + str(ip) --script=lexmark-cong --host-timeout 5m --min-hostgroup 100 " + str(ip)   
+    SCAN = "nmap  -Pn -n --open -p "+ port + " --script=lexmark-cong --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
 def Cassandra(ip, port):
@@ -290,7 +290,7 @@ def Java_Debug_Wire_Protocol(ip, port):
     return SCAN
 
 def Network_Data_Management(ip, port):
-    SCAN = "nmap  -Pn -n --open -p "+ port + " " + str(ip)00 --script=ndmp-fs-info,ndmp-version --host-timeout 5m --min-hostgroup 100 " + str(ip)   
+    SCAN = "nmap  -Pn -n --open -p "+ port + " --script=ndmp-fs-info,ndmp-version --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
 def Memory_Object_Caching(ip, port):
