@@ -134,7 +134,7 @@ def ICAP(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=icap-info --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def Lotus Domino(ip, port):
+def Lotus_Domino(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=domino-enum-users --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
