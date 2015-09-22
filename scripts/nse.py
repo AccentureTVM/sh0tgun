@@ -62,7 +62,7 @@ def NetBIOS(ip, port):
     SCAN = "nmap  -Pn -n -sU --open -p "+ port + " --script=nbstat --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def MS08-067
+def MS08_067
      SCAN = "nmap  -Pn -n --open -p "+ port + " --script=smb-check-vulns --host-timeout 5m --min-hostgroup 100 " + str(ip)   
      return SCAN
      
@@ -90,7 +90,7 @@ def DB2(ip, port):
     SCAN = "nmap  -Pn -n -sS -sU --open -p "+ port + " --script=db2-das-info,db2-discover --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def Novell NetWare Core Protocol(ip, port):
+def Novell_NetWare_Core_Protocol(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=ncp-enum-users,ncp-serverinfo --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
@@ -110,11 +110,11 @@ def rsync(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=rsync-list-modules --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def IMAP/S(ip, port):
+def IMAP_S(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=banner,sslv2,imap-capabilities --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def POP3/S(ip, port):
+def POP3_S(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=banner,sslv2,pop3-capabilities --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
@@ -138,11 +138,11 @@ def Lotus Domino(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=domino-enum-users --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def MS-SQL(ip, port):
+def MS_SQL(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=ms-sql-dump-hashes,ms-sql-empty-password,ms-sql-info --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def MS-SQL UDP(ip, port):
+def MS_SQL_UDP(ip, port):
     SCAN = "nmap  -Pn -n -sU --open -p "+ port + " --script=ms-sql-dac --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
@@ -174,7 +174,7 @@ def GPS(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=gpsd-info --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def Apple Remote Event(ip, port):
+def Apple_Remote_Event(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=eppc-enum-processes --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
@@ -186,7 +186,7 @@ def MySQL(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=mysql-databases,mysql-empty-password,mysql-info,mysql-users,mysql-variables --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def Remote Desktop(ip, port):
+def Remote_Desktop(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=rdp-vuln-ms12-020,rdp-enum-encryption --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
     
@@ -194,10 +194,10 @@ def STUN(ip, port):
     SCAN = "nmap  -Pn -n -sU --open -p "+ port + " --script=stun-version --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def Distributed Compiler Daemon(ip, port):
+def Distributed_Compiler_Daemon(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=distcc-cve2004-2687 --script-args=distcc-exec.cmd='id' --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
-def Erlang Port Mapper(ip, port):
+def Erlang_Port_Mapper(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=epmd-info --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
@@ -209,7 +209,7 @@ def SIP(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=sip-enum-users,sip-methods --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def DNS Service Discovery(ip, port):
+def DNS_Service_Discovery(ip, port):
     SCAN = "nmap  -Pn -n -sU --open -p "+ port + " --script=dns-service-discovery --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
@@ -241,7 +241,7 @@ def Redis(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=redis-info --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def Sun Service Tags(ip, port):
+def Sun_Service(ip, port):
     SCAN = "nmap  -Pn -n -sU --open -p "+ port + " --script=servicetags --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
@@ -249,15 +249,15 @@ def Voldemort(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=voldemort-info --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def Max DB(ip, port):
+def Max_DB(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=maxdb-info --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def Hard Disk Info(ip, port):
+def Hard_Disk(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=hddtemp-info --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def QNX QCONN
+def QNX_QCONN
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=qconn-exec --script-args=qconn-exec.timeout=60,qconn-exec.bytes=1024,qconn-exec.cmd=uname -a --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
@@ -265,11 +265,11 @@ def AJP
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=ajp-methods,ajp-request --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def McAfee ePO(ip, port):
+def McAfee_ePO(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=mcafee-epo-agent --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def CouchBase Web Administration(ip, port):
+def CouchBase_Web_Administration(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=membase-http-info --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
@@ -285,15 +285,15 @@ def Cassandra(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=cassandra-info --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def Java Debug Wire Protocol(ip, port):
+def Java_Debug_Wire_Protocol(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=jdwp-version --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def Network Data Management(ip, port):
+def Network_Data_Management(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " " + str(ip)00 --script=ndmp-fs-info,ndmp-version --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def Memory Object Caching(ip, port):
+def Memory_Object_Caching(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=memcached-info --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
@@ -333,6 +333,6 @@ def Hadoop(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + ",50060,50070,50075,50090 --script=hadoop-datanode-info,hadoop-jobtracker-info,hadoop-namenode-info,hadoop-secondary-namenode-info,hadoop-tasktracker-info --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def Apache HBase(ip, port):
+def Apache_HBase(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + ",60030 --script=hbase-master-info,hbase-region-info --host-timeout 5m --min-hostgroup 100 " + str(ip)   
 
