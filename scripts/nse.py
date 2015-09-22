@@ -257,11 +257,11 @@ def Hard_Disk(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=hddtemp-info --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def QNX_QCONN
+def QNX_QCONN(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=qconn-exec --script-args=qconn-exec.timeout=60,qconn-exec.bytes=1024,qconn-exec.cmd=uname -a --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
-def AJP
+def AJP(ip, port):
     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=ajp-methods,ajp-request --host-timeout 5m --min-hostgroup 100 " + str(ip)   
     return SCAN
 
