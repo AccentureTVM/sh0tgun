@@ -63,7 +63,7 @@ def NetBIOS(ip, port):
     return SCAN
 
 def MS08_067(ip, port):
-     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=smb-check-vulns --host-timeout 5m --min-hostgroup 100 " + str(ip)   
+     SCAN = "nmap  -Pn -n --open -p "+ port + " --script=smb-check-vulns --script-args=unsafe=1 --host-timeout 5m --min-hostgroup 100 " + str(ip)   
      return SCAN
      
 def IMAP(ip, port):

