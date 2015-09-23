@@ -35,7 +35,7 @@ def main(args):
     nbtresults = subprocess.check_output(NBTSCAN, shell=True)
     lines = nbtresults.split("\n")
     for line in lines:
-    	print line
+        print line
         if "VULNERABLE" in line and "NOT VULNERABLE" not in line:
             print('FOUND SMB VULN on ' +ip+ ": " +line)
         if "MS08-067:" in Line and "Vulnerable" in line and "NOT" not in line:
