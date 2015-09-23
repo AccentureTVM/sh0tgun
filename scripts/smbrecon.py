@@ -30,8 +30,10 @@ def main(args):
 			f.write(nbtresults)
 			f.close
 
+    print("INFO: Running nmap smb vuln scan on " + ip)
     NBTSCAN = "nmap -vv -Pn -n --open -p 139,445 --script=smb-check-vulns --script-args=unsafe=1 %s" % (ip)
     nbtresults = subprocess.check_output(NBTSCAN, shell=True)
+    print(nbtresults)
     lines = nbtresults.split("\n")
     for line in lines:
         if "VULNERABLE" in line and "NOT VULNERABLE" not in line:
