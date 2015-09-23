@@ -13,7 +13,7 @@ def main(args):
     if ("Connection refused" not in nbtresults) and ("Connect error" not in nbtresults) and ("Connection reset" not in nbtresults):
         print("[*] NBTSCAN User accounts/domains found on " + ip)
         print(nbtresults)
-        resultsfile = root+"results/smb/" + ip + "_nbtscan.txt"
+        resultsfile = "discovery/smb/" + ip + "_nbtscan.txt"
         f = open(resultsfile, "w")
         f.write(nbtresults)
         f.close
@@ -23,12 +23,12 @@ def main(args):
     if ("Connection refused" not in nbtresults) and ("Connect error" not in nbtresults) and ("Connection reset" not in nbtresults):
         print("[*] ENUM4LINUX User accounts/domains found on " + ip)
         print(nbtresults)
-        resultsfile = root+"results/smb/" + ip + "_enum4linux.txt"
+        resultsfile = "discovery/smb/" + ip + "_enum4linux.txt"
         f = open(resultsfile, "w")
         f.write(nbtresults)
         f.close
 
-    NBTSCAN = "nmap -vv -p 139,445 --script=smb-check-vulns --script-args=unsafe=1 %s -oA %sresults/smb/%s_smbnse" % (ip,root, ip)
+    NBTSCAN = "nmap -vv -p 139,445 --script=smb-check-vulns --script-args=unsafe=1 %s -oA discovery/smb/%s_smbnse" % (ip, ip)
     nbtresults = subprocess.check_output(NBTSCAN, shell=True)
     lines = nbtresults.split("\n")
     for line in lines:
