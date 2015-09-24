@@ -225,7 +225,7 @@ def smtpEnum(ip_address, port):
         print("WARNING: SMTP detected on non-standard port, smtprecon skipped (must run manually)")
     return
 
-def smbEnum(ip_address, port):
+def smbEnum(ip_address, port, useMSF):
     print("INFO: Detected SMB on " + ip_address + ":" + port)
     smbrecon.main(["",ip_address])
     return
