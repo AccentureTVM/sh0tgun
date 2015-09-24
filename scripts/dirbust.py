@@ -7,7 +7,7 @@ import subprocess
 def main(args):
 	if len(args) < 2 :
 		print("Usage: dirbust.py <target url>")
-		sys.exit(0)
+		return
 
 	url = str(args[1])
 	folders = ["/usr/share/dirb/wordlists", "/usr/share/dirb/wordlists/vulns"]

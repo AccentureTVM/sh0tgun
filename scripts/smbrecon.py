@@ -3,9 +3,9 @@ import sys
 import subprocess
 
 def main(args):
-	if len(args) != 2:
-		print("Usage: smbrecon.py <ip address>")
-		sys.exit(0)
+	if len(args) != 4:
+		print("Usage: smbrecon.py <ip address> <port> <msfcli>")
+		return
 
 	ip = args[1]
 	port = args[2]

@@ -6,7 +6,7 @@ import sys
 def main(args):
     if len(args) != 2:
         print("Usage: dnsrecon.py <ip address>")
-        sys.exit(0)
+        return
 
     # ip_address = sys.argv[1]
     # HOSTNAME = "nmblookup -A %s | grep '<00>' | grep -v '<GROUP>' | cut -d' ' -f1" % (ip_address)# grab the hostname

@@ -6,7 +6,7 @@ import os
 def main(args):
     if len(args) != 3:
         print("Usage: ftprecon.py <ip address> <port>")
-        sys.exit(0)
+        return
 
     ip_address = args[1].strip()
     port = args[2].strip()
