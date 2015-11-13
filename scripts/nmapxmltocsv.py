@@ -98,7 +98,7 @@ def process(inputfile, fo):
             print("No open ports on " + ip)
             fo.write(ip + ",,no open ports")
 
-    return [serviceDict,ipDict]
+    return serviceDict
 
 
 if __name__ == "__main__":
