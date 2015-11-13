@@ -366,14 +366,14 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 		print("INFO: Running "+type+" TCP nmap scans for " + ip_address)
 		print(TCPSCAN)
 		subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
-		fo = open(root + "discovery"+sep+"nmap"+sep+"tcp_"+ip_address+".csv", 'w+')
-		serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"tcp_"+ip_address+".xml", fo)
+		fo = open(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".csv", 'w+')
+		serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".xml", fo)
 		
 	if type == "UDP":
 		print("INFO: Running "+type+" UDP nmap scans for " + ip_address)
 		subprocess.check_output(UDPSCAN, shell=True, stderr=subprocess.STDOUT)
-		fo = open(root + "discovery"+sep+"nmap"+sep+"udp_"+ip_address+".csv", 'w+')
-		serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"udp_"+ip_address+".xml", fo)
+		fo = open(root + "discovery"+sep+"nmap"+sep+"udp/udp_"+ip_address+".csv", 'w+')
+		serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"udp/udp_"+ip_address+".xml", fo)
 
 	print("INFO: " + type + " Nmap scans completed for " + ip_address)
 	return serviceDict				
@@ -468,6 +468,8 @@ def init():
 	checkandmk(root + 'discovery'+sep+'db2')
 	checkandmk(root + 'discovery'+sep+'oracle')
 	checkandmk(root + 'discovery'+sep+'nmap')
+	checkandmk(root + 'discovery'+sep+'nmap'+sep+'tcp')
+	checkandmk(root + 'discovery'+sep+'nmap'+sep+'udp')
 	checkandmk(root + 'discovery'+sep+'http')
 	checkandmk(root + 'discovery'+sep+'vnc')
 	checkandmk(root + 'discovery'+sep+'mysql')
