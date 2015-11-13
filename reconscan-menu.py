@@ -455,7 +455,7 @@ def enumServicesMenu():
 		"ftp":ftpEnum, 
 		"microsoft-ds":smbEnum, 
 		"msrpc":smbEnum,
-		"netbios-ssn":smbEnum
+		"netbios-ssn":smbEnum,
 		"ms-sql":mssqlEnum, 
 		"mysql":mysqlEnum
 	}
