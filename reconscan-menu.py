@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys
 
-if sys.version_info[0] != 3 or sys.version_info[1] < 5:
+if sys.version_info[0] != 3 or sys.version_info[1] < 1:
 	print("\nEXIT: This script requires Python version 3.5 or higher\n")
 	sys.exit(1)
 	
