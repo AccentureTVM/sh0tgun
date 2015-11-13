@@ -374,6 +374,7 @@ def runNmapMenu():
 					subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
 		
 					print("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
+				    input("Press any key to continue.  Log data available at " + root + "reconscan.log")
 				elif menuChoice == 3:
 					shell = ""
 					while shell!="y" and shell!="n":
@@ -403,6 +404,7 @@ def runNmapMenu():
 					subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
 		
 					log("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
+					input("Press any key to continue.  Log data available at " + root + "reconscan.log")
 				elif menuChoice == 0:
 					menuChoice = "q"
 				else:
@@ -504,11 +506,13 @@ def enumServicesMenu():
 									if serv in serviceDict:
 										print (serv)
 								choice = input('>>')
-							log("Starting enumeration for " + choice)
+							log("INFO: Starting enumeration for " + choice)
 							for serv in serviceDict[choice]:
 								pool.apply_async(knownServices[choice], args=(serv[0], serv[1]))
 							pool.close()
 							pool.join()
+							log("INFO: Enumeration of " + choice + " has completed. See " + root + "discovery/ for details")
+							input("Press any key to continue.  Log data available at " + root + "reconscan.log")
 			
 				elif menuChoice == 3:
 					if serviceDict == {}:
@@ -528,6 +532,8 @@ def enumServicesMenu():
 									pool.apply_async(knownServices[services], args=(serv[0], serv[1]))
 						pool.close()
 						pool.join()
+						log("INFO: Enumeration has completed. See " + root + "discovery/ for details")
+					    input("Press any key to continue.  Log data available at " + root + "reconscan.log")
 			
 				elif menuChoice == 0:
 					menuChoice = "q"
@@ -626,9 +632,6 @@ def mssqlEnum(ip_address, port):
 	MSSQLSCAN = "nmap -vv -sV -Pn -p %s --script=ms-sql-info,ms-sql-config,ms-sql-dump-hashes --script-args=mssql.instance-port=1433,mssql.username-sa,mssql.password-sa -oX discovery/mssql/%s_mssql.xml %s" % (port, ip_address, ip_address)
 	subprocess.check_output(MSSQLSCAN, shell=True)
 
-	if crackPWs:
-		print("INFO: Performing Medusa MSSQL Password crack for " + ip_address + ":" + port + " see directory/mssql for results")
-		medusa.mssqlCrack(ip_address, port)
 	return
 
 def mysqlEnum(ip_address, port):
@@ -638,17 +641,12 @@ def mysqlEnum(ip_address, port):
 	MYSQLSCAN = "nmap -vv -sV -Pn -p %s --script=mysql-enum, mysql-empty-password  -oX discovery/mysql/%s_mysql.xml %s" % (port, ip_address, ip_address)
 	subprocess.check_output(MYSQLSCAN, shell=True)
 
-	if crackPWs:
-		print("INFO: Performing Medusa mySQL Password crack for " + ip_address + ":" + port + " see discovery/mysql for results")
-		medusa.mysqlCrack(ip_address, port)
 	return
 
 def sshEnum(ip_address, port):
 	print("INFO: Detected SSH on " + ip_address + ":" + port)
 	sshrecon.main(["", ip_address, port])
-	if crackPWs:
-		print("INFO: Performing Medusa ssh Password crack for " + ip_address + ":" + port + " see discovery/ssh for results")
-		medusa.sshCrack(ip_address, port)
+	
 	return
 
 def snmpEnum(ip_address, port):
@@ -666,15 +664,13 @@ def smtpEnum(ip_address, port):
 
 def smbEnum(ip_address, port):
 	print("INFO: Detected SMB on " + ip_address + ":" + port)
-	smbrecon.main(["",ip_address, port, useMSF])
+	smbrecon.main(["",ip_address, port])
 	return
 
 def ftpEnum(ip_address, port):
 	print("INFO: Detected ftp on " + ip_address + ":" + port)
 	ftprecon.main(["",ip_address,port])
-	if crackPWs:
-		print("INFO: Performing Medusa FTP Password crack for " + ip_address + ":" + port + " see discovery/ftp for results")
-		medusa.ftpCrack(ip_address, port)
+	
 	return
 
 

