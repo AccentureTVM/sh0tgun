@@ -118,11 +118,11 @@ def initializeMenu():
 						r = r+"/"
 					root = r
 					if os.path.isfile(root+"serviceDict.dat"):
-                        v = input("Previous NMAP Data was found here.  Would you like to load? If not, all previous data will be erased upon directory initialization (2). (Y/N): ")
-                        if v[0].lower() == "y":
-                            with open(root+"serviceDict.dat","rb") as f:
-                                global serviceDict
-                                serviceDict = pickle.load(f)
+						v = input("Previous NMAP Data was found here.  Would you like to load? If not, all previous data will be erased upon directory initialization (2). (Y/N): ")
+						if v[0].lower() == "y":
+							with open(root+"serviceDict.dat","rb") as f:
+								global serviceDict
+								serviceDict = pickle.load(f)
 					message = "Project root set to: " + root
 				elif menuChoice == 2:
 					init()
@@ -379,11 +379,11 @@ def runNmapMenu():
 				
 					subprocess.check_output("cat " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_*.csv >> " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
 					subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
-		            
-		            if os.path.isfile(root+"serviceDict.dat"):
-		                os.system("rm " + root + "serviceDict.dat")
-		            with open(root+"serviceDict.dat","wb") as f:
-		                pickle.dump(serviceDict, f)
+					
+					if os.path.isfile(root+"serviceDict.dat"):
+						os.system("rm " + root + "serviceDict.dat")
+					with open(root+"serviceDict.dat","wb") as f:
+						pickle.dump(serviceDict, f)
 					print("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
 					input("Press any key to continue.  Log data available at " + root + "reconscan.log")
 				elif menuChoice == 3:
@@ -413,12 +413,12 @@ def runNmapMenu():
 	
 					subprocess.check_output("cat " + root + "discovery"+sep+"nmap"+sep+"udp/udp*.csv >> " + root + "discovery"+sep+"nmap"+sep+"udp/udp.csv", shell=True, stderr=subprocess.STDOUT)
 					subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
-		            
-		            if os.path.isfile(root+"serviceDict.dat"):
-		                os.system("rm " + root + "serviceDict.dat")
-		            with open(root+"serviceDict.dat","wb") as f:
-		                pickle.dump(serviceDict, f)
-		                
+					
+					if os.path.isfile(root+"serviceDict.dat"):
+						os.system("rm " + root + "serviceDict.dat")
+					with open(root+"serviceDict.dat","wb") as f:
+						pickle.dump(serviceDict, f)
+						
 					log("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
 					input("Press any key to continue.  Log data available at " + root + "reconscan.log")
 				elif menuChoice == 0:
