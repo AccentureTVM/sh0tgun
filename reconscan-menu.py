@@ -54,17 +54,17 @@ def mainMenu(argv):
 		if menuChoice[0].lower != "q":
 			temp = num(menuChoice)
 			if temp != False:
-				if menuChoice == 1:
+				if temp == 1:
 					initializeMenu()
-				elif menuChoice == 2:
+				elif temp == 2:
 					targetsMenu()
-				elif menuChoice == 3:
+				elif temp == 3:
 					runNmapMenu()
-				elif menuChoice == 4:
+				elif temp == 4:
 					enumServicesMenu()
-				elif menuChoice == 5:
+				elif temp == 5:
 					pwMenu()
-				elif menuChoice == 6:
+				elif temp == 6:
 					exploitMenu()
 				else:
 					menuChioce = ""
@@ -85,8 +85,8 @@ def initializeMenu():
 		
 		
 		if menuChoice[0].lower != "q":
-			temp = num(menuChoice)
-			if temp != False:
+			menuChoice = num(menuChoice)
+			if menuChoice != False:
 				if menuChoice == 1:
 					global root
 			
