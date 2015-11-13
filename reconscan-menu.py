@@ -374,7 +374,7 @@ def runNmapMenu():
 					subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
 		
 					print("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
-				    input("Press any key to continue.  Log data available at " + root + "reconscan.log")
+					input("Press any key to continue.  Log data available at " + root + "reconscan.log")
 				elif menuChoice == 3:
 					shell = ""
 					while shell!="y" and shell!="n":
@@ -533,7 +533,7 @@ def enumServicesMenu():
 						pool.close()
 						pool.join()
 						log("INFO: Enumeration has completed. See " + root + "discovery/ for details")
-					    input("Press any key to continue.  Log data available at " + root + "reconscan.log")
+						input("Press any key to continue.  Log data available at " + root + "reconscan.log")
 			
 				elif menuChoice == 0:
 					menuChoice = "q"
