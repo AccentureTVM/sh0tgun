@@ -115,7 +115,7 @@ def initializeMenu():
 				elif menuChoice == 0:
 					menuChoice = "q"
 				else:
-					message "Enter a correct option"
+					message = "Enter a correct option"
 			else:
 				menuChoice = ""
 				message =  "Enter a correct option"
