@@ -14,9 +14,9 @@ def main(args):
 	NBTSCAN = "nbtscan -r %s" % (ip)
 	nbtresults = subprocess.check_output(NBTSCAN, shell=True)
 	if ("Connection refused" not in nbtresults) and ("Connect error" not in nbtresults) and ("Connection reset" not in nbtresults):
-		print("FOUND: NBTSCAN User accounts/domains found on " + ip + "check discovery/smb for results")
+		print("FOUND: NBTSCAN User accounts/domains found on " + ip + " check discovery/smb for results")
 		resultsfile = "discovery/smb/" + ip + "_nbtscan.txt"
-		f = open(resultsfile, "w")
+		f = open(resultsfile, "w+")
 		f.write(nbtresults)
 		f.close
 
@@ -24,9 +24,9 @@ def main(args):
 	NBTSCAN = "enum4linux -a %s" % (ip)
 	nbtresults = subprocess.check_output(NBTSCAN, shell=True)
 	if ("Connection refused" not in nbtresults) and ("Connect error" not in nbtresults) and ("Connection reset" not in nbtresults):
-		print("FOUND: ENUM4LINUX User accounts/domains found on " + ip + "check discovery/smb for results")
+		print("FOUND: ENUM4LINUX User accounts/domains found on " + ip + " check discovery/smb for results")
 		resultsfile = "discovery/smb/" + ip + "_enum4linux.txt"
-		f = open(resultsfile, "w")
+		f = open(resultsfile, "w+")
 		f.write(nbtresults)
 		f.close
 
@@ -35,9 +35,8 @@ def main(args):
 	nbtresults = subprocess.check_output(NBTSCAN, shell=True)
 	lines = nbtresults.split("\n")
 	for line in lines:
-		print line
 		if "VULNERABLE" in line and "NOT VULNERABLE" not in line:
-			print("FOUND SMB VULN on " +ip+ ": " +line)
+			print("FOUND: SMB VULN on " +ip+ ": " +line + " | check discovery/smb for full results")
 		if msf:
 			if "MS08-067:" in line and "VULNERABLE" in line and "NOT" not in line:
 				print("Exploiting MS08-067")

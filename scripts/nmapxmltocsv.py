@@ -77,7 +77,7 @@ def process(inputfile, fo):
                 else:
                     serviceDict[service] = []
                     serviceDict[service].append([ip,portnum])
-
+            
                 product = ""
                 version = ""
                 versioning = ""
@@ -98,7 +98,7 @@ def process(inputfile, fo):
             print("No open ports on " + ip)
             fo.write(ip + ",,no open ports")
 
-    return serviceDict
+    return [serviceDict,ipDict]
 
 
 if __name__ == "__main__":

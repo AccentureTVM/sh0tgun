@@ -11,9 +11,13 @@ def main(args):
     ip_address = args[1].strip()
     port = args[2].strip()
     print("INFO: Performing nmap FTP script scan for " + ip_address + ":" + port)
-    FTPSCAN = "nmap -sV -Pn -vv -p %s --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221 -oN 'discovery/ftp/%s_ftp.nmap' %s" % (port, ip_address, ip_address)
+    FTPSCAN = "nmap -sV -Pn --open -p %s --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221 -oA 'discovery/ftp/%s_ftp' %s" % (port, ip_address, ip_address)
     results = subprocess.check_output(FTPSCAN, shell=True)
-    outfile = "discovery/ftp/" + ip_address + "_ftprecon.txt"
+    outfile = "discovery/ftp/" + ip_address + "_ftp.txt"
+    lines = results.split("\n")
+    for line in lines:
+    	if "Anonymous FTP login allowed" in line:
+    		print("FOUND: Anonymous FTP Login on " + ip_address) 
     f = open(outfile, "w")
     f.write(results)
     f.close
