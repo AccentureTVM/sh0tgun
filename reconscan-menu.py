@@ -2,7 +2,7 @@
 import sys
 
 if sys.version_info[0] != 3 or sys.version_info[1] < 1:
-	print("\nEXIT: This script requires Python version 3.5 or higher\n")
+	print("\nEXIT: This script requires Python version 3.1 or higher\n")
 	sys.exit(1)
 	
 import subprocess
@@ -429,13 +429,13 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 	UDPSCAN = "nmap -" + verbosity + " -T " + str(timing) + " -p " + ports + " -s" + TCP + versioning + " " + Pn + " " + Open + " " + OS + custom +" -oA " + root + "discovery/nmap/tcp/udp_%s %s"  % (ip_address, ip_address)
 	
 	if type == "TCP":
-		log("INFO: Running "+type+" TCP nmap scans for " + ip_address)
+		log("INFO: Running TCP nmap scans for " + ip_address)
 		subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
 		fo = open(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".csv", 'w+')
 		serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".xml", fo)
 		
 	if type == "UDP":
-		log("INFO: Running "+type+" UDP nmap scans for " + ip_address)
+		log("INFO: Running UDP nmap scans for " + ip_address)
 		subprocess.check_output(UDPSCAN, shell=True, stderr=subprocess.STDOUT)
 		fo = open(root + "discovery"+sep+"nmap"+sep+"udp/udp_"+ip_address+".csv", 'w+')
 		serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"udp/udp_"+ip_address+".xml", fo)
@@ -454,6 +454,8 @@ def enumServicesMenu():
 		"domain":dnsEnum, 
 		"ftp":ftpEnum, 
 		"microsoft-ds":smbEnum, 
+		"msrpc":smbEnum,
+		"netbios-ssn":smbEnum
 		"ms-sql":mssqlEnum, 
 		"mysql":mysqlEnum
 	}
@@ -483,7 +485,7 @@ def enumServicesMenu():
 							print ("**"+serv)
 						else:
 							print (serv)
-					print ("** indicates enumerable services")
+					print ("\n** indicates enumerable services")
 					input ("Press any key to return...")
 				elif menuChoice == 2:
 					choice = ""
