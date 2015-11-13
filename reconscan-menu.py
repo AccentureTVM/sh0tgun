@@ -21,7 +21,7 @@ import time
 from multiprocessing import Pool
 
 sep = os.path.sep
-root = "/Users/taapes/dev/TEST/"
+root = "/root/TEST/"
 targets = []
 procs = 4
 serviceDict = {}
