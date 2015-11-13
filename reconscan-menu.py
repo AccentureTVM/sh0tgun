@@ -113,12 +113,12 @@ def initializeMenu():
 					procs = p
 					message = "Processes set to " + str(procs)
 				elif menuChoice == 0:
-					menuChoice == "q"
+					menuChoice = "q"
 				else:
-					print ("Enter a correct option")
+					message "Enter a correct option"
 			else:
 				menuChoice = ""
-				print ("Enter a correct option")
+				message =  "Enter a correct option"
 		else:
 			menuChoice = ""
 			choice = input ("Are you sure you want to quit? (Y/N): ")
