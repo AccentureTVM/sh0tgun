@@ -31,9 +31,9 @@ def mainMenu(argv):
 	while (menuChoice != 7):
 		print(chr(27) + "[2J")
 		print("#############################################################")
-		print("####		  Port Scanner and Service Enumerator		   ####")
-		print("####			A multi-process service scanner			 ####")
-		print("####		http, ftp, dns, ssh, snmp, smtp, ms-sql		 ####")
+		print("####		  Port Scanner and Service Enumerator           ####")
+		print("####			A multi-process service scanner             ####")
+		print("####		http, ftp, dns, ssh, snmp, smtp, ms-sql         ####")
 		print("#############################################################")
 		print ("1) Initialize")
 		print ("2) Manage Targets")
@@ -41,7 +41,7 @@ def mainMenu(argv):
 		print ("4) Enumerate Services")
 		print ("5) Password Guess")
 		print ("6) Exploit")
-		print ("7) Quit")
+		print ("Q) Quit")
 		menuChoice = int(input('Option #:'))
 		
 		if math.isnan(menuChoice):
@@ -298,7 +298,6 @@ def runNmapMenu():
 			
 			jobs = [pool.apply_async(nmapScan, args=(ip,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn,Open,"TCP",shell)) for ip in targets]
 			global serviceDict
-			global ipDict
 			for p in jobs:
 				temp = p.get()
 				for key in temp:
@@ -306,7 +305,6 @@ def runNmapMenu():
 						serviceDict[key] = serviceDict[key]+ temp[key]
 					else:
 						serviceDict[key] = temp[key]
-				ipDict.update(temp1)
 				
 			pool.close()
 			pool.join()
