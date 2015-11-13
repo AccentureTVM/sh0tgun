@@ -26,14 +26,20 @@ targets = []
 procs = 4
 serviceDict = {}
 
+def num(s):
+	try:
+		return int(s)
+	except:
+		return False
+
 def mainMenu(argv):
-	menuChoice = 0
-	while (menuChoice != 7):
+	menuChoice = ""
+	while (menuChoice != "q"):
 		print(chr(27) + "[2J")
 		print("#############################################################")
-		print("####		  Port Scanner and Service Enumerator           ####")
-		print("####			A multi-process service scanner             ####")
-		print("####		http, ftp, dns, ssh, snmp, smtp, ms-sql         ####")
+		print("####		  Port Scanner and Service Enumerator		   ####")
+		print("####			A multi-process service scanner			 ####")
+		print("####		http, ftp, dns, ssh, snmp, smtp, ms-sql		 ####")
 		print("#############################################################")
 		print ("1) Initialize")
 		print ("2) Manage Targets")
@@ -41,70 +47,84 @@ def mainMenu(argv):
 		print ("4) Enumerate Services")
 		print ("5) Password Guess")
 		print ("6) Exploit")
-		print ("Q) Quit")
-		menuChoice = int(input('Option #:'))
 		
-		if math.isnan(menuChoice):
-			menuChoice = 0
-			print ("Enter a number")
-		elif menuChoice == 1:
-			initializeMenu()
-		if menuChoice == 2:
-			targetsMenu()
-		elif menuChoice == 3:
-			runNmapMenu()
-		elif menuChoice == 4:
-			enumServicesMenu()
-		elif menuChoice == 5:
-			pwMenu()
-		elif menuChoice == 6:
-			exploitMenu()
+		print ("\nQ) Quit\n")
+		menuChoice = input('Option #:')
+		
+		if menuChoice[0].lower != "q":
+			temp = num(menuChoice)
+			if temp != False:
+				if menuChoice == 1:
+					initializeMenu()
+				elif menuChoice == 2:
+					targetsMenu()
+				elif menuChoice == 3:
+					runNmapMenu()
+				elif menuChoice == 4:
+					enumServicesMenu()
+				elif menuChoice == 5:
+					pwMenu()
+				elif menuChoice == 6:
+					exploitMenu()
+				else:
+					menuChioce = ""
 		
 def initializeMenu():
-	menuChoice = 0
+	menuChoice = ""
 	message = ""
-	while (menuChoice != 4):
+	while (menuChoice != "q"):
 		print(chr(27) + "[2J")
 		print (message + "\n")
 		print ("1) Select root directory")
 		print ("2) Create project directory")
 		print ("3) Multi Processing settings")
-		print ("4) Main Menu")
-		print ("5) Quit")
-		menuChoice = int(input('Option #:'))
 		
-		if math.isnan(menuChoice):
-			menuChoice = 0
-			print ("Enter a number")
-		elif menuChoice == 1:
-			global root
+		print ("\n0) Main Menu")
+		print ("Q) Quit\n")
+		menuChoice = input('>> ')
+		
+		
+		if menuChoice[0].lower != "q":
+			temp = num(menuChoice)
+			if temp != False:
+				if menuChoice == 1:
+					global root
 			
-			r = "/Users/taapes/dev/TEST/"
-			while not os.path.exists(r):
-				v = "n"
-				while v!="y":
-					r = input("Enter valid project root folder: ")
-					print (r)
-					v = input("Is this correct? (Y/N): ")
-					v = v[0].lower()
-			if r[-1] != "/":
-				r = r+"/"
-			root = r
-			message = "Project root set to: " + root
-		elif menuChoice == 2:
-			init()
-			message = "Project root directories successfully created"
-		elif menuChoice == 3:
-			global procs
-			p = -1
-			while p < 1 or math.isnan(p):
-				p = int(input("Enter the MAXIMUM number of conncurrent processes to run (default is 4): "))
-			procs = p
-			message = "Processes set to " + str(procs)
-		elif menuChoice == 5:
+					r = "/Users/taapes/dev/TEST/"
+					while not os.path.exists(r):
+						v = "n"
+						while v!="y":
+							r = input("Enter valid project root folder: ")
+							print (r)
+							v = input("Is this correct? (Y/N): ")
+							v = v[0].lower()
+					if r[-1] != "/":
+						r = r+"/"
+					root = r
+					message = "Project root set to: " + root
+				elif menuChoice == 2:
+					init()
+					message = "Project root directories successfully created"
+				elif menuChoice == 3:
+					global procs
+					p = -1
+					while p < 1 or math.isnan(p):
+						p = int(input("Enter the MAXIMUM number of conncurrent processes to run (default is 4): "))
+					procs = p
+					message = "Processes set to " + str(procs)
+				elif menuChoice == 0:
+					menuChoice == "q"
+				else:
+					print ("Enter a correct option")
+			else:
+				menuChoice = ""
+				print ("Enter a correct option")
+		else:
+			menuChoice = ""
 			choice = input ("Are you sure you want to quit? (Y/N): ")
 			if (choice[0].lower() == "y"):
 				sys.exit()
+			
 
 def targetsMenu():
 	menuChoice = 0
@@ -116,16 +136,18 @@ def targetsMenu():
 		print ("2) Add targets manually")
 		print ("3) Remove targets")
 		print ("4) Show targets")
-		print ("5) Main Menu")
-		print ("6) Quit")
+		print ("\n0) Main Menu")
+		print ("Q) Quit\n")
 		menuChoice = int(input('Option #:'))
 		
 		if math.isnan(menuChoice):
 			menuChoice = 0
 			print ("Enter a number")
 		elif menuChoice == 1:
-			print ("Enter the path and file.  Please format the text file with 1 ip per line, no commas or end characters. ")
-			targetfile = input(">>")
+			targetfile = ""
+			while not os.path.isfile(targetfile):
+				print ("Enter the path and file.  Please format the text file with 1 ip per line, no commas or end characters. ")
+				targetfile = input(">>")
 			f = open(targetfile, 'r')
 			global targets
 			count = 0
@@ -137,12 +159,13 @@ def targetsMenu():
 					count += 1
 				else:
 					failed.append(ip)
+			targets = list(set(targets))
 			print ("loading...")
 			time.sleep(2)
 			f.close
 			message = str(count) + " IPs successfully loaded."
 			if len(failed) > 0:
-			    message = message + " The following are not valid IPs: " + str(failed)
+				message = message + " The following are not valid IPs: " + str(failed)
 		elif menuChoice == 2:
 			addedTargets = input("Enter a list of comma separated targets: ")
 			addedTargets = addedTargets.split(',')
@@ -155,16 +178,20 @@ def targetsMenu():
 				message = "Error please enter valid IPs"
 			else:
 				targets = targets + addedTargets
+				targets = list(set(targets))
 				message = str(len(addedTargets)) + " IPs successfully loaded."
 		elif menuChoice == 3:
 			count = 0
 			for ip in targets:
 				print (str(count) + ") " + ip)
 				count += 1
-			remove = input ("Select the number to remove: ")
-			global targets
-			ip = targets.pop(int(remove))
-			message = "IP removed: " + ip
+			remove = -2
+			while remove < -1 or remove >= len(targets):
+				remove = int(input ("Select the number to remove or -1 to cancel: "))
+			if remove >= 0:
+				global targets
+				ip = targets.pop(int(remove))
+				message = "IP removed: " + ip
 		elif menuChoice == 4:
 			count = 0
 			global targets
@@ -198,8 +225,8 @@ def runNmapMenu():
 		print ("1) Set NMAP options")
 		print ("2) Run TCP NMAP SCAN")
 		print ("3) Run UDP NMAP Scan")
-		print ("4) Main Menu")
-		print ("5) Quit")
+		print ("\n0) Main Menu")
+		print ("Q) Quit\n")
 		menuChoice = int(input('Option #:'))
 		
 		if math.isnan(menuChoice):
@@ -219,7 +246,7 @@ def runNmapMenu():
 				print ("7) Treat all hosts online -- Current: " + Pn)
 				print ("8) Only show open ports -- Current: " + Open)
 				print ("9) Custom flag")
-				print ("10) Done")
+				print ("\n0) Done")
 				menuChoice2 = int(input('Option #:'))
 				
 				if math.isnan(menuChoice2):
@@ -398,8 +425,8 @@ def enumServicesMenu():
 		print ("1) Show All discovered Services")
 		print ("2) Enumerate specific service")
 		print ("3) Enumerate All")
-		print ("4) Main Menu")
-		print ("5) Quit")
+		print ("\n0) Main Menu")
+		print ("Q) Quit\n")
 		menuChoice = int(input('Option #:'))
 		
 		if math.isnan(menuChoice):
