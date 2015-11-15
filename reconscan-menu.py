@@ -16,7 +16,6 @@ import scripts.snmprecon as snmprecon
 import scripts.sshrecon as sshrecon
 import scripts.medusa as medusa
 import scripts.nse as nse
-import scripts.logger as logger
 import time
 
 from multiprocessing import Pool
