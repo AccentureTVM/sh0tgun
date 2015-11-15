@@ -553,8 +553,8 @@ def enumServicesMenu():
 						input("\nPress any key to continue.  Log data available at " + root + "reconscan.log")
 			
 				elif menuChoice == 4:
-				    print (serviceDict)
-				    input("\nPress any key to continue.  Log data available at " + root + "reconscan.log")
+					print (serviceDict)
+					input("\nPress any key to continue.  Log data available at " + root + "reconscan.log")
 				elif menuChoice == 0:
 					menuChoice = "q"
 				else:
