@@ -15,42 +15,51 @@ def main(args):
 		root=""
 	print("INFO: Starting nbtscan on " + ip)
 	NBTSCAN = "nbtscan -r %s" % (ip)
-	nbtresults = subprocess.check_output(NBTSCAN.split(' '), stderr=subprocess.STDOUT)
-	nbtresults = nbtresults.decode("utf-8")
-	if "Connection refused" not in nbtresults and "Connect error" not in nbtresults and "Connection reset" not in nbtresults:
-		print("FOUND: NBTSCAN User accounts/domains found on " + ip + " check discovery/smb for results")
-		resultsfile = root + "discovery/smb/" + ip + "_nbtscan.txt"
-		f = open(resultsfile, "w+")
-		f.write(nbtresults)
-		f.close
+	try:
+		nbtresults = subprocess.check_output(NBTSCAN.split(' '))
+		nbtresults = nbtresults.decode("utf-8")
+		if "Connection refused" not in nbtresults and "Connect error" not in nbtresults and "Connection reset" not in nbtresults:
+			print("FOUND: NBTSCAN User accounts/domains found on " + ip + " check discovery/smb for results")
+			resultsfile = root + "discovery/smb/" + ip + "_nbtscan.txt"
+			f = open(resultsfile, "w+")
+			f.write(nbtresults)
+			f.close
+	except:
+		print("ERROR: NBTscan did not execute correctly for " + ip + ":"+port)
 	
 	print("INFO: Starting enum4linux on " + ip)
 	ENUM4LINUX = "enum4linux -a %s" % (ip)
-	enumresults = subprocess.check_output(ENUM4LINUX.split(' '))
-	enumresults = enumresults.decode("utf-8")
-	if ("Connection refused" not in nbtresults) and ("Connect error" not in nbtresults) and ("Connection reset" not in nbtresults):
-		print("FOUND: ENUM4LINUX User accounts/domains found on " + ip + " check discovery/smb for results")
-		resultsfile = root + "discovery/smb/" + ip + "_enum4linux.txt"
-		f = open(resultsfile, "w+")
-		f.write(nbtresults)
-		f.close
+	try:
+		enumresults = subprocess.check_output(ENUM4LINUX.split(' '))
+		enumresults = enumresults.decode("utf-8")
+		if ("Connection refused" not in nbtresults) and ("Connect error" not in nbtresults) and ("Connection reset" not in nbtresults):
+			print("FOUND: ENUM4LINUX User accounts/domains found on " + ip + " check discovery/smb for results")
+			resultsfile = root + "discovery/smb/" + ip + "_enum4linux.txt"
+			f = open(resultsfile, "w+")
+			f.write(nbtresults)
+			f.close
+	except:
+		print("ERROR: enum4linux did no execute correctly for " + ip + ":"+port)
 
 	print("INFO: Running nmap smb vuln scan on " + ip)
 	nse = "nmap -Pn -n --open -p %s --script=smb-check-vulns --script-args=unsafe=1 %s" % (port, ip)
-	nseresults = subprocess.check_output(nse.split(' '))
-	lines = nseresults.decode("utf-8").split("\n")
-	for line in lines:
-		if "VULNERABLE" in line and "NOT VULNERABLE" not in line:
-			print("FOUND: SMB VULN on " +ip+ ": " +line + " | check discovery/smb for full results")
-	#	if msf:
-	#		if "MS08-067:" in line and "VULNERABLE" in line and "NOT" not in line:
-	#			print("Exploiting MS08-067")
-	#			cmd = "gnome-terminal -x msfcli exploit/windows/smb/ms08_067_netapi RHOST=" + ip + " E"
-	#			subprocess.call(cmd.split(" "))
-	resultsfile = root + "discovery/smb/" + ip + "_nse.txt"
-	f = open(resultsfile, "w")
-	f.write(nbtresults)
-	f.close
+	try:
+		nseresults = subprocess.check_output(nse.split(' '))
+		lines = nseresults.decode("utf-8").split("\n")
+		for line in lines:
+			if "VULNERABLE" in line and "NOT VULNERABLE" not in line:
+				print("FOUND: SMB VULN on " +ip+ ": " +line + " | check discovery/smb for full results")
+		#	if msf:
+		#		if "MS08-067:" in line and "VULNERABLE" in line and "NOT" not in line:
+		#			print("Exploiting MS08-067")
+		#			cmd = "gnome-terminal -x msfcli exploit/windows/smb/ms08_067_netapi RHOST=" + ip + " E"
+		#			subprocess.call(cmd.split(" "))
+		resultsfile = root + "discovery/smb/" + ip + "_nse.txt"
+		f = open(resultsfile, "w")
+		f.write(nbtresults)
+		f.close
+	except:
+		print("ERROR: NSE smb scan failed for " + ip + ":"+port)
 
 if __name__=='__main__':
 	main(sys.argv)

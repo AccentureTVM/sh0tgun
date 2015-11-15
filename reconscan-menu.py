@@ -1,10 +1,5 @@
 #!/usr/bin/env python
 import sys
-
-if sys.version_info[0] != 3 or sys.version_info[1] < 1:
-	print("\nEXIT: This script requires Python version 3.1 or higher\n")
-	sys.exit(1)
-	
 import subprocess
 import pickle
 import argparse
@@ -21,6 +16,7 @@ import scripts.snmprecon as snmprecon
 import scripts.sshrecon as sshrecon
 import scripts.medusa as medusa
 import scripts.nse as nse
+import scripts.logger as logger
 import time
 
 from multiprocessing import Pool
@@ -695,4 +691,7 @@ def ftpEnum(ip_address, port):
 
 
 if __name__=='__main__':
+    if sys.version_info[0] != 3 or sys.version_info[1] < 1:
+        print("\nEXIT: This script requires Python version 3.1 or higher\n")
+        sys.exit(1)
 	mainMenu(sys.argv)
