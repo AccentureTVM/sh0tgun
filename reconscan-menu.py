@@ -487,6 +487,7 @@ def enumServicesMenu():
 		print ("1) Show All discovered Services")
 		print ("2) Enumerate specific service")
 		print ("3) Enumerate All")
+		print ("4) Show serviceDict")
 		print ("\n0) Main Menu")
 		print ("Q) Quit\n")
 		menuChoice = input('Option #:')
@@ -504,7 +505,7 @@ def enumServicesMenu():
 						else:
 							print (serv)
 					print ("\n** indicates enumerable services")
-					input ("Press any key to return...")
+					input ("\nPress any key to return...")
 				elif menuChoice == 2:
 					choice = ""
 					if serviceDict == {}:
@@ -528,7 +529,7 @@ def enumServicesMenu():
 							pool.close()
 							pool.join()
 							log("INFO: Enumeration of " + choice + " has completed. See " + root + "discovery/ for details")
-							input("Press any key to continue.  Log data available at " + root + "reconscan.log")
+							input("\nPress any key to continue.  Log data available at " + root + "reconscan.log")
 			
 				elif menuChoice == 3:
 					if serviceDict == {}:
@@ -549,8 +550,11 @@ def enumServicesMenu():
 						pool.close()
 						pool.join()
 						log("INFO: Enumeration has completed. See " + root + "discovery/ for details")
-						input("Press any key to continue.  Log data available at " + root + "reconscan.log")
+						input("\nPress any key to continue.  Log data available at " + root + "reconscan.log")
 			
+				elif menuChoice == 4:
+				    print (serviceDict)
+				    input("\nPress any key to continue.  Log data available at " + root + "reconscan.log")
 				elif menuChoice == 0:
 					menuChoice = "q"
 				else:
