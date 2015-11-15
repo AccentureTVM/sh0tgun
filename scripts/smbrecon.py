@@ -15,7 +15,7 @@ def main(args):
 		root=""
 	print("INFO: Starting nbtscan on " + ip)
 	NBTSCAN = "nbtscan -r %s" % (ip)
-	nbtresults = subprocess.check_output(NBTSCAN, shell=True)
+	nbtresults = subprocess.check_output(NBTSCAN, shell=True, stderr=subprocess.STDOUT)
 	if ("Connection refused" not in nbtresults) and ("Connect error" not in nbtresults) and ("Connection reset" not in nbtresults):
 		print("FOUND: NBTSCAN User accounts/domains found on " + ip + " check discovery/smb for results")
 		resultsfile = root + "discovery/smb/" + ip + "_nbtscan.txt"
