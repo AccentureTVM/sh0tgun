@@ -15,7 +15,7 @@ def main(args):
 		root=""
 	print("INFO: Starting nbtscan on " + ip)
 	NBTSCAN = "nbtscan -r %s" % (ip)
-	nbtresults = subprocess.check_output(NBTSCAN, shell=True, stderr=subprocess.STDOUT)
+	nbtresults = subprocess.check_output(NBTSCAN.split(' '), stderr=subprocess.STDOUT)
 	print(nbtresults)
 	if "Connection refused" not in nbtresults and "Connect error" not in nbtresults and "Connection reset" not in nbtresults:
 		print ("CHECK")
