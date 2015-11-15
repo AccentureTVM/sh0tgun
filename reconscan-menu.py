@@ -691,7 +691,7 @@ def ftpEnum(ip_address, port):
 
 
 if __name__=='__main__':
-    if sys.version_info[0] != 3 or sys.version_info[1] < 1:
-        print("\nEXIT: This script requires Python version 3.1 or higher\n")
-        sys.exit(1)
+	if sys.version_info[0] != 3 or sys.version_info[1] < 1:
+		print("\nEXIT: This script requires Python version 3.1 or higher\n")
+		sys.exit(1)
 	mainMenu(sys.argv)
