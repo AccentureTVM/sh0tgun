@@ -680,7 +680,7 @@ def smtpEnum(ip_address, port):
 
 def smbEnum(ip_address, port):
 	print("INFO: Detected SMB on " + ip_address + ":" + port)
-	smbrecon.main(["",ip_address, port])
+	smbrecon.main(["",ip_address, port,root])
 	return
 
 def ftpEnum(ip_address, port):
