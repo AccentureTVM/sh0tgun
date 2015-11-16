@@ -564,6 +564,9 @@ def enumServicesMenu():
 				sys.exit()
 	return
 	
+def pwMenu():
+	pass
+		
 def exploitMenu():
 	pass
 
@@ -599,91 +602,169 @@ def checkandmk(path):
 
 
 def dnsEnum(ip_address, port):
-	print("INFO: Detected DNS on " + ip_address + ":" + port)
+	log("INFO: Detected DNS on " + ip_address + ":" + port)
 	if port.strip() == "53":
 		dnsrecon.main(["",ip_address])
+	else:
+		log("ERROR: Can only run dns enum on port 53")
+	
+	log("INFO: Performing nmap DNS script scan for " + ip_address + ":" + port)
+	DNSSCAN = nse.DNS(ip_address, port)	
+	try:
+		nseout = subprocess.check_output(DNSSCAN, shell=True)
+		resultsfile = root + "discovery/dns/" + ip + "_nse.txt"
+		f = open(resultsfile, "w")
+		f.write(nseout)
+		f.close
+	except:
+		log("ERROR: NSE failed for snmp " + ip + ":"+ port)
 	return
 
 def httpEnum(ip_address, port):
-	print("INFO: Detected http on " + ip_address + ":" + port)
-	print("INFO: Performing nmap web script scan for " + ip_address + ":" + port + " see directory/http for results")
+	log("INFO: Detected http on " + ip_address + ":" + port)
+	log("INFO: Performing nmap web script scan for " + ip_address + ":" + port + " see directory/http for results")
 	#HTTPSCAN = "nmap -Pn -vv -p %s --script=http-vhosts,http-userdir-enum,http-apache-negotiation,http-backup-finder,http-config-backup,http-default-accounts,http-email-harvest,http-methods,http-method-tamper,http-passwd,http-robots.txt -oN discovery/http/%s_http.nmap %s" % (port, ip_address, ip_address)
 	HTTPSCAN = nse.http(ip_address, port)
-	subprocess.check_output(HTTPSCAN, shell=True)
+	try:
+		nseout = subprocess.check_output(HTTPSCAN, shell=True)
+		resultsfile = root + "discovery/http/" + ip + "_nse.txt"
+		f = open(resultsfile, "w")
+		f.write(nseout)
+		f.close
+	except:
+		log("ERROR: NSE failed for http " + ip + ":"+ port)
 
-	print("INFO: Using Dirbuster for " + ip_address + ":" + port + " see directory/http for results")
+	log("INFO: Using Dirbuster for " + ip_address + ":" + port + " see directory/http for results")
 	dirbust.main(["",ip_address,port])
 
-	# print("INFO: Performing NIKTO scan for " + ip_address + ":" + port + " see directory/http for results")
-	# NIKTOSCAN = "nikto -host %s -p %s" % (ip_address, port)
-	# NIKTOSCAN = subprocess.check_output(NIKTOSCAN, shell=True)
-	# out = "discover/http/" + ip_address + "NIKTO.txt"
-	# niktoout = open(out, "w+")
-	# niktoout.write(NIKTOSCAN)
-	# niktoout.close()
-	return 0
+	log("INFO: Performing NIKTO scan for " + ip_address + ":" + port + " see directory/http for results")
+	NIKTOSCAN = "nikto -host %s -p %s" % (ip_address, port)
+	try:
+		NIKTOSCAN = subprocess.check_output(NIKTOSCAN, shell=True)
+		out = "discover/http/" + ip_address + "NIKTO.txt"
+		niktoout = open(out, "w+")
+		niktoout.write(NIKTOSCAN)
+		niktoout.close()
+	except:
+		log("ERROR: NIKTO failed for " + ip + ":"+ port)
+	return
 
 def httpsEnum(ip_address, port, root):
-	print("INFO: Detected https on " + ip_address + ":" + port)
-	print("INFO: Performing nmap web script scan for " + ip_address + ":" + port)
+	log("INFO: Detected https on " + ip_address + ":" + port)
+	log("INFO: Performing nmap web script scan for " + ip_address + ":" + port)
 	HTTPSSCAN = "nmap -Pn -vv -p %s --script=http-vhosts,http-userdir-enum,http-apache-negotiation,http-backup-finder,http-config-backup,http-default-accounts,http-email-harvest,http-methods,http-method-tamper,http-passwd,http-robots.txt -oN discovery/http/%s_https.nmap %s" % (port, ip_address, ip_address)
-	subprocess.check_output(HTTPSSCAN, shell=True)
+	try:
+		nseout = subprocess.check_output(HTTPSSCAN, shell=True)
+		resultsfile = root + "discovery/http/" + ip + "_ssl_nse.txt"
+		f = open(resultsfile, "w")
+		f.write(nseout)
+		f.close
+	except:
+		log("ERROR: NSE failed for https " + ip + ":"+ port)
 
-	print("INFO: Using Dirbuster for " + ip_address + ":" + port + " see directory/http for results")
+	log("INFO: Using Dirbuster for " + ip_address + ":" + port + " see directory/http for results")
 	dirbust.main(["",ip_address,port])
 
-	# print("INFO: Performing NIKTO scan for " + ip_address + ":" + port + " see directory/http for results")
-	# NIKTOSCAN = "nikto -host %s -p %s" % (ip_address, port)
-	# NIKTOSCAN = subprocess.check_output(NIKTOSCAN, shell=True)
-	# out = "discover/http/" + ip_address + "NIKTO.txt"
-	# niktoout = open(out, "w+")
-	# niktoout.write(NIKTOSCAN)
-	# niktoout.close()
+	log("INFO: Performing NIKTO scan for " + ip_address + ":" + port + " see directory/http for results")
+	NIKTOSCAN = "nikto -host %s -p %s" % (ip_address, port)
+	try:
+		NIKTOSCAN = subprocess.check_output(NIKTOSCAN, shell=True)
+		out = "discover/http/" + ip_address + "NIKTO_SSL.txt"
+		niktoout = open(out, "w+")
+		niktoout.write(NIKTOSCAN)
+		niktoout.close()
+	except:
+		log("ERROR: NIKTO failed for " + ip + ":"+ port)
 	return
 
 def mssqlEnum(ip_address, port):
-	print("INFO: Detected MS-SQL on " + ip_address + ":" + port)
-	print("INFO: Performing nmap mssql script scan for " + ip_address + ":" + port)
+	log("INFO: Detected MS-SQL on " + ip_address + ":" + port)
+	log("INFO: Performing nmap mssql script scan for " + ip_address + ":" + port)
 	MSSQLSCAN = "nmap -vv -sV -Pn -p %s --script=ms-sql-info,ms-sql-config,ms-sql-dump-hashes --script-args=mssql.instance-port=1433,mssql.username-sa,mssql.password-sa -oX discovery/mssql/%s_mssql.xml %s" % (port, ip_address, ip_address)
-	subprocess.check_output(MSSQLSCAN, shell=True)
+	try:
+		nseout = subprocess.check_output(MSSQLSCAN, shell=True)
+		resultsfile = root + "discovery/mssql/" + ip + "_nse.txt"
+		f = open(resultsfile, "w")
+		f.write(nseout)
+		f.close
+	except:
+		log("ERROR: NSE failed for mssql" + ip + ":"+ port)
 
 	return
 
 def mysqlEnum(ip_address, port):
-	print("INFO: Detected mySQL on " + ip_address + ":" + port)
-	print("INFO: Performing nmap mysql script scan for " + ip_address + ":" + port)
+	log("INFO: Detected mySQL on " + ip_address + ":" + port)
+	log("INFO: Performing nmap mysql script scan for " + ip_address + ":" + port)
 	# mysql-vuln-cve2012-2122
 	MYSQLSCAN = "nmap -vv -sV -Pn -p %s --script=mysql-enum, mysql-empty-password  -oX discovery/mysql/%s_mysql.xml %s" % (port, ip_address, ip_address)
-	subprocess.check_output(MYSQLSCAN, shell=True)
+	try:
+		nseout = subprocess.check_output(MYSQLSCAN, shell=True)
+		resultsfile = root + "discovery/mysql/" + ip + "_nse.txt"
+		f = open(resultsfile, "w")
+		f.write(nseout)
+		f.close
+	except:
+		log("ERROR: NSE failed for mysql" + ip + ":"+ port)
+
 
 	return
 
 def sshEnum(ip_address, port):
-	print("INFO: Detected SSH on " + ip_address + ":" + port)
-	sshrecon.main(["", ip_address, port])
-	
+	log("INFO: Detected SSH on " + ip_address + ":" + port)
+	# sshrecon.main(["", ip_address, port])				 NOTHING HERE YET
+	log("INFO: Performing nmap SSH script scan for " + ip_address + ":" + port)
+	SSHSCAN = nse.SSH(ip_address, port)	
+	try:
+		nseout = subprocess.check_output(SSHSCAN, shell=True)
+		resultsfile = root + "discovery/ssh/" + ip + "_nse.txt"
+		f = open(resultsfile, "w")
+		f.write(nseout)
+		f.close
+	except:
+		log("ERROR: NSE failed for snmp " + ip + ":"+ port)
 	return
 
 def snmpEnum(ip_address, port):
-	print("INFO: Detected snmp on " + ip_address + ":" + port)
+	log("INFO: Detected snmp on " + ip_address + ":" + port)
 	snmprecon.main(["", ip_address])
+	
+	log("INFO: Performing nmap snmp script scan for " + ip_address + ":" + port)
+	SNMPSCAN = nse.SNMP(ip_address, port)	
+	try:
+		nseout = subprocess.check_output(SNMPSCAN, shell=True)
+		resultsfile = root + "discovery/snmp/" + ip + "_nse.txt"
+		f = open(resultsfile, "w")
+		f.write(nseout)
+		f.close
+	except:
+		log("ERROR: NSE failed for snmp " + ip + ":"+ port)
+		
 	return
 
 def smtpEnum(ip_address, port):
-	print("INFO: Detected smtp on " + ip_address + ":" + port)
-	if port.strip() == "25":
-		smtprecon.main(["", ip_address])
-	else:
-		print("WARNING: SMTP detected on non-standard port, smtprecon skipped (must run manually)")
+	log("INFO: Detected smtp on " + ip_address + ":" + port)
+	smtprecon.main(["", ip_address, port])
+	
+	log("INFO: Performing nmap smtp script scan for " + ip_address + ":" + port)
+	SMTPSCAN = nse.SMTP(ip_address, port)	
+	try:
+		nseout = subprocess.check_output(SMTPSCAN, shell=True)
+		resultsfile = root + "discovery/smtp/" + ip + "_nse.txt"
+		f = open(resultsfile, "w")
+		f.write(nseout)
+		f.close
+	except:
+		log("ERROR: NSE failed for smtp " + ip + ":"+ port)
+		
 	return
 
 def smbEnum(ip_address, port):
-	print("INFO: Detected SMB on " + ip_address + ":" + port)
+	log("INFO: Detected SMB on " + ip_address + ":" + port)
 	smbrecon.main(["",ip_address, port,root])
 	return
 
 def ftpEnum(ip_address, port):
-	print("INFO: Detected ftp on " + ip_address + ":" + port)
+	log("INFO: Detected ftp on " + ip_address + ":" + port)
 	ftprecon.main(["",ip_address,port])
 
 	return

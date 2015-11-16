@@ -27,14 +27,13 @@ def main(args):
 						if line not in found:
 							found.append(line)
 			except:
-				pass
+				print ("ERROR: Dirbscan failed for " + url)
 
-	try:
-		if found[0] != "":
+	if found[0] != "":
 			print("[*] Dirb found the following items...")
 			for item in found:
 				print("   " + item)
-	except:
+	else:
 		print("INFO: No items found during dirb scan of " + url)
 
 

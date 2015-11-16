@@ -4,32 +4,35 @@ import sys
 import subprocess
 
 def main(args):
-    if len(args) != 2:
-        print("Usage: smtprecon.py <ip address>")
-        return
+	if len(args) != 3:
+		print("Usage: smtprecon.py <ip address>")
+		return
 
-    #SMTPSCAN = "nmap -vv -sV -Pn -p 25,465,587 --script=smtp-vuln* %s" % (sys.argv[1])
-    #results = subprocess.check_output(SMTPSCAN, shell=True)
+	#SMTPSCAN = "nmap -vv -sV -Pn -p 25,465,587 --script=smtp-vuln* %s" % (ip)
+	#results = subprocess.check_output(SMTPSCAN, shell=True)
 
-    #f = open("results/smtpnmapresults.txt", "a")
-    #f.write(results)
-    #f.close
+	#f = open("results/smtpnmapresults.txt", "a")
+	#f.write(results)
+	#f.close
+	
+	ip = sys.argv[1]
+	port = sys.argv[2]
 
-    print("INFO: Trying SMTP Enum on " + sys.argv[1])
-    names = open('/usr/share/wfuzz/wordlist/fuzzdb/wordlists-user-passwd/names/namelist.txt', 'r')
-    for name in names:
-        s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        connect=s.connect((sys.argv[1],25))
-        banner=s.recv(1024)
-        s.send('HELO test@test.org \r\n')
-        result= s.recv(1024)
-        s.send('VRFY ' + name.strip() + '\r\n')
-        result=s.recv(1024)
-        if ("not implemented" in result) or ("disallowed" in result):
-            sys.exit("INFO: VRFY Command not implemented on " + sys.argv[1])
-        if (("250" in result) or ("252" in result) and ("Cannot VRFY" not in result)):
-            print("[*] SMTP VRFY Account found on " + sys.argv[1] + ": " + name.strip()	)
-        s.close()
+	print("INFO: Trying SMTP Enum on " + ip)
+	names = open('/usr/share/wfuzz/wordlist/fuzzdb/wordlists-user-passwd/names/namelist.txt', 'r')
+	for name in names:
+		s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		connect=s.connect((ip,25))
+		banner=s.recv(1024)
+		s.send('HELO test@test.org \r\n')
+		result= s.recv(1024)
+		s.send('VRFY ' + name.strip() + '\r\n')
+		result=s.recv(1024)
+		if ("not implemented" in result) or ("disallowed" in result):
+			sys.exit("INFO: VRFY Command not implemented on " + ip)
+		if (("250" in result) or ("252" in result) and ("Cannot VRFY" not in result)):
+			print("[*] SMTP VRFY Account found on " + ip + ": " + name.strip()	)
+		s.close()
 
 if __name__=='__main__':
-    main(sys.argv)
+	main(sys.argv)

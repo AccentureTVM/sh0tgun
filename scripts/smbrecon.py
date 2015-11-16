@@ -32,11 +32,11 @@ def main(args):
 	try:
 		enumresults = subprocess.check_output(ENUM4LINUX.split(' '))
 		enumresults = enumresults.decode("utf-8")
-		if ("Connection refused" not in nbtresults) and ("Connect error" not in nbtresults) and ("Connection reset" not in nbtresults):
+		if ("Connection refused" not in enumresults) and ("Connect error" not in enumresults) and ("Connection reset" not in enumresults):
 			print("FOUND: ENUM4LINUX User accounts/domains found on " + ip + " check discovery/smb for results")
 			resultsfile = root + "discovery/smb/" + ip + "_enum4linux.txt"
 			f = open(resultsfile, "w+")
-			f.write(nbtresults)
+			f.write(enumresults)
 			f.close
 	except:
 		print("ERROR: enum4linux did no execute correctly for " + ip + ":"+port)
@@ -56,7 +56,7 @@ def main(args):
 		#			subprocess.call(cmd.split(" "))
 		resultsfile = root + "discovery/smb/" + ip + "_nse.txt"
 		f = open(resultsfile, "w")
-		f.write(nbtresults)
+		f.write(nseresults)
 		f.close
 	except:
 		print("ERROR: NSE smb scan failed for " + ip + ":"+port)
