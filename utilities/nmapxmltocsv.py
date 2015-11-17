@@ -72,8 +72,7 @@ def process(inputfile, fo):
 						service = port.find('service').get('name')
 
 				if service in serviceDict:
-					if portnum not in serviceDict[service]:
-						serviceDict[service].append([ip,portnum])
+					serviceDict[service].append([ip,portnum])
 				else:
 					serviceDict[service] = []
 					serviceDict[service].append([ip,portnum])
