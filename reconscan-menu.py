@@ -381,6 +381,7 @@ def runNmapMenu():
 						pickle.dump(serviceDict, f)
 					print("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
 					input("Press any key to continue.  Log data available at " + root + "reconscan.log")
+				
 				elif menuChoice == 3:
 					shell = ""
 					while shell!="y" and shell!="n":
@@ -416,6 +417,7 @@ def runNmapMenu():
 						
 					log("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
 					input("Press any key to continue.  Log data available at " + root + "reconscan.log")
+				
 				elif menuChoice == 0:
 					menuChoice = "q"
 				else:
@@ -547,9 +549,6 @@ def enumServicesMenu():
 						log("INFO: Enumeration has completed. See " + root + "discovery/ for details")
 						input("\nPress any key to continue.  Log data available at " + root + "reconscan.log")
 			
-				elif menuChoice == 4:
-					print (serviceDict)
-					input("\nPress any key to continue.  Log data available at " + root + "reconscan.log")
 				elif menuChoice == 0:
 					menuChoice = "q"
 				else:
@@ -565,10 +564,130 @@ def enumServicesMenu():
 	return
 	
 def pwMenu():
-	pass
+	knownServices = {
+		"http":httpPW, 
+		"ssl/http":httpPW, 
+		"https":httpPW, 
+		"ssh":sshPW, 
+		"ftp":ftpPW, 
+		"ms-sql":mssqlPW, 
+		"mysql":mysqlPW,
+		"vnc":vncPW
+	}
+	
+	pool = Pool(processes=procs)
+	message = ""	
+	menuChoice = ""
+	while (menuChoice != "q"):
+		print(chr(27) + "[2J")
+		print (message + "\n")
+		print ("1) Change medusa settings")
+		print ("2) PW guess specific service")
+		print ("3) PW guess All")
+		print ("\n0) Main Menu")
+		print ("Q) Quit\n")
+		menuChoice = input('Option #:')
 		
+		message = ""
+		if menuChoice == '':
+			message = "Enter a correct Option"
+		elif menuChoice[0].lower() != "q":
+			menuChoice = num(menuChoice)
+			if menuChoice is not None:
+				if menuChoice == 1:
+					pass
+					# medusa options
+				elif menuChoice == 2:
+					choice = ""
+					if serviceDict == {}:
+						message = "No services detected: Please run NMAP scans first"
+					else:
+						count = 0
+						for serv in knownServices:
+							if serv in serviceDict:
+								count += 1
+						if count == 0:
+							message = "No discovered services are guessable."
+						else:
+							while choice not in knownServices:
+								for serv in knownServices:
+									if serv in serviceDict:
+										print (serv)
+								choice = input('>>')
+							log("INFO: Starting guess for " + choice)
+							for serv in serviceDict[choice]:
+								pool.apply_async(knownServices[choice], args=(serv[0], serv[1]))
+							pool.close()
+							pool.join()
+							log("INFO: PW Guess of " + choice + " has completed. See " + root + "password/ for details")
+							input("\nPress any key to continue.  Log data available at " + root + "reconscan.log")
+			
+				elif menuChoice == 3:
+					if serviceDict == {}:
+						message = "No services detected: Please run NMAP scans first"
+					else:
+						log("No PW guess tool for the following services: ")
+						for serv in serviceDict:
+							if serv not in knownServices:
+								for ips in serviceDict[serv]:
+									temp = ips[0]+":"+ips[1]+" "
+								log(" -"+serv+": "+ temp)
+					
+						log("Starting Guessing")
+						for services in knownServices:
+							if services in serviceDict:
+								for serv in serviceDict[services]:
+									pool.apply_async(knownServices[services], args=(serv[0], serv[1]))
+						pool.close()
+						pool.join()
+						log("INFO: Guessing has completed. See " + root + "password/ for details")
+						input("\nPress any key to continue.  Log data available at " + root + "reconscan.log")
+			
+				elif menuChoice == 0:
+					menuChoice = "q"
+				else:
+					message = "Enter a correct option"
+			else:
+				menuChoice = ""
+				message =  "Enter a correct option"
+		else:
+			menuChoice == ""
+			choice = input ("Are you sure you want to quit? (Y/N): ")
+			if (choice[0].lower() == "y"):
+				sys.exit()
+		
+def httpPW(ip, port):
+	log("INFO: Starting password guess for http web form at " + ip + ":" + port)
+	medusa.webformCrack()
+	log("INFO: Password guess for http at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+	
+def sshPW(ip, port):
+	log("INFO: Starting password guess for ssh  at " + ip + ":" + port)
+	medusa.webformCrack()
+	log("INFO: Password guess for ssh at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+	
+def ftpPW(ip, port):
+	log("INFO: Starting password guess for ftp at " + ip + ":" + port)
+	medusa.webformCrack()
+	log("INFO: Password guess for ftp at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+
+def mssqlPW(ip, port):
+	log("INFO: Starting password guess for MS SQL at " + ip + ":" + port)
+	medusa.webformCrack()
+	log("INFO: Password guess for mssql at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+
+def mysqlPW(ip, port):
+	log("INFO: Starting password guess for MySQL at " + ip + ":" + port)
+	medusa.webformCrack()
+	log("INFO: Password guess for mysql at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+	
+def vncPW(ip, port):
+	log("INFO: Starting password guess for VNC at " + ip + ":" + port)
+	medusa.webformCrack()
+	log("INFO: Password guess for vnc at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+
 def exploitMenu():
-	pass
+	input("ERROR: This feature is not available yet. Press any key to continue.")
 
 def init():
 	# TODO REMOVE
