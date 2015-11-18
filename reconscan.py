@@ -26,6 +26,8 @@ targets = []
 procs = 4
 serviceDict = {}
 logger = None
+counter = {}
+pool = Pool(processes=4)
 
 def num(s):
 	try:
@@ -130,6 +132,8 @@ def initializeMenu():
 					while p < 1 or math.isnan(p):
 						p = int(input("Enter the MAXIMUM number of conncurrent processes to run (default is 4): "))
 					procs = p
+					global pool
+					pool = Pool(processes=procs)
 					message = "Processes set to " + str(procs)
 				elif menuChoice == 0:
 					menuChoice = "q"
@@ -444,8 +448,8 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 	UDPSCAN = "nmap -" + verbosity + " -T " + str(timing) + " -p " + ports + " -s" + TCP + versioning + " " + Pn + " " + Open + " " + OS + custom +" -oA " + root + "discovery/nmap/tcp/udp_%s %s"  % (ip_address, ip_address)
 	
 	if shell == "y":
-	    TCPSCAN = "gnome-terminal -x " + TCPSCAN
-	    UDPSCAN = "gnome-terminal -x " + UDPSCAN
+		TCPSCAN = "gnome-terminal -x " + TCPSCAN
+		UDPSCAN = "gnome-terminal -x " + UDPSCAN
 	if type == "TCP":
 		log("INFO: Running TCP nmap scans for " + ip_address)
 		subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
@@ -475,10 +479,12 @@ def enumServicesMenu():
 		"msrpc":smbEnum,
 		"netbios-ssn":smbEnum,
 		"ms-sql":mssqlEnum, 
-		"mysql":mysqlEnum
+		"mysql":mysqlEnum,
+		"drda":drdaEnum,
+		"ms-wbt-server":rdpEnum,
+		"rmiregistry":rmiEnum
 	}
 	
-	pool = Pool(processes=procs)
 	message = ""	
 	menuChoice = ""
 	while (menuChoice != "q"):
@@ -694,7 +700,7 @@ def exploitMenu():
 
 def init():
 	# TODO REMOVE
-	os.system("rm -r " + root + "discovery")
+	# os.system("rm -r " + root + "discovery")
 	checkandmk(root + 'issues')
 	checkandmk(root + 'lists')
 	checkandmk(root + 'password')
@@ -716,12 +722,56 @@ def init():
 	checkandmk(root + 'discovery'+sep+'http')
 	checkandmk(root + 'discovery'+sep+'vnc')
 	checkandmk(root + 'discovery'+sep+'mysql')
+	checkandmk(root + 'discovery'+sep+'drda')
+	checkandmk(root + 'discovery'+sep+'rdp')
+	checkandmk(root + 'discovery'+sep+'rmi')
 	return
 
 def checkandmk(path):
 	if not os.path.exists(path):
 		os.makedirs(path)
 
+def drdaEnum(ip_address, port):
+	log("INFO: Detected DRDA on " + ip_address + ":" + port)
+	log("INFO: Performing nmap DRDA script scan for " + ip_address + ":" + port)
+	DRDASCAN = nse.DRDA(ip_address, port)	
+	try:
+		nseout = subprocess.check_output(DRDASCAN.split(' '))
+		resultsfile = root + "discovery/drda/" + ip + ":" + port + "_nse.txt"
+		f = open(resultsfile, "w")
+		f.write(nseout)
+		f.close
+	except:
+		log("ERROR: NSE failed for DRDA " + ip + ":"+ port)
+	return
+	
+def rdpEnum(ip_address, port):
+	log("INFO: Detected RDP on " + ip_address + ":" + port)
+	log("INFO: Performing nmap RDP script scan for " + ip_address + ":" + port)
+	RDPSCAN = nse.Remote_Desktop(ip_address, port)	
+	try:
+		nseout = subprocess.check_output(RDPSCAN.split(' '))
+		resultsfile = root + "discovery/rdp/" + ip + ":" + port + "_nse.txt"
+		f = open(resultsfile, "w")
+		f.write(nseout)
+		f.close
+	except:
+		log("ERROR: NSE failed for RDP " + ip + ":"+ port)
+	return
+	
+def rmiEnum(ip_address, port):
+	log("INFO: Detected JAVA RMI on " + ip_address + ":" + port)
+	log("INFO: Performing nmap RMI script scan for " + ip_address + ":" + port)
+	RMISCAN = nse.RMI_Registry(ip_address, port)	
+	try:
+		nseout = subprocess.check_output(RMISCAN.split(' '))
+		resultsfile = root + "discovery/rmi/" + ip + ":" + port + "_nse.txt"
+		f = open(resultsfile, "w")
+		f.write(nseout)
+		f.close
+	except:
+		log("ERROR: NSE failed for DRDA " + ip + ":"+ port)
+	return
 
 def dnsEnum(ip_address, port):
 	log("INFO: Detected DNS on " + ip_address + ":" + port)
@@ -734,7 +784,7 @@ def dnsEnum(ip_address, port):
 	DNSSCAN = nse.DNS(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(DNSSCAN, shell=True)
-		resultsfile = root + "discovery/dns/" + ip + "_nse.txt"
+		resultsfile = root + "discovery/dns/" + ip + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
@@ -749,7 +799,7 @@ def httpEnum(ip_address, port):
 	HTTPSCAN = nse.http(ip_address, port)
 	try:
 		nseout = subprocess.check_output(HTTPSCAN, shell=True)
-		resultsfile = root + "discovery/http/" + ip + "_nse.txt"
+		resultsfile = root + "discovery/http/" + ip + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
@@ -777,7 +827,7 @@ def httpsEnum(ip_address, port, root):
 	HTTPSSCAN = "nmap -Pn -vv -p %s --script=http-vhosts,http-userdir-enum,http-apache-negotiation,http-backup-finder,http-config-backup,http-default-accounts,http-email-harvest,http-methods,http-method-tamper,http-passwd,http-robots.txt -oN discovery/http/%s_https.nmap %s" % (port, ip_address, ip_address)
 	try:
 		nseout = subprocess.check_output(HTTPSSCAN, shell=True)
-		resultsfile = root + "discovery/http/" + ip + "_ssl_nse.txt"
+		resultsfile = root + "discovery/http/" + ip + ":" + port + "_ssl_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
@@ -805,7 +855,7 @@ def mssqlEnum(ip_address, port):
 	MSSQLSCAN = "nmap -vv -sV -Pn -p %s --script=ms-sql-info,ms-sql-config,ms-sql-dump-hashes --script-args=mssql.instance-port=1433,mssql.username-sa,mssql.password-sa -oX discovery/mssql/%s_mssql.xml %s" % (port, ip_address, ip_address)
 	try:
 		nseout = subprocess.check_output(MSSQLSCAN, shell=True)
-		resultsfile = root + "discovery/mssql/" + ip + "_nse.txt"
+		resultsfile = root + "discovery/mssql/" + ip + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
@@ -821,7 +871,7 @@ def mysqlEnum(ip_address, port):
 	MYSQLSCAN = "nmap -vv -sV -Pn -p %s --script=mysql-enum, mysql-empty-password  -oX discovery/mysql/%s_mysql.xml %s" % (port, ip_address, ip_address)
 	try:
 		nseout = subprocess.check_output(MYSQLSCAN, shell=True)
-		resultsfile = root + "discovery/mysql/" + ip + "_nse.txt"
+		resultsfile = root + "discovery/mysql/" + ip + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
@@ -838,12 +888,12 @@ def sshEnum(ip_address, port):
 	SSHSCAN = nse.SSH(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(SSHSCAN, shell=True)
-		resultsfile = root + "discovery/ssh/" + ip + "_nse.txt"
+		resultsfile = root + "discovery/ssh/" + ip + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
 	except:
-		log("ERROR: NSE failed for snmp " + ip + ":"+ port)
+		log("ERROR: NSE failed for ssh " + ip + ":"+ port)
 	return
 
 def snmpEnum(ip_address, port):
@@ -854,7 +904,7 @@ def snmpEnum(ip_address, port):
 	SNMPSCAN = nse.SNMP(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(SNMPSCAN, shell=True)
-		resultsfile = root + "discovery/snmp/" + ip + "_nse.txt"
+		resultsfile = root + "discovery/snmp/" + ip + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
@@ -871,7 +921,7 @@ def smtpEnum(ip_address, port):
 	SMTPSCAN = nse.SMTP(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(SMTPSCAN, shell=True)
-		resultsfile = root + "discovery/smtp/" + ip + "_nse.txt"
+		resultsfile = root + "discovery/smtp/" + ip + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
