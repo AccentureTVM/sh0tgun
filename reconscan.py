@@ -239,7 +239,7 @@ def targetsMenu():
 def runNmapMenu():
 	timing = 4
 	verbosity = "vvv"
-	port = "moderate"
+	port = "Moderate"
 	versioning = "V"
 	online = "-Pn"
 	TCP = "S"
@@ -444,8 +444,9 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 		ports = "0-65535"
 
 	ip_address = ip_address.strip()
-	TCPSCAN = "nmap -" + verbosity + " -T " + str(timing) + " -p " + ports + " -s" + TCP + versioning + " " + Pn + " " + Open + " " + OS + custom +" -oA " + root + "discovery/nmap/tcp/tcp_%s %s"  % (ip_address, ip_address)
-	UDPSCAN = "nmap -" + verbosity + " -T " + str(timing) + " -p " + ports + " -s" + TCP + versioning + " " + Pn + " " + Open + " " + OS + custom +" -oA " + root + "discovery/nmap/tcp/udp_%s %s"  % (ip_address, ip_address)
+	ip_format = ip_address.replace("/", "_")
+	TCPSCAN = "nmap -" + verbosity + " -T " + str(timing) + " -p " + ports + " -s" + TCP + versioning + " " + Pn + " " + Open + " " + OS + custom +" -oA " + root + "discovery/nmap/tcp/tcp_%s %s"  % (ip_format, ip_address)
+	UDPSCAN = "nmap -" + verbosity + " -T " + str(timing) + " -p " + ports + " -s" + TCP + versioning + " " + Pn + " " + Open + " " + OS + custom +" -oA " + root + "discovery/nmap/tcp/udp_%s %s"  % (ip_format, ip_address)
 	
 	if shell == "y":
 		TCPSCAN = "gnome-terminal -x " + TCPSCAN
