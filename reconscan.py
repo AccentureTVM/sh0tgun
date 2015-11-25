@@ -452,6 +452,7 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 		UDPSCAN = "gnome-terminal -x " + UDPSCAN
 	if type == "TCP":
 		log("INFO: Running TCP nmap scans for " + ip_address)
+		print (TCPSCAN)
 		subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
 		fo = open(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".csv", 'w+')
 		serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".xml", fo)
