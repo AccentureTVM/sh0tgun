@@ -454,27 +454,27 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 	if type == "TCP":
 		log("INFO: Running TCP nmap scans for " + ip_address)
 		try:
-            subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
-            try:
-                fo = open(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".csv", 'w+')
-                serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".xml", fo)
-            except:
-                print ("Error Processing NMAP Results.  Nmap scans still available at /discover/nmap/tcp")
-        except:
-            print("Error running NMAP scans")
-        
+			subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
+			try:
+				fo = open(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".csv", 'w+')
+				serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".xml", fo)
+			except:
+				print ("Error Processing NMAP Results.  Nmap scans still available at /discover/nmap/tcp")
+		except:
+			print("Error running NMAP scans")
+		
 		
 	if type == "UDP":
 		log("INFO: Running UDP nmap scans for " + ip_address)
 		try:
-            subprocess.check_output(UDPSCAN, shell=True, stderr=subprocess.STDOUT)
-            try:
-                fo = open(root + "discovery"+sep+"nmap"+sep+"udp/udp_"+ip_address+".csv", 'w+')
-                serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"udp/udp_"+ip_address+".xml", fo)
-            except:
-                print ("Error Processing NMAP Results.  Nmap scans still available at /discover/nmap/tcp")
-        except:
-            print("Error running NMAP scans")
+			subprocess.check_output(UDPSCAN, shell=True, stderr=subprocess.STDOUT)
+			try:
+				fo = open(root + "discovery"+sep+"nmap"+sep+"udp/udp_"+ip_address+".csv", 'w+')
+				serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"udp/udp_"+ip_address+".xml", fo)
+			except:
+				print ("Error Processing NMAP Results.  Nmap scans still available at /discover/nmap/tcp")
+		except:
+			print("Error running NMAP scans")
 
 	log("INFO: " + type + " Nmap scans completed for " + ip_address)
 	return serviceDict				
