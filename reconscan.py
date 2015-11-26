@@ -411,7 +411,7 @@ def runNmapMenu():
 					pool.close()
 					pool.join()
 	
-					subprocess.check_output("cat " + root + "discovery"+sep+"nmap"+sep+"udp/udp*.csv >> " + root + "discovery"+sep+"nmap"+sep+"udp/udp.csv", shell=True, stderr=subprocess.STDOUT)
+					subprocess.check_output("cat " + root + "discovery"+sep+"nmap"+sep+"udp/udp*.csv >> " + root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
 					subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
 					
 					if os.path.isfile(root+"serviceDict.dat"):
@@ -453,16 +453,28 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 		UDPSCAN = "gnome-terminal -x " + UDPSCAN
 	if type == "TCP":
 		log("INFO: Running TCP nmap scans for " + ip_address)
-		print (TCPSCAN)
-		subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
-		fo = open(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".csv", 'w+')
-		serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".xml", fo)
+		try:
+            subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
+            try:
+                fo = open(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".csv", 'w+')
+                serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".xml", fo)
+            except:
+                print ("Error Processing NMAP Results.  Nmap scans still available at /discover/nmap/tcp")
+        except:
+            print("Error running NMAP scans")
+        
 		
 	if type == "UDP":
 		log("INFO: Running UDP nmap scans for " + ip_address)
-		subprocess.check_output(UDPSCAN, shell=True, stderr=subprocess.STDOUT)
-		fo = open(root + "discovery"+sep+"nmap"+sep+"udp/udp_"+ip_address+".csv", 'w+')
-		serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"udp/udp_"+ip_address+".xml", fo)
+		try:
+            subprocess.check_output(UDPSCAN, shell=True, stderr=subprocess.STDOUT)
+            try:
+                fo = open(root + "discovery"+sep+"nmap"+sep+"udp/udp_"+ip_address+".csv", 'w+')
+                serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"udp/udp_"+ip_address+".xml", fo)
+            except:
+                print ("Error Processing NMAP Results.  Nmap scans still available at /discover/nmap/tcp")
+        except:
+            print("Error running NMAP scans")
 
 	log("INFO: " + type + " Nmap scans completed for " + ip_address)
 	return serviceDict				
