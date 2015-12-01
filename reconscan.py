@@ -719,7 +719,7 @@ def exploitMenu():
 
 def init():
 	# TODO REMOVE
-	# os.system("rm -r " + root + "discovery")
+	os.system("rm -r " + root + "discovery")
 	checkandmk(root + 'issues')
 	checkandmk(root + 'lists')
 	checkandmk(root + 'password')
