@@ -120,11 +120,13 @@ def initializeMenu():
 							with open(root+"serviceDict.dat","rb") as f:
 								global serviceDict
 								serviceDict = pickle.load(f)
+							f.close()
 					message = "Project root set to: " + root
 				elif menuChoice == 2:
 					init()
 					global logger
 					logger = open(root+"reconscan.log", 'w+')
+					logger.close
 					message = "Project root directories successfully created"
 				elif menuChoice == 3:
 					global procs
@@ -383,6 +385,7 @@ def runNmapMenu():
 						os.system("rm " + root + "serviceDict.dat")
 					with open(root+"serviceDict.dat","wb") as f:
 						pickle.dump(serviceDict, f)
+						f.close()
 					print("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
 					input("Press any key to continue.  Log data available at " + root + "reconscan.log")
 				
@@ -418,7 +421,7 @@ def runNmapMenu():
 						os.system("rm " + root + "serviceDict.dat")
 					with open(root+"serviceDict.dat","wb") as f:
 						pickle.dump(serviceDict, f)
-						
+						f.close()
 					log("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
 					input("Press any key to continue.  Log data available at " + root + "reconscan.log")
 				
@@ -458,6 +461,7 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 			try:
 				fo = open(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".csv", 'w+')
 				serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".xml", fo)
+				fo.close()
 			except:
 				print ("Error Processing NMAP Results.  Nmap scans still available at /discover/nmap/tcp")
 		except:
@@ -470,6 +474,7 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 			subprocess.check_output(UDPSCAN, shell=True, stderr=subprocess.STDOUT)
 			try:
 				fo = open(root + "discovery"+sep+"nmap"+sep+"udp/udp_"+ip_address+".csv", 'w+')
+				fo.close()
 				serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"udp/udp_"+ip_address+".xml", fo)
 			except:
 				print ("Error Processing NMAP Results.  Nmap scans still available at /discover/nmap/tcp")
@@ -679,32 +684,32 @@ def pwMenu():
 			if (choice[0].lower() == "y"):
 				sys.exit()
 		
-def httpPW(ip, port):
+def httpPW(ip, port, root):
 	log("INFO: Starting password guess for http web form at " + ip + ":" + port)
 	medusa.webformCrack()
 	log("INFO: Password guess for http at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
 	
-def sshPW(ip, port):
+def sshPW(ip, port, root):
 	log("INFO: Starting password guess for ssh  at " + ip + ":" + port)
 	medusa.webformCrack()
 	log("INFO: Password guess for ssh at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
 	
-def ftpPW(ip, port):
+def ftpPW(ip, port, root):
 	log("INFO: Starting password guess for ftp at " + ip + ":" + port)
 	medusa.webformCrack()
 	log("INFO: Password guess for ftp at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
 
-def mssqlPW(ip, port):
+def mssqlPW(ip, port, root):
 	log("INFO: Starting password guess for MS SQL at " + ip + ":" + port)
 	medusa.webformCrack()
 	log("INFO: Password guess for mssql at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
 
-def mysqlPW(ip, port):
+def mysqlPW(ip, port, root):
 	log("INFO: Starting password guess for MySQL at " + ip + ":" + port)
 	medusa.webformCrack()
 	log("INFO: Password guess for mysql at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
 	
-def vncPW(ip, port):
+def vncPW(ip, port, root):
 	log("INFO: Starting password guess for VNC at " + ip + ":" + port)
 	medusa.webformCrack()
 	log("INFO: Password guess for vnc at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
