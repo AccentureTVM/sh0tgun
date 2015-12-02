@@ -898,7 +898,7 @@ def smbEnum(ip_address, port):
 
 def ftpEnum(ip_address, port):
 	log("INFO: Detected ftp on " + ip_address + ":" + port)
-	ftprecon.main(["",ip_address,port])
+	ftprecon.main(["",ip_address,port,root])
 
 	return
 	
