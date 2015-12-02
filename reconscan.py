@@ -498,6 +498,7 @@ def enumServicesMenu():
 		"msrpc":smbEnum,
 		"netbios-ssn":smbEnum,
 		"ms-sql":mssqlEnum, 
+		"ms-sql-s":mssqlEnum,
 		"mysql":mysqlEnum,
 		"drda":drdaEnum,
 		"ms-wbt-server":rdpEnum,
@@ -512,7 +513,6 @@ def enumServicesMenu():
 		print ("1) Show All discovered Services")
 		print ("2) Enumerate specific service")
 		print ("3) Enumerate All")
-		print ("4) Show serviceDict")
 		print ("\n0) Main Menu")
 		print ("Q) Quit\n")
 		menuChoice = input('Option #:')
@@ -600,7 +600,8 @@ def pwMenu():
 		"ftp":ftpPW, 
 		"ms-sql":mssqlPW, 
 		"mysql":mysqlPW,
-		"vnc":vncPW
+		"vnc":vncPW,
+		"vnc-http":vncPW
 	}
 	
 	pool = Pool(processes=procs)
