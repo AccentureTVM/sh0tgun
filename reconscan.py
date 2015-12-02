@@ -599,6 +599,7 @@ def pwMenu():
 		"ssh":sshPW, 
 		"ftp":ftpPW, 
 		"ms-sql":mssqlPW, 
+		"ms-sql-s":mssqlPW,
 		"mysql":mysqlPW,
 		"vnc":vncPW,
 		"vnc-http":vncPW
@@ -638,18 +639,20 @@ def pwMenu():
 						if count == 0:
 							message = "No discovered services are guessable."
 						else:
-							while choice not in knownServices:
+							print("Type the full name of the service you would like to guess or press 0 to go back")
+							while choice not in knownServices and choice != "0":
 								for serv in knownServices:
 									if serv in serviceDict:
 										print (serv)
 								choice = input('>>')
-							log("INFO: Starting guess for " + choice)
-							for serv in serviceDict[choice]:
-								pool.apply_async(knownServices[choice], args=(serv[0], serv[1]))
-							pool.close()
-							pool.join()
-							log("INFO: PW Guess of " + choice + " has completed. See " + root + "password/ for details")
-							input("\nPress any key to continue.  Log data available at " + root + "reconscan.log")
+							if choice != "0":
+								log("INFO: Starting guess for " + choice)
+								for serv in serviceDict[choice]:
+									pool.apply_async(knownServices[choice], args=(serv[0], serv[1]))
+								pool.close()
+								pool.join()
+								log("INFO: PW Guess of " + choice + " has completed. See " + root + "password/ for details")
+								input("\nPress any key to continue.  Log data available at " + root + "reconscan.log")
 			
 				elif menuChoice == 3:
 					if serviceDict == {}:
