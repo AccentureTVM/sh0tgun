@@ -459,8 +459,8 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 		try:
 			subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
 			try:
-				fo = open(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".csv", 'w+')
-				serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_address+".xml", fo)
+				fo = open(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_format+".csv", 'w+')
+				tempDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_format+".xml", fo)
 				fo.close()
 			except:
 				print ("Error Processing NMAP Results.  Nmap scans still available at /discover/nmap/tcp")
@@ -473,16 +473,16 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 		try:
 			subprocess.check_output(UDPSCAN, shell=True, stderr=subprocess.STDOUT)
 			try:
-				fo = open(root + "discovery"+sep+"nmap"+sep+"udp/udp_"+ip_address+".csv", 'w+')
+				fo = open(root + "discovery"+sep+"nmap"+sep+"udp/udp_"+ip_format+".csv", 'w+')
 				fo.close()
-				serviceDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"udp/udp_"+ip_address+".xml", fo)
+				tempDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"udp/udp_"+ip_format+".xml", fo)
 			except:
 				print ("Error Processing NMAP Results.  Nmap scans still available at /discover/nmap/tcp")
 		except:
 			print("Error running NMAP scans")
 
 	log("INFO: " + type + " Nmap scans completed for " + ip_address)
-	return serviceDict				
+	return tempDict				
 			
 def enumServicesMenu():		
 	knownServices = {
