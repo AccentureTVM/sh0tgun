@@ -15,6 +15,7 @@ def main(args):
 	FTPSCAN = "nmap -sV -Pn --open -p " + port + " --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221 -oA " + root + "discovery/ftp/" + ip_address + "_ftp " + ip_address
 	try:
 		results = subprocess.check_output(FTPSCAN, shell=True)
+		results = results.decode('utf-8')
 		outfile = root + "discovery/ftp/" + ip_address + "_ftp.txt"
 		lines = results.split("\n")
 		for line in lines:

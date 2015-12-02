@@ -28,6 +28,7 @@ def main(args):
 	host = "host " + ip_address + " | grep -v 'not found'"
 	try:
 		host = subprocess.check_output(host, shell=True).strip()
+		host = host.decode('utf-8')
 		if host != "":
 			dnsrecon = "dnsrecon -d %s -t axfr" %(ip_address)
 			dnsrecon = subprocess.check_output(dnsrecon, shell=True)

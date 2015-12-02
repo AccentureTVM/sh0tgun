@@ -21,6 +21,7 @@ def main(args):
 			DIRBSCAN = "dirb %s %s/%s %s -S -r" % (url, folder, filename, outfile)
 			try:
 				results = subprocess.check_output(DIRBSCAN, shell=True)
+				results = results.decode('utf-8')
 				resultarr = results.split("\n")
 				for line in resultarr:
 					if "+" in line:

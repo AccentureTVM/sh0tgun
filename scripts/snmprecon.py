@@ -14,7 +14,7 @@ def main(args):
 	
 	try:
 		results = subprocess.check_output(ONESIXONESCAN, shell=True).strip()
-
+		results = results.decode('utf-8')
 		if results != "":
 			if "Windows" in results:
 				results = results.split("Software: ")[1]

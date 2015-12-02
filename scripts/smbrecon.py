@@ -45,7 +45,8 @@ def main(args):
 	nse = "nmap -Pn -n --open -p %s --script=smb-check-vulns --script-args=unsafe=1 %s" % (port, ip)
 	try:
 		nseresults = subprocess.check_output(nse.split(' '))
-		lines = nseresults.decode("utf-8").split("\n")
+		nseresults = nseresults.decode('utf-8')
+		lines = nseresults.split("\n")
 		for line in lines:
 			if "VULNERABLE" in line and "NOT VULNERABLE" not in line:
 				print("FOUND: SMB VULN on " +ip+ ": " +line + " | check discovery/smb for full results")
