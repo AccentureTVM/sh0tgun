@@ -12,7 +12,7 @@ def main(args):
 	port = args[2].strip()
 	root = args[3]
 	print("INFO: Performing nmap FTP script scan for " + ip_address + ":" + port)
-	FTPSCAN = "nmap -sV -Pn --open -p %s --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221 -oA " + root + "discovery/ftp/%s_ftp' %s" % (port, ip_address, ip_address)
+	FTPSCAN = "nmap -sV -Pn --open -p " + port + " --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221 -oA " + root + "discovery/ftp/" + ip_address + "_ftp " + ip_address
 	try:
 		results = subprocess.check_output(FTPSCAN, shell=True)
 		outfile = root + "discovery/ftp/" + ip_address + "_ftp.txt"
