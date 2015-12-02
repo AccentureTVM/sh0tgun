@@ -22,11 +22,11 @@ from multiprocessing import Pool
 sep = os.path.sep
 root = "/root/TEST/"
 targets = []
-procs = 4
+procs = 1
 serviceDict = {}
 logger = None
 counter = {}
-pool = Pool(processes=4)
+pool = Pool(processes=1)
 
 
 ##########################################################
