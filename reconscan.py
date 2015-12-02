@@ -496,6 +496,7 @@ def enumServicesMenu():
 								choice = input('>>')
 							log("INFO: Starting enumeration for " + choice)
 							for serv in serviceDict[choice]:
+							    print ("calling: " + knownServices[choice] + "(" + serv[0] + ", " + serv[1] + ")")
 								pool.apply_async(knownServices[choice], args=(serv[0], serv[1]))
 							pool.close()
 							pool.join()
