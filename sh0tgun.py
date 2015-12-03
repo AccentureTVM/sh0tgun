@@ -467,6 +467,8 @@ def pwGuess():
 					if choice != "0":
 						log("INFO: Starting guess for " + choice)
 						for serv in serviceDict[choice]:
+						    pwCounter[choice] += 1
+						    pwCounter["total"] += 1
 							pool.apply_async(knownServices[choice], args=(serv[0], serv[1]), callback = pwCallback)
 	
 		elif menuChoice == 3:
