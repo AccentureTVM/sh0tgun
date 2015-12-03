@@ -53,14 +53,14 @@ pool = None
 ##########################################################	
 
 def run(argv):
-    print ("***************************")
-    print ("***       SH0TGUN       ***")
-    print ("***                     ***")
-    print ("***   Network Scanner   ***")
-    print ("***  Service Enumerator ***")
-    print ("***************************")
-    print ("")
-    
+	print ("***************************")
+	print ("***	   SH0TGUN	   ***")
+	print ("***					 ***")
+	print ("***   Network Scanner   ***")
+	print ("***  Service Enumerator ***")
+	print ("***************************")
+	print ("")
+	
 	message = initialize()
 	
 	options = [
