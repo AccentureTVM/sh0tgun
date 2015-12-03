@@ -471,7 +471,7 @@ def pwGuess():
 							pwCounter["total"] += 1
 							pool.apply_async(knownServices[choice], args=(serv[0], serv[1], choice), callback = pwCallback)
 					
-					input("Press ENTER to go back to the main menu")
+					input("Press ENTER to go back to the main menu\n\n")
 					
 		elif menuChoice == 3:
 			if serviceDict == {}:
