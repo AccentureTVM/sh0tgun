@@ -46,17 +46,17 @@ enumCounter = {
 	"total":0
 }
 pwCounter = {
-    "total":0,
-    "http":0,
-    "ssl/http":0,
-    "https":0,
-    "ssh":0,
-    "ftp":0,
-    "ms-sql":0, 
-    "ms-sql-s":0,
-    "mysql":0,
-    "vnc":0,
-    "vnc-http":0
+	"total":0,
+	"http":0,
+	"ssl/http":0,
+	"https":0,
+	"ssh":0,
+	"ftp":0,
+	"ms-sql":0, 
+	"ms-sql-s":0,
+	"mysql":0,
+	"vnc":0,
+	"vnc-http":0
 }
 pool = None
 
@@ -441,7 +441,7 @@ def pwGuess():
 					if choice != "0":
 						log("INFO: Starting guess for " + choice)
 						for serv in serviceDict[choice]:
-							pool.apply_async(knownServices[choice], args=(serv[0], serv[1]))
+							pool.apply_async(knownServices[choice], args=(serv[0], serv[1]), callback = pwCallback)
 	
 		elif menuChoice == 3:
 			if serviceDict == {}:
@@ -455,10 +455,14 @@ def pwGuess():
 						log(" -"+serv+": "+ temp)
 			
 				log("Starting Guessing")
+				jobs = []
 				for services in knownServices:
 					if services in serviceDict:
 						for serv in serviceDict[services]:
-							pool.apply_async(knownServices[services], args=(serv[0], serv[1]))
+							jobs.append(pool.apply_async(knownServices[services], args=(serv[0], serv[1])))
+							
+				for job in jobs:
+					job.wait()
 				
 				log("INFO: Guessing has completed. See " + root + "password/ for details")
 				input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
@@ -867,19 +871,19 @@ def enumCallback(retVal):
 		print ("Enumeration of all " + retVal[0] + " instances has completed. See " + root + "discovery/ for details")
 		input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
 	if enumCounter["total"] == 0:
-	    print ("Guessing of all services has completed. See " + root + "discovery/ for details")
-	    input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
+		print ("Guessing of all services has completed. See " + root + "discovery/ for details")
+		input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
 	
 def pwCallback(retVal):
-    global pwCounter
+	global pwCounter
 	pwCounter[retVal[0] ] -= 1
 	print ("Guessing of " + retVal[0] + " has completed for " +retVal[1] + ":" + retVal[2])
 	if pwCounter[retVal[0] ] == 0:
 		print ("Guessing of all " + retVal[0] + " instances has completed. See " + root + "password/ for details")
 		input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
 	if pwCounter["total"] == 0:
-	    print ("Guessing of all services has completed. See " + root + "password/ for details")
-	    input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
+		print ("Guessing of all services has completed. See " + root + "password/ for details")
+		input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
 	
 def num(s):
 	try:
