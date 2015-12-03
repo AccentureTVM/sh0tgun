@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import subprocess
+import sys
 
 def sshCrack(ip_address, port, root):
 	MEDUSA = "medusa -h %s -U %s -P %s -v6 -n %s -e ns -M ssh > " + root + "discovery/ssh/medusa_%s.txt" % (ip_address, "/root/wordlists/admin_usernames.txt", "/root/wordlists/rockyou.txt", port, ip_address)
