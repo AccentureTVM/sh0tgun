@@ -21,9 +21,9 @@ from multiprocessing import Pool
 
 sep = os.path.sep
 root = "/root/TEST/"
-targets = None
+targets = []
 procs = 1
-serviceDict = None
+serviceDict = {}
 logger = None
 counter = {
 	"http":0, 
@@ -61,10 +61,6 @@ def run(argv):
 	print ("***************************")
 	print ("")
 	
-	global targets
-	global serviceDict
-	targets = []
-	serviceDict = {}
 	message = initialize()
 	
 	options = [
@@ -143,6 +139,7 @@ def manageTargets():
 		"Show targets",
 	]
 	menuChoice = ""
+	global targets
 	while menuChoice != 0:
 		menuChoice = executeMenu("","",options)
 		if menuChoice == 1:
@@ -151,7 +148,6 @@ def manageTargets():
 				print ("Enter the path and file.  Please format the text file with 1 ip per line, no commas or end characters. ")
 				targetfile = input(">>")
 			f = open(targetfile, 'r')
-			global targets
 			count = 0
 			failed = []
 			for ip in f:
@@ -171,7 +167,6 @@ def manageTargets():
 		elif menuChoice == 2:
 			addedTargets = input("Enter a list of comma separated targets: ")
 			addedTargets = addedTargets.split(',')
-			global targets
 			count = 0
 			for ip in addedTargets:
 				if not re.match(r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$', ip.strip()) and not re.match(r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', ip.strip()):
@@ -191,12 +186,10 @@ def manageTargets():
 			while remove < -1 or remove >= len(targets):
 				remove = int(input ("Select the number to remove or -1 to cancel: "))
 			if remove >= 0:
-				global targets
 				ip = targets.pop(int(remove))
 				message = "IP removed: " + ip
 		elif menuChoice == 4:
 			count = 0
-			global targets
 			for ip in targets:
 				print (ip)
 			input("Press ENTER when done")
@@ -226,6 +219,7 @@ def runNmap():
 	]
 	message = ""
 	menuChoice = ""
+	global serviceDict
 	while menuChoice != 0:
 		menuChoice = executeMenu(title,message,options)
 		if menuChoice == 1:
@@ -243,7 +237,6 @@ def runNmap():
 				v = v[0].lower()
 	
 			jobs = [pool.apply_async(nmapScan, args=(ip,nmapOptions["timing"],nmapOptions["verbosity"],nmapOptions["port"],nmapOptions["versioning"],nmapOptions["online"],nmapOptions["TCP"],nmapOptions["OS"],nmapOptions["custom"],nmapOptions["Pn"],nmapOptions["Open"],"TCP",shell)) for ip in targets]
-			global serviceDict
 			for p in jobs:
 				temp = p.get()
 				for key in temp:
@@ -280,7 +273,6 @@ def runNmap():
 	
 			jobs = [pool.apply_async(nmapScan, args=(ip,nmapOptions["timing"],nmapOptions["verbosity"],nmapOptions["port"],nmapOptions["versioning"],nmapOptions["online"],nmapOptions["TCP"],nmapOptions["OS"],nmapOptions["custom"],nmapOptions["Pn"],nmapOptions["Open"],"TCP",shell)) for ip in targets]
 			
-			global serviceDict
 			for p in jobs:
 				temp = p.get()
 				for key in temp:
