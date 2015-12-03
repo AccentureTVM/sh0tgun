@@ -21,9 +21,9 @@ from multiprocessing import Pool
 
 sep = os.path.sep
 root = "/root/TEST/"
-targets = []
+targets = None
 procs = 1
-serviceDict = {}
+serviceDict = None
 logger = None
 counter = {
 	"http":0, 
@@ -61,6 +61,10 @@ def run(argv):
 	print ("***************************")
 	print ("")
 	
+	global targets
+	global serviceDict
+	targets = []
+	serviceDict = {}
 	message = initialize()
 	
 	options = [
