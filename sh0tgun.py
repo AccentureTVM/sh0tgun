@@ -471,6 +471,7 @@ def pwGuess():
 							pwCounter["total"] += 1
 							pool.apply_async(knownServices[choice], args=(serv[0], serv[1]), callback = pwCallback)
 	
+					input("Press ENTER to go back to the main menu")
 		elif menuChoice == 3:
 			if serviceDict == {}:
 				message = "No services detected: Please run NMAP scans first"
