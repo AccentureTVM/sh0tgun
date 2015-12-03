@@ -72,7 +72,7 @@ def run(argv):
 	]
 	menuChoice = ""
 	while 1 == 1:
-		menuChoice =q executeMenu("",message,options)
+		menuChoice = executeMenu("",message,options)
 		message = ""
 		if menuChoice == 1:
 			manageTargets()
