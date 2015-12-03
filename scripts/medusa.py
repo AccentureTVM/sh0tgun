@@ -30,7 +30,7 @@ def mssqlCrack(ip_address, port, root):
 
 def mysqlCrack(ip_address, port, root):
 	MEDUSA = "medusa -h %s -U %s -P %s -v6 -n %s -e ns -M mysql  > " + root + "discovery/mysql/medusa_%s.txt" % (ip_address, "/root/wordlists/admin_usernames.txt", "/root/wordlists/rockyou.txt", port, ip_address)
-	print MEDUSA
+	print (MEDUSA)
 	results = subprocess.check_output(MEDUSA, shell=True)
 	results = results.decode('utf-8')
 	results = results.split("\n")
