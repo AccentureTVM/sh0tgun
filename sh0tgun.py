@@ -20,7 +20,7 @@ import time
 from multiprocessing import Pool
 
 sep = os.path.sep
-root = "/root/TEST/"
+root = ""
 targets = []
 procs = 1
 serviceDict = {}
@@ -855,35 +855,41 @@ def ftpEnum(ip_address, port, service):
 # PW Guess functions
 ##########################################################
 		
-def httpPW(ip, port):
+def httpPW(ip, port, service):
 	log("INFO: Starting password guess for http web form at " + ip + ":" + port)
 	medusa.webformCrack(ip, port, root)
 	log("INFO: Password guess for http at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+	return [service, ip, port]
 	
-def sshPW(ip, port):
+def sshPW(ip, port, service):
 	log("INFO: Starting password guess for ssh  at " + ip + ":" + port)
 	medusa.sshCrack(ip, port, root)
 	log("INFO: Password guess for ssh at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+	return [service, ip, port]
 	
-def ftpPW(ip, port):
+def ftpPW(ip, port, service):
 	log("INFO: Starting password guess for ftp at " + ip + ":" + port)
 	medusa.ftpCrack(ip, port, root)
 	log("INFO: Password guess for ftp at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+	return [service, ip, port]
 
-def mssqlPW(ip, port):
+def mssqlPW(ip, port, service):
 	log("INFO: Starting password guess for MS SQL at " + ip + ":" + port)
 	medusa.mssqlCrack(ip, port, root)
 	log("INFO: Password guess for mssql at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+	return [service, ip, port]
 
-def mysqlPW(ip, port):
+def mysqlPW(ip, port, service):
 	log("INFO: Starting password guess for MySQL at " + ip + ":" + port)
 	medusa.mysqlCrack(ip, port, root)
 	log("INFO: Password guess for mysql at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+	return [service, ip, port]
 	
-def vncPW(ip, port):
+def vncPW(ip, port, service):
 	log("INFO: Starting password guess for VNC at " + ip + ":" + port)
 	medusa.vncCrack(ip, port, root)
 	log("INFO: Password guess for vnc at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+	return [service, ip, port]
 
 ##########################################################
 # Utility functions
