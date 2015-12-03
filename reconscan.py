@@ -44,7 +44,7 @@ counter = {
 	"ms-wbt-server":0,
 	"rmiregistry":0
 }
-pool = Pool(processes=1)
+pool = None
 
 
 
@@ -53,37 +53,32 @@ pool = Pool(processes=1)
 ##########################################################	
 
 def run(argv):
+    message = initialize()
+    
 	options = [
-		"Initialize",
 		"Manage Targets",
 		"Run Nmap",
 		"Enumerate Services",
 		"Password Guess",
 		"Exploit"
 	]
-	message = ""
 	menuChoice = ""
 	while 1 == 1:
 		menuChoice = executeMenu("",message,options)
 		if menuChoice == 1:
-			initialize()
-			message = ""
-		elif menuChoice == 2:
 			manageTargets()
-		elif menuChoice == 3:
+		elif menuChoice == 2:
 			if len(targets) == 0:
 				message = "There are no targets to scan. Press 2 to add targets"
-			elif root == "root":
-				message = "Project directory has not been intialized. Press 1 to set root folder and initialize"
 			else:
 				runNmap()
-		elif menuChoice == 4:
+		elif menuChoice == 3:
 			enumServices()
 			message = ""
-		elif menuChoice == 5:
+		elif menuChoice == 4:
 			pwGuess()
 			message = ""
-		elif menuChoice == 6:
+		elif menuChoice == 5:
 			exploit()
 			message = ""
 		elif menuChoice == 0:
@@ -92,55 +87,41 @@ def run(argv):
 			message = "Enter a correct option"
 		
 def initialize():
-	options = [
-		"Select root directory",
-		"Create project directories and logs",
-		"MultiProcessing settings"
-	]
-	message = ""
-	menuChoice = ""
-	while menuChoice != 0:
-		menuChoice = executeMenu("",message,options)
-		if menuChoice == 1:
-			global root
+    global root
+    r = "/THIS/IS/NOT/A/DIRECTORY!!!!/"
+    while not os.path.exists(r):
+        v = "n"
+        while v!="y":
+            r = input("Enter valid project root folder: ")
+            print (r)
+            v = input("Is this correct? (Y/N): ")
+            v = v[0].lower()
+    if r[-1] != "/":
+        r = r+"/"
+    root = r
+    if os.path.isfile(root+"serviceDict.dat"):
+        v = input("Previous NMAP Data was found here.  Would you like to load? If not, all previous data will be erased upon directory initialization (2). (Y/N): ")
+        if v[0].lower() == "y":
+            with open(root+"serviceDict.dat","rb") as f:
+                global serviceDict
+                serviceDict = pickle.load(f)
+            f.close()
+    message = "Project root set to: " + root
+    initDirs()
+    global logger
+    logger = open(root+"reconscan.log", 'w+')
+    logger.close
+    message += "\nProject root directories successfully created\n"
+    
+    global procs
+    p = -1
+    while p < 1 or math.isnan(p):
+        p = int(input("Enter the MAXIMUM number of conncurrent processes to run (standard is 4): "))
+    procs = p
+    global pool
+    pool = Pool(processes=procs)
+    message += "\nProcesses set to " + str(procs)
 	
-			r = "/Users/taapes/dev/TST/"
-			while not os.path.exists(r):
-				v = "n"
-				while v!="y":
-					r = input("Enter valid project root folder: ")
-					print (r)
-					v = input("Is this correct? (Y/N): ")
-					v = v[0].lower()
-			if r[-1] != "/":
-				r = r+"/"
-			root = r
-			if os.path.isfile(root+"serviceDict.dat"):
-				v = input("Previous NMAP Data was found here.  Would you like to load? If not, all previous data will be erased upon directory initialization (2). (Y/N): ")
-				if v[0].lower() == "y":
-					with open(root+"serviceDict.dat","rb") as f:
-						global serviceDict
-						serviceDict = pickle.load(f)
-					f.close()
-			message = "Project root set to: " + root
-		elif menuChoice == 2:
-			initDirs()
-			global logger
-			logger = open(root+"reconscan.log", 'w+')
-			logger.close
-			message = "Project root directories successfully created"
-		elif menuChoice == 3:
-			global procs
-			p = -1
-			while p < 1 or math.isnan(p):
-				p = int(input("Enter the MAXIMUM number of conncurrent processes to run (default is 4): "))
-			procs = p
-			global pool
-			pool = Pool(processes=procs)
-			message = "Processes set to " + str(procs)
-		else:
-			message = "Enter a correct option"
-			
 def manageTargets():
 	options = [
 		"Import Targets from file",
