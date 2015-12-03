@@ -563,7 +563,7 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 	ip_format = ip_address.replace("/", "_")
 	TCPSCAN = "nmap -" + verbosity + " -T " + str(timing) + " -p " + ports + " -s" + TCP + versioning + " " + Pn + " " + Open + " " + OS + custom +" -oA " + root + "discovery/nmap/tcp/tcp_%s %s"  % (ip_format, ip_address)
 	UDPSCAN = "nmap -" + verbosity + " -T " + str(timing) + " -p " + ports + " -s" + TCP + versioning + " " + Pn + " " + Open + " " + OS + custom +" -oA " + root + "discovery/nmap/tcp/udp_%s %s"  % (ip_format, ip_address)
-	
+	tempDict = {}
 	if shell == "y":
 		TCPSCAN = "gnome-terminal -x " + TCPSCAN
 		UDPSCAN = "gnome-terminal -x " + UDPSCAN
