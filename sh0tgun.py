@@ -25,7 +25,7 @@ targets = []
 procs = 1
 serviceDict = {}
 logger = None
-counter = {
+enumCounter = {
 	"http":0, 
 	"ssl/http":0, 
 	"https":0, 
@@ -42,7 +42,21 @@ counter = {
 	"mysql":0,
 	"drda":0,
 	"ms-wbt-server":0,
-	"rmiregistry":0
+	"rmiregistry":0,
+	"total":0
+}
+pwCounter = {
+    "total":0,
+    "http":0,
+    "ssl/http":0,
+    "https":0,
+    "ssh":0,
+    "ftp":0,
+    "ms-sql":0, 
+    "ms-sql-s":0,
+    "mysql":0,
+    "vnc":0,
+    "vnc-http":0
 }
 pool = None
 
@@ -348,9 +362,10 @@ def enumServices():
 								print (serv)
 						choice = input('>>')
 					log("INFO: Starting enumeration for " + choice)
-					global counter
+					global enumCounter
 					for serv in serviceDict[choice]:
-						counter[choice] += 1
+						enumCounter[choice] += 1
+						enumCounter["total"] += 1
 						pool.apply_async(knownServices[choice], args=(serv[0], serv[1], choice), callback=enumCallback)
 	
 		elif menuChoice == 3:
@@ -398,7 +413,6 @@ def pwGuess():
 		"PW guess All"
 	]
 	
-	pool = Pool(processes=procs)
 	message = ""	
 	menuChoice = ""
 	while menuChoice != 0:
@@ -428,10 +442,6 @@ def pwGuess():
 						log("INFO: Starting guess for " + choice)
 						for serv in serviceDict[choice]:
 							pool.apply_async(knownServices[choice], args=(serv[0], serv[1]))
-						pool.close()
-						pool.join()
-						log("INFO: PW Guess of " + choice + " has completed. See " + root + "password/ for details")
-						input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
 	
 		elif menuChoice == 3:
 			if serviceDict == {}:
@@ -449,8 +459,7 @@ def pwGuess():
 					if services in serviceDict:
 						for serv in serviceDict[services]:
 							pool.apply_async(knownServices[services], args=(serv[0], serv[1]))
-				pool.close()
-				pool.join()
+				
 				log("INFO: Guessing has completed. See " + root + "password/ for details")
 				input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
 		else:
@@ -851,12 +860,27 @@ def vncPW(ip, port):
 ##########################################################
 
 def enumCallback(retVal):
-	global counter
-	counter[retVal[0] ] -= 1
+	global enumCounter
+	enumCounter[retVal[0] ] -= 1
 	print ("Enumeration of " + retVal[0] + " has completed for " +retVal[1] + ":" + retVal[2])
-	if counter[retVal[0] ] == 0:
-		print ("Enumeration of all " + retVal[0] + " services has completed. See " + root + "discovery/ for details")
-		
+	if enumCounter[retVal[0] ] == 0:
+		print ("Enumeration of all " + retVal[0] + " instances has completed. See " + root + "discovery/ for details")
+		input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
+	if enumCounter["total"] == 0:
+	    print ("Guessing of all services has completed. See " + root + "discovery/ for details")
+	    input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
+	
+def pwCallback(retVal):
+    global pwCounter
+	pwCounter[retVal[0] ] -= 1
+	print ("Guessing of " + retVal[0] + " has completed for " +retVal[1] + ":" + retVal[2])
+	if pwCounter[retVal[0] ] == 0:
+		print ("Guessing of all " + retVal[0] + " instances has completed. See " + root + "password/ for details")
+		input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
+	if pwCounter["total"] == 0:
+	    print ("Guessing of all services has completed. See " + root + "password/ for details")
+	    input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
+	
 def num(s):
 	try:
 		return int(s)
@@ -895,6 +919,17 @@ def initDirs():
 	checkandmk(root + 'discovery'+sep+'drda')
 	checkandmk(root + 'discovery'+sep+'rdp')
 	checkandmk(root + 'discovery'+sep+'rmi')
+	checkandmk(root + 'password'+sep+'ftp')
+	checkandmk(root + 'password'+sep+'smb')
+	checkandmk(root + 'password'+sep+'smtp')
+	checkandmk(root + 'password'+sep+'ssh')
+	checkandmk(root + 'password'+sep+'mssql')
+	checkandmk(root + 'password'+sep+'db2')
+	checkandmk(root + 'password'+sep+'oracle')
+	checkandmk(root + 'password'+sep+'http')
+	checkandmk(root + 'password'+sep+'vnc')
+	checkandmk(root + 'password'+sep+'mysql')
+	checkandmk(root + 'password'+sep+'rdp')
 	return
 
 def checkandmk(path):
