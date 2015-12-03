@@ -66,7 +66,7 @@ pool = None
 # Main functions
 ##########################################################	
 
-def run(argv):
+def run(args):
 	print ("***************************")
 	print ("***	   SH0TGUN	   ***")
 	print ("***					 ***")
@@ -75,7 +75,10 @@ def run(argv):
 	print ("***************************")
 	print ("")
 	
-	message = initialize()
+	if len(args)> 1:
+		message = testInit()
+	else:
+		message = initialize()
 	
 	options = [
 		"Manage Targets",
@@ -108,7 +111,28 @@ def run(argv):
 			message = "This is the main menu!"
 		else:
 			message = "Enter a correct option"
-		
+
+def testInit():
+
+	global root
+	root = "/root/TEST/"
+	with open(root+"serviceDict.dat","rb") as f:
+		global serviceDict
+		serviceDict = pickle.load(f)
+	f.close()
+	initDirs()
+	global logger
+	logger = open(root+"reconscan.log", 'w+')
+	logger.close
+	message += "\nProject root directories successfully created\n"
+	procs = 4
+	global pool
+	pool = Pool(processes=procs)
+	message = "Project root set to: " + root
+	message += "\nProject root directories successfully created\n"
+	message += "\nProcesses set to " + str(procs)
+	return (message)
+	
 def initialize():
 	global root
 	r = "/THIS/IS/NOT/A/DIRECTORY!!!!/"
@@ -138,8 +162,11 @@ def initialize():
 	
 	global procs
 	p = -1
-	while p < 1 or math.isnan(p):
-		p = int(input("Enter the MAXIMUM number of conncurrent processes to run (standard is 4): "))
+	while p < 1:
+		p = input("Enter the MAXIMUM number of conncurrent processes to run (standard is 4): ")
+		p = num(p)
+		if p is None:
+			p= -1
 	procs = p
 	global pool
 	pool = Pool(processes=procs)
