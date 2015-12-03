@@ -25,8 +25,27 @@ targets = []
 procs = 1
 serviceDict = {}
 logger = None
-counter = {}
+counter = {
+	"http":0, 
+	"ssl/http":0, 
+	"https":0, 
+	"ssh":0, 
+	"snmp":0, 
+	"smtp":0, 
+	"domain":0, 
+	"ftp":0, 
+	"microsoft-ds":0, 
+	"msrpc":0,
+	"netbios-ssn":0,
+	"ms-sql":0, 
+	"ms-sql-s":0,
+	"mysql":0,
+	"drda":0,
+	"ms-wbt-server":0,
+	"rmiregistry":0
+}
 pool = Pool(processes=1)
+
 
 
 ##########################################################
@@ -349,11 +368,12 @@ def enumServices():
 								print (serv)
 						choice = input('>>')
 					log("INFO: Starting enumeration for " + choice)
+					global counter
 					for serv in serviceDict[choice]:
-						pool.apply_async(knownServices[choice], args=(serv[0], serv[1]))
+						counter[choice] += 1
+						pool.apply_async(knownServices[choice], args=(serv[0], serv[1], choice), callback=enumCallback)
 
 					log("INFO: Enumeration of " + choice + " has completed. See " + root + "discovery/ for details")
-					input("\nPress ENTER to continue.  Log data available at " + root + "reconscan.log")
 	
 		elif menuChoice == 3:
 			if serviceDict == {}:
@@ -367,12 +387,14 @@ def enumServices():
 						log(" -"+serv+": "+ temp)
 			
 				log("Starting Enumeration")
+				jobs = []
 				for services in knownServices:
 					if services in serviceDict:
 						for serv in serviceDict[services]:
-							pool.apply_async(knownServices[services], args=(serv[0], serv[1]))
-				pool.close()
-				pool.join()
+							jobs.append(pool.apply_async(knownServices[services], args=(serv[0], serv[1], services)))
+				
+				for job in jobs:
+					job.wait()
 				log("INFO: Enumeration has completed. See " + root + "discovery/ for details")
 				input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
 	
@@ -602,7 +624,7 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 # Enum functions
 ##########################################################
 
-def drdaEnum(ip_address, port):
+def drdaEnum(ip_address, port, service):
 	log("INFO: Detected DRDA on " + ip_address + ":" + port)
 	log("INFO: Performing nmap DRDA script scan for " + ip_address + ":" + port)
 	DRDASCAN = nse.DRDA(ip_address, port)	
@@ -614,9 +636,9 @@ def drdaEnum(ip_address, port):
 		f.close
 	except:
 		log("ERROR: NSE failed for DRDA " + ip + ":"+ port)
-	return
+	return [service, ip_address, port]
 	
-def rdpEnum(ip_address, port):
+def rdpEnum(ip_address, port, service):
 	log("INFO: Detected RDP on " + ip_address + ":" + port)
 	log("INFO: Performing nmap RDP script scan for " + ip_address + ":" + port)
 	RDPSCAN = nse.Remote_Desktop(ip_address, port)	
@@ -628,9 +650,9 @@ def rdpEnum(ip_address, port):
 		f.close
 	except:
 		log("ERROR: NSE failed for RDP " + ip + ":"+ port)
-	return
+	return [service, ip_address, port]
 	
-def rmiEnum(ip_address, port):
+def rmiEnum(ip_address, port, service):
 	log("INFO: Detected JAVA RMI on " + ip_address + ":" + port)
 	log("INFO: Performing nmap RMI script scan for " + ip_address + ":" + port)
 	RMISCAN = nse.RMI_Registry(ip_address, port)	
@@ -642,9 +664,9 @@ def rmiEnum(ip_address, port):
 		f.close
 	except:
 		log("ERROR: NSE failed for DRDA " + ip + ":"+ port)
-	return
+	return [service, ip_address, port]
 
-def dnsEnum(ip_address, port):
+def dnsEnum(ip_address, port, service):
 	log("INFO: Detected DNS on " + ip_address + ":" + port)
 	if port.strip() == "53":
 		dnsrecon.main(["",ip_address])
@@ -661,9 +683,9 @@ def dnsEnum(ip_address, port):
 		f.close
 	except:
 		log("ERROR: NSE failed for snmp " + ip + ":"+ port)
-	return
+	return [service, ip_address, port]
 
-def httpEnum(ip_address, port):
+def httpEnum(ip_address, port, service):
 	log("INFO: Detected http on " + ip_address + ":" + port)
 	log("INFO: Performing nmap web script scan for " + ip_address + ":" + port + " see directory/http for results")
 	#HTTPSCAN = "nmap -Pn -vv -p %s --script=http-vhosts,http-userdir-enum,http-apache-negotiation,http-backup-finder,http-config-backup,http-default-accounts,http-email-harvest,http-methods,http-method-tamper,http-passwd,http-robots.txt -oN discovery/http/%s_http.nmap %s" % (port, ip_address, ip_address)
@@ -690,9 +712,9 @@ def httpEnum(ip_address, port):
 		niktoout.close()
 	except:
 		log("ERROR: NIKTO failed for " + ip + ":"+ port)
-	return
+	return  [service, ip_address, port]
 
-def httpsEnum(ip_address, port):
+def httpsEnum(ip_address, port, service):
 	log("INFO: Detected https on " + ip_address + ":" + port)
 	log("INFO: Performing nmap web script scan for " + ip_address + ":" + port)
 	HTTPSSCAN = "nmap -Pn -vv -p %s --script=http-vhosts,http-userdir-enum,http-apache-negotiation,http-backup-finder,http-config-backup,http-default-accounts,http-email-harvest,http-methods,http-method-tamper,http-passwd,http-robots.txt -oN discovery/http/%s_https.nmap %s" % (port, ip_address, ip_address)
@@ -718,9 +740,9 @@ def httpsEnum(ip_address, port):
 		niktoout.close()
 	except:
 		log("ERROR: NIKTO failed for " + ip + ":"+ port)
-	return
+	return  [service, ip_address, port]
 
-def mssqlEnum(ip_address, port):
+def mssqlEnum(ip_address, port, service):
 	log("INFO: Detected MS-SQL on " + ip_address + ":" + port)
 	log("INFO: Performing nmap mssql script scan for " + ip_address + ":" + port)
 	MSSQLSCAN = "nmap -vv -sV -Pn -p %s --script=ms-sql-info,ms-sql-config,ms-sql-dump-hashes --script-args=mssql.instance-port=1433,mssql.username-sa,mssql.password-sa -oX discovery/mssql/%s_mssql.xml %s" % (port, ip_address, ip_address)
@@ -733,9 +755,9 @@ def mssqlEnum(ip_address, port):
 	except:
 		log("ERROR: NSE failed for mssql" + ip + ":"+ port)
 
-	return
+	return [service, ip_address, port]
 
-def mysqlEnum(ip_address, port):
+def mysqlEnum(ip_address, port, service):
 	log("INFO: Detected mySQL on " + ip_address + ":" + port)
 	log("INFO: Performing nmap mysql script scan for " + ip_address + ":" + port)
 	# mysql-vuln-cve2012-2122
@@ -750,9 +772,9 @@ def mysqlEnum(ip_address, port):
 		log("ERROR: NSE failed for mysql" + ip + ":"+ port)
 
 
-	return
+	return [service, ip_address, port]
 
-def sshEnum(ip_address, port):
+def sshEnum(ip_address, port, service):
 	log("INFO: Detected SSH on " + ip_address + ":" + port)
 	# sshrecon.main(["", ip_address, port])				 NOTHING HERE YET
 	log("INFO: Performing nmap SSH script scan for " + ip_address + ":" + port)
@@ -765,9 +787,9 @@ def sshEnum(ip_address, port):
 		f.close
 	except:
 		log("ERROR: NSE failed for ssh " + ip + ":"+ port)
-	return
+	return [service, ip_address, port]
 
-def snmpEnum(ip_address, port):
+def snmpEnum(ip_address, port, service):
 	log("INFO: Detected snmp on " + ip_address + ":" + port)
 	snmprecon.main(["", ip_address])
 	
@@ -782,9 +804,9 @@ def snmpEnum(ip_address, port):
 	except:
 		log("ERROR: NSE failed for snmp " + ip + ":"+ port)
 		
-	return
+	return [service, ip_address, port]
 
-def smtpEnum(ip_address, port):
+def smtpEnum(ip_address, port, service):
 	log("INFO: Detected smtp on " + ip_address + ":" + port)
 	smtprecon.main(["", ip_address, port])
 	
@@ -799,18 +821,18 @@ def smtpEnum(ip_address, port):
 	except:
 		log("ERROR: NSE failed for smtp " + ip + ":"+ port)
 		
-	return
+	return [service, ip_address, port]
 
-def smbEnum(ip_address, port):
+def smbEnum(ip_address, port, service):
 	log("INFO: Detected SMB on " + ip_address + ":" + port)
 	smbrecon.main(["",ip_address, port,root])
-	return
+	return [service, ip_address, port]
 
-def ftpEnum(ip_address, port):
+def ftpEnum(ip_address, port, service):
 	log("INFO: Detected ftp on " + ip_address + ":" + port)
 	ftprecon.main(["",ip_address,port,root])
 
-	return
+	return [service, ip_address, port]
 	
 ##########################################################
 # PW Guess functions
@@ -850,6 +872,13 @@ def vncPW(ip, port):
 # Utility functions
 ##########################################################
 
+def enumCallback(retVal):
+	global counter
+	counter[retVal[0] ] -= 1
+	print ("Enumeration of " + retVal[0] + " has completed for " +retVal[1] + ":" + retVal[2])
+	if counter[retVal[0] ] == 0:
+		print ("Enumeration of " + retVal[0] + " has completed. See " + root + "discovery/ for details")
+		
 def num(s):
 	try:
 		return int(s)
