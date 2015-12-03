@@ -4,8 +4,8 @@ import sys
 
 
 def main(args):
-	if len(args) != 2:
-		print("Usage: dnsrecon.py <ip address>")
+	if len(args) != 3:
+		print("Usage: dnsrecon.py <ip address> <root>")
 		return
 
 	# ip_address = sys.argv[1]
@@ -24,23 +24,24 @@ def main(args):
 	#	 dnsf.close
 
 	ip_address = args[1]
-
-	host = "host " + ip_address + " | grep -v 'not found'"
+	root = args[2]
 	try:
+		host = "host " + ip_address
 		host = subprocess.check_output(host, shell=True).strip()
-		host = host.decode('utf-8')
-		if host != "":
+		try:
 			dnsrecon = "dnsrecon -d %s -t axfr" %(ip_address)
 			dnsrecon = subprocess.check_output(dnsrecon, shell=True)
-			print ("DNSRecon run for %s" ) % (ip_address)
-			out = "discover/dns/" + ip_address + "_dnsrecon.txt"
+			dnsrecon = dnsrecon.decode('utf-8')
+			print ("DNSRecon run for " + ip_address + ". See " + root + "discovery/dns/ for results.")
+			out = root + "discovery/dns/" + ip_address + "_dnsrecon.txt"
 			dnsout = open(out, "w+")
 			dnsout.write(dnsrecon)
 			dnsout.close()
-		else:
-			print ("INFO: No host found for " + ip_address)
+		except:
+			print ("ERROR: DNSrecon failed for " + ip_address)
+		
 	except:
-		print ("ERROR: DNSrecon failed for " + ip_address)
+		print ("INFO: No host found for " + ip_address)
 
 if __name__=='__main__':
 	main(sys.argv)

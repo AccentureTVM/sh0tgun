@@ -50,11 +50,6 @@ def main(args):
 		for line in lines:
 			if "VULNERABLE" in line and "NOT VULNERABLE" not in line:
 				print("FOUND: SMB VULN on " +ip+ ": " +line + " | check discovery/smb for full results")
-		#	if msf:
-		#		if "MS08-067:" in line and "VULNERABLE" in line and "NOT" not in line:
-		#			print("Exploiting MS08-067")
-		#			cmd = "gnome-terminal -x msfcli exploit/windows/smb/ms08_067_netapi RHOST=" + ip + " E"
-		#			subprocess.call(cmd.split(" "))
 		resultsfile = root + "discovery/smb/" + ip + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseresults)

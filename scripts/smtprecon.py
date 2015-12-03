@@ -5,7 +5,7 @@ import subprocess
 
 def main(args):
 	if len(args) != 3:
-		print("Usage: smtprecon.py <ip address>")
+		print("Usage: smtprecon.py <ip address> <port>")
 		return
 
 	#SMTPSCAN = "nmap -vv -sV -Pn -p 25,465,587 --script=smtp-vuln* %s" % (ip)
