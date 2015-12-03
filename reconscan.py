@@ -53,8 +53,8 @@ pool = None
 ##########################################################	
 
 def run(argv):
-    message = initialize()
-    
+	message = initialize()
+	
 	options = [
 		"Manage Targets",
 		"Run Nmap",
@@ -87,40 +87,40 @@ def run(argv):
 			message = "Enter a correct option"
 		
 def initialize():
-    global root
-    r = "/THIS/IS/NOT/A/DIRECTORY!!!!/"
-    while not os.path.exists(r):
-        v = "n"
-        while v!="y":
-            r = input("Enter valid project root folder: ")
-            print (r)
-            v = input("Is this correct? (Y/N): ")
-            v = v[0].lower()
-    if r[-1] != "/":
-        r = r+"/"
-    root = r
-    if os.path.isfile(root+"serviceDict.dat"):
-        v = input("Previous NMAP Data was found here.  Would you like to load? If not, all previous data will be erased upon directory initialization (2). (Y/N): ")
-        if v[0].lower() == "y":
-            with open(root+"serviceDict.dat","rb") as f:
-                global serviceDict
-                serviceDict = pickle.load(f)
-            f.close()
-    message = "Project root set to: " + root
-    initDirs()
-    global logger
-    logger = open(root+"reconscan.log", 'w+')
-    logger.close
-    message += "\nProject root directories successfully created\n"
-    
-    global procs
-    p = -1
-    while p < 1 or math.isnan(p):
-        p = int(input("Enter the MAXIMUM number of conncurrent processes to run (standard is 4): "))
-    procs = p
-    global pool
-    pool = Pool(processes=procs)
-    message += "\nProcesses set to " + str(procs)
+	global root
+	r = "/THIS/IS/NOT/A/DIRECTORY!!!!/"
+	while not os.path.exists(r):
+		v = "n"
+		while v!="y":
+			r = input("Enter valid project root folder: ")
+			print (r)
+			v = input("Is this correct? (Y/N): ")
+			v = v[0].lower()
+	if r[-1] != "/":
+		r = r+"/"
+	root = r
+	if os.path.isfile(root+"serviceDict.dat"):
+		v = input("Previous NMAP Data was found here.  Would you like to load? If not, all previous data will be erased upon directory initialization (2). (Y/N): ")
+		if v[0].lower() == "y":
+			with open(root+"serviceDict.dat","rb") as f:
+				global serviceDict
+				serviceDict = pickle.load(f)
+			f.close()
+	message = "Project root set to: " + root
+	initDirs()
+	global logger
+	logger = open(root+"reconscan.log", 'w+')
+	logger.close
+	message += "\nProject root directories successfully created\n"
+	
+	global procs
+	p = -1
+	while p < 1 or math.isnan(p):
+		p = int(input("Enter the MAXIMUM number of conncurrent processes to run (standard is 4): "))
+	procs = p
+	global pool
+	pool = Pool(processes=procs)
+	message += "\nProcesses set to " + str(procs)
 	
 def manageTargets():
 	options = [
