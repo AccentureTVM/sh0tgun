@@ -714,7 +714,7 @@ def httpEnum(ip_address, port, service):
 		log("ERROR: NIKTO failed for " + ip + ":"+ port)
 	return  [service, ip_address, port]
 
-def httpsEnum(ip_address, port, service,True):
+def httpsEnum(ip_address, port, service):
 	log("INFO: Detected https on " + ip_address + ":" + port)
 	log("INFO: Performing nmap web script scan for " + ip_address + ":" + port)
 	HTTPSSCAN = "nmap -Pn -vv -p %s --script=http-vhosts,http-userdir-enum,http-apache-negotiation,http-backup-finder,http-config-backup,http-default-accounts,http-email-harvest,http-methods,http-method-tamper,http-passwd,http-robots.txt -oN discovery/http/%s_https.nmap %s" % (port, ip_address, ip_address)
@@ -728,7 +728,7 @@ def httpsEnum(ip_address, port, service,True):
 		log("ERROR: NSE failed for https " + ip + ":"+ port)
 
 	log("INFO: Using Dirbuster for " + ip_address + ":" + port + " see directory/http for results")
-	dirbust.main(["",ip_address,port])
+	dirbust.main(["",ip_address,port, True])
 
 	log("INFO: Performing NIKTO scan for " + ip_address + ":" + port + " see directory/http for results")
 	NIKTOSCAN = "nikto -host %s -p %s" % (ip_address, port)
