@@ -19,7 +19,7 @@ def mssqlCrack(ip_address, port, root):
 	print ("SOMETHING HAPPENED")
 	MEDUSA = "medusa -h %s -U %s -P %s -v6 -n %s -e ns -M mssql > %sdiscovery/mssql/medusa_%s.txt" % (ip_address, "/root/wordlists/admin_usernames.txt", "/root/wordlists/rockyou.txt", port, root, ip_address)
 	print (MEDUSA)
-	print ("WHAT ABOUT ME")
+	
 	results = subprocess.check_output(MEDUSA, shell=True)
 	results = results.decode('utf-8')
 	results = results.split("\n")
