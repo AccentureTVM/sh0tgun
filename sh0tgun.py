@@ -434,8 +434,8 @@ def pwGuess():
 		"vnc-http":vncPW
 	}
 	medusaOptions = {
-		"users":"-U wordlists/admin_usernames.txt",
-		"pws": "-P wordlists/pw.txt",
+		"users":"-U wordlists/test.txt",
+		"pws": "-P wordlists/test.txt",
 		"jb": "-e ns",
 		"verbosity": "6",
 	}
