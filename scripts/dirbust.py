@@ -5,11 +5,17 @@ import os
 import subprocess
 
 def main(args):
-	if len(args) < 2 :
-		print("Usage: dirbust.py <target url>")
+	if len(args) < 4 :
+		print("Usage: dirbust.py <target url> <root folder>")
 		return
 
 	url = str(args[1])
+	root = args[2]
+	ssl = args[3]
+	if ssl == True:
+		ssl = "https://"
+	else:
+		ssl = "http://"
 	folders = ["/usr/share/dirb/wordlists", "/usr/share/dirb/wordlists/vulns"]
 
 	found = []
@@ -17,8 +23,8 @@ def main(args):
 	for folder in folders:
 		for filename in os.listdir(folder):
 
-			outfile = " -o " + "discovery/dirb/" + url + "_dirb_" + filename
-			DIRBSCAN = "dirb %s %s/%s %s -S -r" % (url, folder, filename, outfile)
+			outfile = " -o " + root + "discovery/dirb/" + url + "_dirb_" + filename
+			DIRBSCAN = "dirb %s%s %s/%s %s -S -r" % (ssl,url, folder, filename, outfile)
 			try:
 				results = subprocess.check_output(DIRBSCAN, shell=True)
 				results = results.decode('utf-8')
