@@ -433,6 +433,12 @@ def pwGuess():
 		"vnc":vncPW,
 		"vnc-http":vncPW
 	}
+	medusaOptions = {
+		"users":"-U wordlists/admin_usernames.txt",
+		"pws": "-P wordlists/pw.txt",
+		"jb": "-e ns",
+		"verbosity": "6",
+	}
 	options = [
 		"Change medusa settings",
 		"PW guess specific service",
@@ -469,8 +475,10 @@ def pwGuess():
 						for serv in serviceDict[choice]:
 							pwCounter[choice] += 1
 							pwCounter["total"] += 1
-							pool.apply_async(knownServices[choice], args=(serv[0], serv[1]), callback = pwCallback)
-	
+							pool.apply_async(knownServices[choice], args=(serv[0], serv[1], choice, medusaOptions), callback = pwCallback)
+					
+					input("Press ENTER to go back to the main menu\n\n")
+
 		elif menuChoice == 3:
 			if serviceDict == {}:
 				message = "No services detected: Please run NMAP scans first"
@@ -857,39 +865,39 @@ def ftpEnum(ip_address, port, service):
 # PW Guess functions
 ##########################################################
 		
-def httpPW(ip, port, service):
+def httpPW(ip, port, service, options):
 	log("INFO: Starting password guess for http web form at " + ip + ":" + port)
-	medusa.webformCrack(ip, port, root)
+	medusa.webformCrack(ip, port, root, options)
 	log("INFO: Password guess for http at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
 	return [service, ip, port]
 	
-def sshPW(ip, port, service):
+def sshPW(ip, port, service, options):
 	log("INFO: Starting password guess for ssh  at " + ip + ":" + port)
-	medusa.sshCrack(ip, port, root)
+	medusa.sshCrack(ip, port, root, options)
 	log("INFO: Password guess for ssh at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
 	return [service, ip, port]
 	
-def ftpPW(ip, port, service):
+def ftpPW(ip, port, service, options):
 	log("INFO: Starting password guess for ftp at " + ip + ":" + port)
-	medusa.ftpCrack(ip, port, root)
+	medusa.ftpCrack(ip, port, root, options)
 	log("INFO: Password guess for ftp at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
 	return [service, ip, port]
 
-def mssqlPW(ip, port, service):
+def mssqlPW(ip, port, service, options):
 	log("INFO: Starting password guess for MS SQL at " + ip + ":" + port)
-	medusa.mssqlCrack(ip, port, root)
+	medusa.mssqlCrack(ip, port, root, options)
 	log("INFO: Password guess for mssql at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
 	return [service, ip, port]
 
-def mysqlPW(ip, port, service):
+def mysqlPW(ip, port, service, options):
 	log("INFO: Starting password guess for MySQL at " + ip + ":" + port)
-	medusa.mysqlCrack(ip, port, root)
+	medusa.mysqlCrack(ip, port, root, options)
 	log("INFO: Password guess for mysql at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
 	return [service, ip, port]
 	
-def vncPW(ip, port, service):
+def vncPW(ip, port, service, options):
 	log("INFO: Starting password guess for VNC at " + ip + ":" + port)
-	medusa.vncCrack(ip, port, root)
+	medusa.vncCrack(ip, port, root, options)
 	log("INFO: Password guess for vnc at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
 	return [service, ip, port]
 

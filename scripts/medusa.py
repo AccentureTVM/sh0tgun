@@ -3,8 +3,9 @@
 import subprocess
 import sys
 
-def sshCrack(ip_address, port, root):
-	MEDUSA = "medusa -h %s -U %s -P %s -v6 -n %s -e ns -M ssh > " + root + "password/ssh/medusa_%s.txt" % (ip_address, "/root/wordlists/admin_usernames.txt", "/root/wordlists/rockyou.txt", port, ip_address)
+def sshCrack(ip_address, port, root, options):
+	MEDUSA = "medusa -h " + ip_address + " " + options["users"] + " " + options["pws"] +  " -v" + options["verbosity"] + " -n " + port + " " + options["jb"] + " -M mssql > " + root + "password/mssql/medusa_" + ip_address + ".txt"
+	print (MEDUSA)
 	results = subprocess.check_output(MEDUSA, shell=True)
 	results = results.decode('utf-8')
 	results = results.split("\n")
@@ -16,8 +17,10 @@ def sshCrack(ip_address, port, root):
 	fo.close()
 	return
 
-def mssqlCrack(ip_address, port, root):
-	MEDUSA = "medusa -h %s -U %s -P %s -v6 -n %s -e ns -M mssql > %spassword/mssql/medusa_%s.txt" % (ip_address, "/root/wordlists/admin_usernames.txt", "/root/wordlists/pw.txt", port, root, ip_address)	
+
+def mssqlCrack(ip_address, port, root, options):
+	MEDUSA = "medusa -h " + ip_address + " " + options["users"] + " " + options["pws"] +  " -v" + options["verbosity"] + " -n " + port + " " + options["jb"] + " -M mssql > " + root + "password/mssql/medusa_" + ip_address + ".txt"
+	print (MEDUSA)
 	results = subprocess.check_output(MEDUSA, shell=True)
 	results = results.decode('utf-8')
 	results = results.split("\n")
@@ -29,8 +32,8 @@ def mssqlCrack(ip_address, port, root):
 	fo.close()
 	return
 
-def mysqlCrack(ip_address, port, root):
-	MEDUSA = "medusa -h %s -U %s -P %s -v6 -n %s -e ns -M mysql  > " + root + "password/mysql/medusa_%s.txt" % (ip_address, "/root/wordlists/admin_usernames.txt", "/root/wordlists/rockyou.txt", port, ip_address)
+def mysqlCrack(ip_address, port, root, options):
+	MEDUSA = "medusa -h " + ip_address + " " + options["users"] + " " + options["pws"] +  " -v" + options["verbosity"] + " -n " + port + " " + options["jb"] + " -M mssql > " + root + "password/mssql/medusa_" + ip_address + ".txt"
 	print (MEDUSA)
 	results = subprocess.check_output(MEDUSA, shell=True)
 	results = results.decode('utf-8')
@@ -43,8 +46,9 @@ def mysqlCrack(ip_address, port, root):
 	fo.close()
 	return
 
-def webformCrack(ip_address, port, root):
-	MEDUSA = "medusa -h %s -U %s -P %s -v6 -n %s -e ns -M web-form  > " + root + "password/http/medusa_%s.txt" % (ip_address, "/root/wordlists/admin_usernames.txt", "/root/wordlists/rockyou.txt", port, ip_address)
+def webformCrack(ip_address, port, root, options):
+	MEDUSA = "medusa -h " + ip_address + " " + options["users"] + " " + options["pws"] +  " -v" + options["verbosity"] + " -n " + port + " " + options["jb"] + " -M mssql > " + root + "password/mssql/medusa_" + ip_address + ".txt"
+	print (MEDUSA)
 	results = subprocess.check_output(MEDUSA, shell=True)
 	results = results.decode('utf-8')
 	results = results.split("\n")
@@ -56,8 +60,9 @@ def webformCrack(ip_address, port, root):
 	fo.close()
 	return
 
-def ftpCrack(ip_address, port, root):
-	MEDUSA = "medusa -h %s -U %s -P %s -v6 -n %s -e ns -M ftp > " + root + "password/ftp/medusa_%s.txt" % (ip_address, "/root/wordlists/admin_usernames.txt", "/root/wordlists/rockyou.txt", port, ip_address)
+def ftpCrack(ip_address, port, root, options):
+	MEDUSA = "medusa -h " + ip_address + " " + options["users"] + " " + options["pws"] +  " -v" + options["verbosity"] + " -n " + port + " " + options["jb"] + " -M mssql > " + root + "password/mssql/medusa_" + ip_address + ".txt"
+	print (MEDUSA)
 	results = subprocess.check_output(MEDUSA, shell=True)
 	results = results.decode('utf-8')
 	results = results.split("\n")
@@ -69,8 +74,9 @@ def ftpCrack(ip_address, port, root):
 	fo.close()
 	return
 
-def vncCrack(ip_address, port, root):
-	MEDUSA = "medusa -h %s -U %s -P %s -v6 -n %s -e ns -M vnc > " + root + "password/vnc/medusa_%s.txt" % (ip_address, "/root/wordlists/admin_usernames.txt", "/root/wordlists/rockyou.txt", port, ip_address)
+def vncCrack(ip_address, port, root, options):
+	MEDUSA = "medusa -h " + ip_address + " " + options["users"] + " " + options["pws"] +  " -v" + options["verbosity"] + " -n " + port + " " + options["jb"] + " -M mssql > " + root + "password/mssql/medusa_" + ip_address + ".txt"
+	print (MEDUSA)
 	results = subprocess.check_output(MEDUSA, shell=True)
 	results = results.decode('utf-8')
 	results = results.split("\n")
