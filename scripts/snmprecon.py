@@ -3,12 +3,13 @@ import subprocess
 import sys
 
 def main(args):
-	if len(args) != 2:
-		print("Usage: snmprecon.py <ip address>")
+	if len(args) != 3:
+		print("Usage: snmprecon.py <ip address> <root>")
 		return
 
 	snmpdetect = 0
 	ip_address = args[1]
+	root = args[2]
 
 	ONESIXONESCAN = "onesixtyone %s" % (ip_address)
 	

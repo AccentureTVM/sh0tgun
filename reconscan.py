@@ -669,7 +669,7 @@ def rmiEnum(ip_address, port, service):
 def dnsEnum(ip_address, port, service):
 	log("INFO: Detected DNS on " + ip_address + ":" + port)
 	if port.strip() == "53":
-		dnsrecon.main(["",ip_address])
+		dnsrecon.main(["",ip_address, root])
 	else:
 		log("ERROR: Can only run dns enum on port 53")
 	
@@ -791,7 +791,7 @@ def sshEnum(ip_address, port, service):
 
 def snmpEnum(ip_address, port, service):
 	log("INFO: Detected snmp on " + ip_address + ":" + port)
-	snmprecon.main(["", ip_address])
+	snmprecon.main(["", ip_address, root])
 	
 	log("INFO: Performing nmap snmp script scan for " + ip_address + ":" + port)
 	SNMPSCAN = nse.SNMP(ip_address, port)	
