@@ -266,6 +266,7 @@ def runNmap():
 				v = v[0].lower()
 	
 			jobs = [pool.apply_async(nmapScan, args=(ip,nmapOptions["timing"],nmapOptions["verbosity"],nmapOptions["port"],nmapOptions["versioning"],nmapOptions["online"],nmapOptions["TCP"],nmapOptions["OS"],nmapOptions["custom"],nmapOptions["Pn"],nmapOptions["Open"],"TCP",shell)) for ip in targets]
+			
 			global serviceDict
 			for p in jobs:
 				temp = p.get()
@@ -570,7 +571,7 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 	if type == "TCP":
 		log("INFO: Running TCP nmap scans for " + ip_address)
 		try:
-			subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
+			subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT, stdout=subprocess.STDOUT)
 			try:
 				fo = open(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_format+".csv", 'w+')
 				tempDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_format+".xml", fo)
@@ -584,7 +585,7 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 	if type == "UDP":
 		log("INFO: Running UDP nmap scans for " + ip_address)
 		try:
-			subprocess.check_output(UDPSCAN, shell=True, stderr=subprocess.STDOUT)
+			subprocess.check_output(UDPSCAN, shell=True, stderr=subprocess.STDOUT, stdout=subprocess.STDOUT)
 			try:
 				fo = open(root + "discovery"+sep+"nmap"+sep+"udp/udp_"+ip_format+".csv", 'w+')
 				fo.close()
