@@ -72,7 +72,8 @@ def run(argv):
 	]
 	menuChoice = ""
 	while 1 == 1:
-		menuChoice = executeMenu("",message,options)
+		menuChoice =q executeMenu("",message,options)
+		message = ""
 		if menuChoice == 1:
 			manageTargets()
 		elif menuChoice == 2:
@@ -210,7 +211,6 @@ def runNmap():
 		"Open" : "--open"
 	}
 	
-	pool = Pool(processes=procs)
 	title = "nmap -" + nmapOptions["verbosity"] + " -T " + str(nmapOptions["timing"]) + " -p " + nmapOptions["port"] + " -s" + nmapOptions["TCP"] + nmapOptions["versioning"] + " " + nmapOptions["Pn"] + " " + nmapOptions["Open"] + " " + nmapOptions["OS"] + " " + nmapOptions["custom"] + " -oA " + root + "discovery/nmap/tcp ip"
 	options = [
 		"Set NMAP options",
@@ -245,9 +245,6 @@ def runNmap():
 					else:
 						serviceDict[key] = temp[key]
 		
-			pool.close()
-			pool.join()
-		
 			subprocess.check_output("cat " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_*.csv >> " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
 			subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
 			
@@ -280,9 +277,6 @@ def runNmap():
 						serviceDict[key] = serviceDict[key]+ temp[key]
 					else:
 						serviceDict[key] = temp[key]
-	
-			pool.close()
-			pool.join()
 
 			subprocess.check_output("cat " + root + "discovery"+sep+"nmap"+sep+"udp/udp*.csv >> " + root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
 			subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
@@ -358,8 +352,6 @@ def enumServices():
 					for serv in serviceDict[choice]:
 						counter[choice] += 1
 						pool.apply_async(knownServices[choice], args=(serv[0], serv[1], choice), callback=enumCallback)
-
-					log("INFO: Enumeration of " + choice + " has completed. See " + root + "discovery/ for details")
 	
 		elif menuChoice == 3:
 			if serviceDict == {}:
