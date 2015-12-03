@@ -16,6 +16,7 @@ def sshCrack(ip_address, port, root):
 	return
 
 def mssqlCrack(ip_address, port, root):
+	print ("SOMETHING HAPPENED")
 	MEDUSA = "medusa -h %s -U %s -P %s -v6 -n %s -e ns -M mssql > " + root + "discovery/mssql/medusa_%s.txt" % (ip_address, "/root/wordlists/admin_usernames.txt", "/root/wordlists/rockyou.txt", port, ip_address)
 	print (MEDUSA)
 	results = subprocess.check_output(MEDUSA, shell=True)
