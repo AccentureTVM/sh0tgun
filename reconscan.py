@@ -571,7 +571,6 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 	if type == "TCP":
 		log("INFO: Running TCP nmap scans for " + ip_address)
 		try:
-			print(TCPSCAN)
 			subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
 			try:
 				fo = open(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_format+".csv", 'w+')
