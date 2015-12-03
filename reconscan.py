@@ -121,6 +121,7 @@ def initialize():
 	global pool
 	pool = Pool(processes=procs)
 	message += "\nProcesses set to " + str(procs)
+	print (message)
 	
 def manageTargets():
 	options = [
