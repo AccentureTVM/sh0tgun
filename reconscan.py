@@ -229,7 +229,7 @@ def runNmap():
 				v = input("Do you want to continue? (Y/N): ")
 				v = v[0].lower()
 	
-			jobs = [pool.apply_async(nmapScan, args=(ip,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn,Open,"TCP",shell)) for ip in targets]
+			jobs = [pool.apply_async(nmapScan, args=(ip,nmapOptions["timing"],nmapOptions["verbosity"],nmapOptions["port"],nmapOptions["versioning"],nmapOptions["online"],nmapOptions["TCP"],nmapOptions["OS"],nmapOptions["custom"],nmapOptions["Pn"],nmapOptions["Open"],"TCP",shell)) for ip in targets]
 			global serviceDict
 			for p in jobs:
 				temp = p.get()
@@ -265,7 +265,7 @@ def runNmap():
 				v = input("Do you want to continue? (Y/N): ")
 				v = v[0].lower()
 	
-			jobs = [pool.apply_async(nmapScan, args=(ip,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn,Open,"UDP",shell)) for ip in targets]
+			jobs = [pool.apply_async(nmapScan, args=(ip,nmapOptions["timing"],nmapOptions["verbosity"],nmapOptions["port"],nmapOptions["versioning"],nmapOptions["online"],nmapOptions["TCP"],nmapOptions["OS"],nmapOptions["custom"],nmapOptions["Pn"],nmapOptions["Open"],"TCP",shell)) for ip in targets]
 			global serviceDict
 			for p in jobs:
 				temp = p.get()
