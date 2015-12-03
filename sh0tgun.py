@@ -430,7 +430,7 @@ def pwGuess():
 							pool.apply_async(knownServices[choice], args=(serv[0], serv[1]))
 						pool.close()
 						pool.join()
-						log("INFO: PW Guess of " + choicge + " has completed. See " + root + "password/ for details")
+						log("INFO: PW Guess of " + choice + " has completed. See " + root + "password/ for details")
 						input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
 	
 		elif menuChoice == 3:
