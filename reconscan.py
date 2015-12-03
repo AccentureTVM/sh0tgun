@@ -30,407 +30,269 @@ pool = Pool(processes=1)
 
 
 ##########################################################
-# Menu functions
-##########################################################
+# Main functions
+##########################################################	
 
-def mainMenu(argv):
+def run(argv):
+	options = [
+		"Initialize",
+		"Manage Targets",
+		"Run Nmap",
+		"Enumerate Services",
+		"Password Guess",
+		"Exploit"
+	]
+	message = ""
 	menuChoice = ""
+	while 1 == 1:
+		menuChoice = executeMenu("",message,options)
+		if menuChoice == 1:
+			initialize()
+			message = ""
+		elif menuChoice == 2:
+			manageTargets()
+		elif menuChoice == 3:
+			if len(targets) == 0:
+				message = "There are no targets to scan. Press 2 to add targets"
+			elif root == "root":
+				message = "Project directory has not been intialized. Press 1 to set root folder and initialize"
+			else:
+				runNmap()
+		elif menuChoice == 4:
+			enumServices()
+			message = ""
+		elif menuChoice == 5:
+			pwGuess()
+			message = ""
+		elif menuChoice == 6:
+			exploit()
+			message = ""
+		elif menuChoice == 0:
+			message = "This is the main menu!"
+		else:
+			message = "Enter a correct option"
+		
+def initialize():
+	options = [
+		"Select root directory",
+		"Create project directories and logs",
+		"MultiProcessing settings"
+	]
 	message = ""
-	while (menuChoice != "q"):
-		print(chr(27) + "[2J")
-		print (message + "\n")
-		print ("1) Initialize")
-		print ("2) Manage Targets")
-		print ("3) Run Nmap")
-		print ("4) Enumerate Services")
-		print ("5) Password Guess")
-		print ("6) Exploit")
-		
-		print ("\nQ) Quit\n")
-		menuChoice = input('Option #:')
-		
-		if menuChoice == '':
-			message = "Enter a correct Option"
-		elif menuChoice[0].lower != "q":
-			temp = num(menuChoice)
-			if temp is not None:
-				if temp == 1:
-					initializeMenu()
-				elif temp == 2:
-					targetsMenu()
-				elif temp == 3:
-					if len(targets) == 0:
-						message = "There are no targets to scan. Press 2 to add targets"
-					elif root == "root":
-						message = "Project directory has not been intialized. Press 1 to set root folder and initialize"
-					else:
-						runNmapMenu()
-				elif temp == 4:
-					enumServicesMenu()
-				elif temp == 5:
-					pwMenu()
-				elif temp == 6:
-					exploitMenu()
-				else:
-					menuChioce = ""
-		
-def initializeMenu():
 	menuChoice = ""
-	message = ""
-	while (menuChoice != "q"):
-		print(chr(27) + "[2J")
-		print (message + "\n")
-		print ("1) Select root directory")
-		print ("2) Create project directories and logs")
-		print ("3) Multi Processing settings")
-		
-		print ("\n0) Main Menu")
-		print ("Q) Quit\n")
-		menuChoice = input('>> ')
-		message = ""
-		if menuChoice == '':
-			message = "Enter a correct Option"
-		elif menuChoice[0].lower() != "q":
-			menuChoice = num(menuChoice)
-			if menuChoice is not None:
-				if menuChoice == 1:
-					global root
-			
-					r = "/Users/taapes/dev/TST/"
-					while not os.path.exists(r):
-						v = "n"
-						while v!="y":
-							r = input("Enter valid project root folder: ")
-							print (r)
-							v = input("Is this correct? (Y/N): ")
-							v = v[0].lower()
-					if r[-1] != "/":
-						r = r+"/"
-					root = r
-					if os.path.isfile(root+"serviceDict.dat"):
-						v = input("Previous NMAP Data was found here.  Would you like to load? If not, all previous data will be erased upon directory initialization (2). (Y/N): ")
-						if v[0].lower() == "y":
-							with open(root+"serviceDict.dat","rb") as f:
-								global serviceDict
-								serviceDict = pickle.load(f)
-							f.close()
-					message = "Project root set to: " + root
-				elif menuChoice == 2:
-					init()
-					global logger
-					logger = open(root+"reconscan.log", 'w+')
-					logger.close
-					message = "Project root directories successfully created"
-				elif menuChoice == 3:
-					global procs
-					p = -1
-					while p < 1 or math.isnan(p):
-						p = int(input("Enter the MAXIMUM number of conncurrent processes to run (default is 4): "))
-					procs = p
-					global pool
-					pool = Pool(processes=procs)
-					message = "Processes set to " + str(procs)
-				elif menuChoice == 0:
-					menuChoice = "q"
-				else:
-					message = "Enter a correct option"
-			else:
-				menuChoice = ""
-				message =  "Enter a correct option"
+	while menuChoice != 0:
+		menuChoice = executeMenu("",message,options)
+		if menuChoice == 1:
+			global root
+	
+			r = "/Users/taapes/dev/TST/"
+			while not os.path.exists(r):
+				v = "n"
+				while v!="y":
+					r = input("Enter valid project root folder: ")
+					print (r)
+					v = input("Is this correct? (Y/N): ")
+					v = v[0].lower()
+			if r[-1] != "/":
+				r = r+"/"
+			root = r
+			if os.path.isfile(root+"serviceDict.dat"):
+				v = input("Previous NMAP Data was found here.  Would you like to load? If not, all previous data will be erased upon directory initialization (2). (Y/N): ")
+				if v[0].lower() == "y":
+					with open(root+"serviceDict.dat","rb") as f:
+						global serviceDict
+						serviceDict = pickle.load(f)
+					f.close()
+			message = "Project root set to: " + root
+		elif menuChoice == 2:
+			initDirs()
+			global logger
+			logger = open(root+"reconscan.log", 'w+')
+			logger.close
+			message = "Project root directories successfully created"
+		elif menuChoice == 3:
+			global procs
+			p = -1
+			while p < 1 or math.isnan(p):
+				p = int(input("Enter the MAXIMUM number of conncurrent processes to run (default is 4): "))
+			procs = p
+			global pool
+			pool = Pool(processes=procs)
+			message = "Processes set to " + str(procs)
 		else:
-			menuChoice = ""
-			choice = input ("Are you sure you want to quit? (Y/N): ")
-			if (choice[0].lower() == "y"):
-				sys.exit()
+			message = "Enter a correct option"
 			
-def targetsMenu():
-	menuChoice = 0
-	message = ""
-	while (menuChoice != "q"):
-		print (chr(27) + "[2J")
-		print (message + "\n")
-		print ("1) Import Targets from file")
-		print ("2) Add targets manually")
-		print ("3) Remove targets")
-		print ("4) Show targets")
-		print ("\n0) Main Menu")
-		print ("Q) Quit\n")
-		menuChoice = input('Option #:')
-		message = ""
-		if menuChoice == '':
-			message = "Enter a correct Option"
-		elif menuChoice[0].lower() != "q":
-			menuChoice = num(menuChoice)
-			if menuChoice is not None:
-				if menuChoice == 1:
-					targetfile = ""
-					while not os.path.isfile(targetfile):
-						print ("Enter the path and file.  Please format the text file with 1 ip per line, no commas or end characters. ")
-						targetfile = input(">>")
-					f = open(targetfile, 'r')
-					global targets
-					count = 0
-					failed = []
-					for ip in f:
-						if re.match(r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$', ip.strip()) or re.match(r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', ip.strip()):
-							print (ip.strip())
-							targets.append(ip.strip())
-							count += 1
-						else:
-							failed.append(ip)
-					targets = list(set(targets))
-					print ("loading...")
-					time.sleep(2)
-					f.close
-					message = str(count) + " IPs successfully loaded."
-					if len(failed) > 0:
-						message = message + " The following are not valid IPs: " + str(failed)
-				elif menuChoice == 2:
-					addedTargets = input("Enter a list of comma separated targets: ")
-					addedTargets = addedTargets.split(',')
-					global targets
-					count = 0
-					for ip in addedTargets:
-						if not re.match(r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$', ip.strip()) and not re.match(r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', ip.strip()):
-							count += 1
-					if count > 0:
-						message = "Error please enter valid IPs"
-					else:
-						targets = targets + addedTargets
-						targets = list(set(targets))
-						message = str(len(addedTargets)) + " IPs successfully loaded."
-				elif menuChoice == 3:
-					count = 0
-					for ip in targets:
-						print (str(count) + ") " + ip)
-						count += 1
-					remove = -2
-					while remove < -1 or remove >= len(targets):
-						remove = int(input ("Select the number to remove or -1 to cancel: "))
-					if remove >= 0:
-						global targets
-						ip = targets.pop(int(remove))
-						message = "IP removed: " + ip
-				elif menuChoice == 4:
-					count = 0
-					global targets
-					for ip in targets:
-						print (ip)
-					input("Press ENTER when done")
-				elif menuChoice == 0:
-					menuChoice = "q"
+def manageTargets():
+	options = [
+		"Import Targets from file",
+		"Add targets manually",
+		"Remove targets",
+		"Show targets",
+	]
+	menuChoice = ""
+	while menuChoice != 0:
+		menuChoice = executeMenu("","",options)
+		if menuChoice == 1:
+			targetfile = ""
+			while not os.path.isfile(targetfile):
+				print ("Enter the path and file.  Please format the text file with 1 ip per line, no commas or end characters. ")
+				targetfile = input(">>")
+			f = open(targetfile, 'r')
+			global targets
+			count = 0
+			failed = []
+			for ip in f:
+				if re.match(r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$', ip.strip()) or re.match(r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', ip.strip()):
+					print (ip.strip())
+					targets.append(ip.strip())
+					count += 1
 				else:
-					message = "Enter a correct option"
+					failed.append(ip)
+			targets = list(set(targets))
+			print ("loading...")
+			time.sleep(2)
+			f.close
+			message = str(count) + " IPs successfully loaded."
+			if len(failed) > 0:
+				message = message + " The following are not valid IPs: " + str(failed)
+		elif menuChoice == 2:
+			addedTargets = input("Enter a list of comma separated targets: ")
+			addedTargets = addedTargets.split(',')
+			global targets
+			count = 0
+			for ip in addedTargets:
+				if not re.match(r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$', ip.strip()) and not re.match(r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', ip.strip()):
+					count += 1
+			if count > 0:
+				message = "Error please enter valid IPs"
 			else:
-				menuChoice = ""
-				message =  "Enter a correct option"
+				targets = targets + addedTargets
+				targets = list(set(targets))
+				message = str(len(addedTargets)) + " IPs successfully loaded."
+		elif menuChoice == 3:
+			count = 0
+			for ip in targets:
+				print (str(count) + ") " + ip)
+				count += 1
+			remove = -2
+			while remove < -1 or remove >= len(targets):
+				remove = int(input ("Select the number to remove or -1 to cancel: "))
+			if remove >= 0:
+				global targets
+				ip = targets.pop(int(remove))
+				message = "IP removed: " + ip
+		elif menuChoice == 4:
+			count = 0
+			global targets
+			for ip in targets:
+				print (ip)
+			input("Press ENTER when done")
 		else:
-			menuChoice = ""
-			choice = input ("Are you sure you want to quit? (Y/N): ")
-			if (choice[0].lower() == "y"):
-				sys.exit()
-
-def runNmapMenu():
-	timing = 4
-	verbosity = "vvv"
-	port = "Moderate"
-	versioning = "V"
-	online = "-Pn"
-	TCP = "S"
-	OS = "-O"
-	custom = ""
-	Pn = "-Pn"
-	Open = "--open"
+			message = "Enter a correct option"
+			
+def runNmap():
+	nmapOptions = {
+		"timing" : 4,
+		"verbosity" : "vvv",
+		"port" : "Moderate",
+		"versioning" : "V",
+		"online" : "-Pn",
+		"TCP" : "S",
+		"OS" : "-O",
+		"custom" : "",
+		"Pn" : "-Pn",
+		"Open" : "--open"
+	}
 	
 	pool = Pool(processes=procs)
-	
-	
+	title = "nmap -" + nmapOptions["verbosity"] + " -T " + str(nmapOptions["timing"]) + " -p " + nmapOptions["port"] + " -s" + nmapOptions["TCP"] + nmapOptions["versioning"] + " " + nmapOptions["Pn"] + " " + nmapOptions["Open"] + " " + nmapOptions["OS"] + " " + nmapOptions["custom"] + " -oA " + root + "discovery/nmap/tcp ip"
+	options = [
+		"Set NMAP options",
+		"Run TCP NMAP SCAN",
+		"Run UDP NMAP Scan",
+	]
+	message = ""
 	menuChoice = ""
-	while (menuChoice != "q"):
-		print(chr(27) + "[2J")
-		print ("nmap -" + verbosity + " -T " + str(timing) + " -p " + port + " -s" + TCP + versioning + " " + Pn + " " + Open + " " + OS + custom + " -oA " + root + "discovery/nmap/tcp ip")
-		print ("1) Set NMAP options")
-		print ("2) Run TCP NMAP SCAN")
-		print ("3) Run UDP NMAP Scan")
-		print ("\n0) Main Menu")
-		print ("Q) Quit\n")
-		menuChoice = input('Option #:')
-		message = ""
-		if menuChoice == '':
-			message = "Enter a correct Option"
-		elif menuChoice[0].lower() != "q":
-			menuChoice = num(menuChoice)
-			if menuChoice is not None:
-				if menuChoice == 1:
-					menuChoice2 = -1
-					message2 = ""
-					while (menuChoice2 != 0):
-						print(chr(27) + "[2J")
-						print (message2 + "\n")
-						print ("nmap -" + verbosity + " -T " + str(timing) + " -p " + port + " -s" + TCP + versioning + " " + Pn + " " + Open + " " + OS + custom + " -oA " + root + "discovery/nmap/tcp ip")
-						print ("1) Set Timing -- Current: " + str(timing))
-						print ("2) Set Ports -- Current: " + port)
-						print ("3) Set verbosity -- Current: " + verbosity)
-						print ("4) Set TCP Scan Type -- Current: s" + TCP)
-						print ("5) Set Service Versioning -- Current: " + versioning)
-						print ("6) Set OS detection -- Current: " + OS)
-						print ("7) Treat all hosts online -- Current: " + Pn)
-						print ("8) Only show open ports -- Current: " + Open)
-						print ("9) Custom flag")
-						print ("\n0) Done")
-						menuChoice2 = input('Option: ')
-						message2 = ""
-						menuChoice2 = num(menuChoice2)
-						if menuChoice2 is None:
-							menuChoice2 = -1
-							message2 = "Enter a valid option"
-						elif menuChoice2 == 1:
-							timing = 0
-							while timing < 1 or timing > 5 or math.isnan(timing):
-								timing = int(input("Enter a number 1 - 5 (Slowest to Fastest, default is 4): "))
-						elif menuChoice2 == 2:
-							print ("1) Full = 0-65535")
-							print ("2) Moderate = Top 1000 ports")
-							print ("3) light = Top 125 ports")
-							p=0
-							while math.isnan(p) or p < 1 or p >= 4:
-								p = int(input("Enter the number of the scan intensity (1-3)"))
-								if p == 1:
-									port = "Full"
-								elif p == 2:
-									port = "Moderate"
-								elif p == 3:
-									port = "Light"
-								else:
-									print ("not valid")
-						elif menuChoice2 == 3:
-							verbosity = ""
-							while verbosity != "v" and verbosity != "vv" and verbosity != "vvv":
-								verbosity = input("Enter verbosity level (v, vv, or vvv): ")
-								verbosity = verbosity.lower()
-						elif menuChoice2 == 4:
-							TCP= ""
-							while TCP!= "S" and TCP!= "T" and TCP!= "A" and TCP!= "W" and TCP!= "M":
-								TCP= input("Enter the tcp scan type (S, T, A, W, or M): ")
-								TCP= TCP.upper()
-						elif menuChoice2 == 5:
-							v = input("Do you want to run service versioning? (Y/N): ")
-							v = v[0].lower()
-							if v == "y":
-								versioning = "V"
-							else:
-								versioning = ""
-						elif menuChoice2 == 6:
-							v = input("Do you want to run  OS detection? (Y/N): ")
-							v = v[0].lower()
-							if v == "y":
-								OS = "-O"
-							else:
-								OS = ""
-						elif menuChoice2 == 7:
-							v = input("Do you want to treat all hosts as online? (Y/N): ")
-							v = v[0].lower()
-							if v == "y":
-								Pn = "-Pn"
-							else:
-								Pn = ""
-						elif menuChoice2 == 8:
-							v = input("Do you want to only show open ports? (Y/N): ")
-							v = v[0].lower()
-							if v == "y":
-								Open = "--open"
-							else:
-								Open = ""
-						elif menuChoice2 == 9:
-							custom = input("Enter custom flags, space delimited: ")
-						elif menuChoice2 != 0:
-							message2 = "Enter a correct option"
-				elif menuChoice == 2:
-					shell = ""
-					while shell!="y" and shell!="n":
-						shell = input("Do you want to spawn new windows for each nmap scan? (versus running in the background) (Y/N): ")
-						shell = shell[0].lower()
-			
-					print("You are about to run an NMAP scan.  You cannot close this window until it is finished.")
-					v = "n"
-					while v!="y":
-						v = input("Do you want to continue? (Y/N): ")
-						v = v[0].lower()
-			
-					jobs = [pool.apply_async(nmapScan, args=(ip,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn,Open,"TCP",shell)) for ip in targets]
-					global serviceDict
-					for p in jobs:
-						temp = p.get()
-						for key in temp:
-							if key in serviceDict:
-								serviceDict[key] = serviceDict[key]+ temp[key]
-							else:
-								serviceDict[key] = temp[key]
-				
-					pool.close()
-					pool.join()
-				
-					subprocess.check_output("cat " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_*.csv >> " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
-					subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
-					
-					if os.path.isfile(root+"serviceDict.dat"):
-						os.system("rm " + root + "serviceDict.dat")
-					with open(root+"serviceDict.dat","wb") as f:
-						pickle.dump(serviceDict, f)
-						f.close()
-					print("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
-					input("Press any key to continue.  Log data available at " + root + "reconscan.log")
-				
-				elif menuChoice == 3:
-					shell = ""
-					while shell!="y" and shell!="n":
-						shell = input("Do you want to spawn new windows for each nmap scan? (versus running in the background) (Y/N): ")
-						shell = shell[0].lower()
-				
-					print("You are about to run an NMAP scan.  You cannot close this window until it is finished.")
-					v = "n"
-					while v!="y":
-						v = input("Do you want to continue? (Y/N): ")
-						v = v[0].lower()
-			
-					jobs = [pool.apply_async(nmapScan, args=(ip,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn,Open,"UDP",shell)) for ip in targets]
-					global serviceDict
-					for p in jobs:
-						temp = p.get()
-						for key in temp:
-							if key in serviceDict:
-								serviceDict[key] = serviceDict[key]+ temp[key]
-							else:
-								serviceDict[key] = temp[key]
-			
-					pool.close()
-					pool.join()
+	while menuChoice != 0:
+		menuChoice = executeMenu(title,message,options)
+		if menuChoice == 1:
+			nmapOptions = setNmapOptions(nmapOptions)
+		elif menuChoice == 2:
+			shell = ""
+			while shell!="y" and shell!="n":
+				shell = input("Do you want to spawn new windows for each nmap scan? (versus running in the background) (Y/N): ")
+				shell = shell[0].lower()
 	
-					subprocess.check_output("cat " + root + "discovery"+sep+"nmap"+sep+"udp/udp*.csv >> " + root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
-					subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
-					
-					if os.path.isfile(root+"serviceDict.dat"):
-						os.system("rm " + root + "serviceDict.dat")
-					with open(root+"serviceDict.dat","wb") as f:
-						pickle.dump(serviceDict, f)
-						f.close()
-					log("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
-					input("Press any key to continue.  Log data available at " + root + "reconscan.log")
-				
-				elif menuChoice == 0:
-					menuChoice = "q"
-				else:
-					message = "Enter a correct option"
-			else:
-				menuChoice = ""
-				message =  "Enter a correct option"
-		else:
-			menuChoice == ""
-			choice = input ("Are you sure you want to quit? (Y/N): ")
-			if (choice[0].lower() == "y"):
-				sys.exit()		
+			print("You are about to run an NMAP scan.  You cannot close this window until it is finished.")
+			v = "n"
+			while v!="y":
+				v = input("Do you want to continue? (Y/N): ")
+				v = v[0].lower()
+	
+			jobs = [pool.apply_async(nmapScan, args=(ip,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn,Open,"TCP",shell)) for ip in targets]
+			global serviceDict
+			for p in jobs:
+				temp = p.get()
+				for key in temp:
+					if key in serviceDict:
+						serviceDict[key] = serviceDict[key]+ temp[key]
+					else:
+						serviceDict[key] = temp[key]
+		
+			pool.close()
+			pool.join()
+		
+			subprocess.check_output("cat " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_*.csv >> " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
+			subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
 			
-def enumServicesMenu():		
+			if os.path.isfile(root+"serviceDict.dat"):
+				os.system("rm " + root + "serviceDict.dat")
+			with open(root+"serviceDict.dat","wb") as f:
+				pickle.dump(serviceDict, f)
+				f.close()
+			print("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
+			input("Press Enter to continue.  Log data available at " + root + "reconscan.log")
+		
+		elif menuChoice == 3:
+			shell = ""
+			while shell!="y" and shell!="n":
+				shell = input("Do you want to spawn new windows for each nmap scan? (versus running in the background) (Y/N): ")
+				shell = shell[0].lower()
+		
+			print("You are about to run an NMAP scan.  You cannot close this window until it is finished.")
+			v = "n"
+			while v!="y":
+				v = input("Do you want to continue? (Y/N): ")
+				v = v[0].lower()
+	
+			jobs = [pool.apply_async(nmapScan, args=(ip,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn,Open,"UDP",shell)) for ip in targets]
+			global serviceDict
+			for p in jobs:
+				temp = p.get()
+				for key in temp:
+					if key in serviceDict:
+						serviceDict[key] = serviceDict[key]+ temp[key]
+					else:
+						serviceDict[key] = temp[key]
+	
+			pool.close()
+			pool.join()
+
+			subprocess.check_output("cat " + root + "discovery"+sep+"nmap"+sep+"udp/udp*.csv >> " + root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
+			subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
+			
+			if os.path.isfile(root+"serviceDict.dat"):
+				os.system("rm " + root + "serviceDict.dat")
+			with open(root+"serviceDict.dat","wb") as f:
+				pickle.dump(serviceDict, f)
+				f.close()
+			log("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
+			input("Press Enter to continue.  Log data available at " + root + "reconscan.log")
+		
+		else:
+			message = "Enter a correct option"
+		
+def enumServices():		
 	knownServices = {
 		"http":httpEnum, 
 		"ssl/http":httpsEnum, 
@@ -450,95 +312,73 @@ def enumServicesMenu():
 		"ms-wbt-server":rdpEnum,
 		"rmiregistry":rmiEnum
 	}
-	
-	message = ""	
+	options = [
+		"Show All discovered Services",
+		"Enumerate specific service",
+		"Enumerate All Services",
+	]
+	message = ""
 	menuChoice = ""
-	while (menuChoice != "q"):
-		print(chr(27) + "[2J")
-		print (message + "\n")
-		print ("1) Show All discovered Services")
-		print ("2) Enumerate specific service")
-		print ("3) Enumerate All")
-		print ("\n0) Main Menu")
-		print ("Q) Quit\n")
-		menuChoice = input('Option #:')
-		
-		message = ""
-		if menuChoice == '':
-			message = "Enter a correct Option"
-		elif menuChoice[0].lower() != "q":
-			menuChoice = num(menuChoice)
-			if menuChoice is not None:
-				if menuChoice == 1:
-					for serv in serviceDict:
-						if serv in knownServices:
-							print ("**"+serv)
-						else:
-							print (serv)
-					print ("\n** indicates enumerable services")
-					input ("\nPress any key to return...")
-				elif menuChoice == 2:
-					choice = ""
-					if serviceDict == {}:
-						message = "No services detected: Please run NMAP scans first"
-					else:
-						count = 0
+	while menuChoice != 0:
+		menuChoice = executeMenu("",message,options)
+		if menuChoice == 1:
+			for serv in serviceDict:
+				if serv in knownServices:
+					print ("**"+serv)
+				else:
+					print (serv)
+			print ("\n** indicates enumerable services")
+			input ("\nPress Enter to return...")
+			message = ""
+		elif menuChoice == 2:
+			choice = ""
+			if serviceDict == {}:
+				message = "No services detected: Please run NMAP scans first"
+			else:
+				count = 0
+				for serv in knownServices:
+					if serv in serviceDict:
+						count += 1
+				if count == 0:
+					message = "No discovered services are enumerable.  Press 1 to see discovered services"
+				else:
+					while choice not in knownServices:
 						for serv in knownServices:
 							if serv in serviceDict:
-								count += 1
-						if count == 0:
-							message = "No discovered services are enumerable.  Press 1 to see discovered services"
-						else:
-							while choice not in knownServices:
-								for serv in knownServices:
-									if serv in serviceDict:
-										print (serv)
-								choice = input('>>')
-							log("INFO: Starting enumeration for " + choice)
-							for serv in serviceDict[choice]:
-								print ("calling: " + str(knownServices[choice]) + "(" + serv[0] + ", " + serv[1] + ")")
-								pool.apply_async(knownServices[choice], args=(serv[0], serv[1]))
-							pool.close()
-							pool.join()
-							log("INFO: Enumeration of " + choice + " has completed. See " + root + "discovery/ for details")
-							input("\nPress any key to continue.  Log data available at " + root + "reconscan.log")
-			
-				elif menuChoice == 3:
-					if serviceDict == {}:
-						message = "No services detected: Please run NMAP scans first"
-					else:
-						log("No enum tool for the following services: ")
-						for serv in serviceDict:
-							if serv not in knownServices:
-								for ips in serviceDict[serv]:
-									temp = ips[0]+":"+ips[1]+" "
-								log(" -"+serv+": "+ temp)
-					
-						log("Starting Enumeration")
-						for services in knownServices:
-							if services in serviceDict:
-								for serv in serviceDict[services]:
-									pool.apply_async(knownServices[services], args=(serv[0], serv[1]))
-						pool.close()
-						pool.join()
-						log("INFO: Enumeration has completed. See " + root + "discovery/ for details")
-						input("\nPress any key to continue.  Log data available at " + root + "reconscan.log")
-			
-				elif menuChoice == 0:
-					menuChoice = "q"
-				else:
-					message = "Enter a correct option"
-			else:
-				menuChoice = ""
-				message =  "Enter a correct option"
-		else:
-			menuChoice == ""
-			choice = input ("Are you sure you want to quit? (Y/N): ")
-			if (choice[0].lower() == "y"):
-				sys.exit()
-	return
+								print (serv)
+						choice = input('>>')
+					log("INFO: Starting enumeration for " + choice)
+					for serv in serviceDict[choice]:
+						pool.apply_async(knownServices[choice], args=(serv[0], serv[1]))
+
+					log("INFO: Enumeration of " + choice + " has completed. See " + root + "discovery/ for details")
+					input("\nPress ENTER to continue.  Log data available at " + root + "reconscan.log")
 	
-def pwMenu():
+		elif menuChoice == 3:
+			if serviceDict == {}:
+				message = "No services detected: Please run NMAP scans first"
+			else:
+				log("No enum tool for the following services: ")
+				for serv in serviceDict:
+					if serv not in knownServices:
+						for ips in serviceDict[serv]:
+							temp = ips[0]+":"+ips[1]+" "
+						log(" -"+serv+": "+ temp)
+			
+				log("Starting Enumeration")
+				for services in knownServices:
+					if services in serviceDict:
+						for serv in serviceDict[services]:
+							pool.apply_async(knownServices[services], args=(serv[0], serv[1]))
+				pool.close()
+				pool.join()
+				log("INFO: Enumeration has completed. See " + root + "discovery/ for details")
+				input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
+	
+		else:
+			message = "Enter a correct option"
+	
+def pwGuess():
 	knownServices = {
 		"http":httpPW, 
 		"ssl/http":httpPW, 
@@ -551,97 +391,166 @@ def pwMenu():
 		"vnc":vncPW,
 		"vnc-http":vncPW
 	}
+	options = [
+		"Change medusa settings",
+		"PW guess specific service",
+		"PW guess All"
+	]
 	
 	pool = Pool(processes=procs)
 	message = ""	
 	menuChoice = ""
-	while (menuChoice != "q"):
-		print(chr(27) + "[2J")
-		print (message + "\n")
-		print ("1) Change medusa settings")
-		print ("2) PW guess specific service")
-		print ("3) PW guess All")
-		print ("\n0) Main Menu")
-		print ("Q) Quit\n")
-		menuChoice = input('Option #:')
-		
-		message = ""
-		if menuChoice == '':
-			message = "Enter a correct Option"
-		elif menuChoice[0].lower() != "q":
-			menuChoice = num(menuChoice)
-			if menuChoice is not None:
-				if menuChoice == 1:
-					pass
-					# medusa options
-				elif menuChoice == 2:
-					choice = ""
-					if serviceDict == {}:
-						message = "No services detected: Please run NMAP scans first"
-					else:
-						count = 0
+	while menuChoice != 0:
+		menuChoice = executeMenu("",message,options)
+		if menuChoice == 1:
+			pass
+			# medusa options
+		elif menuChoice == 2:
+			choice = ""
+			if serviceDict == {}:
+				message = "No services detected: Please run NMAP scans first"
+			else:
+				count = 0
+				for serv in knownServices:
+					if serv in serviceDict:
+						count += 1
+				if count == 0:
+					message = "No discovered services are guessable."
+				else:
+					print("Type the full name of the service you would like to guess or press 0 to go back")
+					while choice not in knownServices and choice != "0":
 						for serv in knownServices:
 							if serv in serviceDict:
-								count += 1
-						if count == 0:
-							message = "No discovered services are guessable."
-						else:
-							print("Type the full name of the service you would like to guess or press 0 to go back")
-							while choice not in knownServices and choice != "0":
-								for serv in knownServices:
-									if serv in serviceDict:
-										print (serv)
-								choice = input('>>')
-							if choice != "0":
-								log("INFO: Starting guess for " + choice)
-								for serv in serviceDict[choice]:
-									pool.apply_async(knownServices[choice], args=(serv[0], serv[1]))
-								pool.close()
-								pool.join()
-								log("INFO: PW Guess of " + choicge + " has completed. See " + root + "password/ for details")
-								input("\nPress any key to continue.  Log data available at " + root + "reconscan.log")
-			
-				elif menuChoice == 3:
-					if serviceDict == {}:
-						message = "No services detected: Please run NMAP scans first"
-					else:
-						log("No PW guess tool for the following services: ")
-						for serv in serviceDict:
-							if serv not in knownServices:
-								for ips in serviceDict[serv]:
-									temp = ips[0]+":"+ips[1]+" "
-								log(" -"+serv+": "+ temp)
-					
-						log("Starting Guessing")
-						for services in knownServices:
-							if services in serviceDict:
-								for serv in serviceDict[services]:
-									pool.apply_async(knownServices[services], args=(serv[0], serv[1]))
+								print (serv)
+						choice = input('>>')
+					if choice != "0":
+						log("INFO: Starting guess for " + choice)
+						for serv in serviceDict[choice]:
+							pool.apply_async(knownServices[choice], args=(serv[0], serv[1]))
 						pool.close()
 						pool.join()
-						log("INFO: Guessing has completed. See " + root + "password/ for details")
-						input("\nPress any key to continue.  Log data available at " + root + "reconscan.log")
-			
-				elif menuChoice == 0:
-					menuChoice = "q"
-				else:
-					message = "Enter a correct option"
+						log("INFO: PW Guess of " + choicge + " has completed. See " + root + "password/ for details")
+						input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
+	
+		elif menuChoice == 3:
+			if serviceDict == {}:
+				message = "No services detected: Please run NMAP scans first"
 			else:
-				menuChoice = ""
-				message =  "Enter a correct option"
+				log("No PW guess tool for the following services: ")
+				for serv in serviceDict:
+					if serv not in knownServices:
+						for ips in serviceDict[serv]:
+							temp = ips[0]+":"+ips[1]+" "
+						log(" -"+serv+": "+ temp)
+			
+				log("Starting Guessing")
+				for services in knownServices:
+					if services in serviceDict:
+						for serv in serviceDict[services]:
+							pool.apply_async(knownServices[services], args=(serv[0], serv[1]))
+				pool.close()
+				pool.join()
+				log("INFO: Guessing has completed. See " + root + "password/ for details")
+				input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
 		else:
-			menuChoice == ""
-			choice = input ("Are you sure you want to quit? (Y/N): ")
-			if (choice[0].lower() == "y"):
-				sys.exit()
+			message = "Enter a correct option"
 				
-def exploitMenu():
-	input("ERROR: This feature is not available yet. Press any key to continue.")
+def exploit():
+	input("ERROR: This feature is not available yet. Press Enter to continue.")
 
 ##########################################################
 # NMAP functions
 ##########################################################
 
+def setNmapOptions(nmapOptions):
+	menuChoice2 = -1
+	message2 = ""
+	while (menuChoice2 != 0):
+		print(chr(27) + "[2J")
+		print (message2 + "\n")
+		print ("nmap -" + nmapOptions["verbosity"] + " -T " + str(nmapOptions["timing"]) + " -p " + nmapOptions["port"] + " -s" + nmapOptions["TCP"] + nmapOptions["versioning"] + " " + nmapOptions["Pn"] + " " + nmapOptions["Open"] + " " + nmapOptions["OS"] + nmapOptions["custom"] + " -oA " + root + "discovery/nmap/tcp ip")
+		print ("1) Set Timing -- Current: " + str(nmapOptions["timing"]))
+		print ("2) Set Ports -- Current: " + nmapOptions["port"])
+		print ("3) Set verbosity -- Current: " + nmapOptions["verbosity"])
+		print ("4) Set TCP Scan Type -- Current: s" + nmapOptions["TCP"])
+		print ("5) Set Service Versioning -- Current: " + nmapOptions["versioning"])
+		print ("6) Set OS detection -- Current: " + nmapOptions["OS"])
+		print ("7) Treat all hosts online -- Current: " + nmapOptions["Pn"])
+		print ("8) Only show open ports -- Current: " + nmapOptions["Open"])
+		print ("9) Custom flag")
+		print ("\n0) Done")
+		menuChoice2 = input('Option: ')
+		message2 = ""
+		menuChoice2 = num(menuChoice2)
+		if menuChoice2 is None:
+			menuChoice2 = -1
+			message2 = "Enter a valid option"
+		elif menuChoice2 == 1:
+			timing = 0
+			while timing < 1 or timing > 5 or math.isnan(timing):
+				timing = int(input("Enter a number 1 - 5 (Slowest to Fastest, default is 4): "))
+			nmapOptions["timing"] = timing
+		elif menuChoice2 == 2:
+			print ("1) Full = 0-65535")
+			print ("2) Moderate = Top 1000 ports")
+			print ("3) light = Top 125 ports")
+			p=0
+			while math.isnan(p) or p < 1 or p >= 4:
+				p = int(input("Enter the number of the scan intensity (1-3)"))
+				if p == 1:
+					nmapOptions["port"] = "Full"
+				elif p == 2:
+					nmapOptions["port"] = "Moderate"
+				elif p == 3:
+					nmapOptions["port"] = "Light"
+				else:
+					print ("not valid")
+		elif menuChoice2 == 3:
+			verbosity = ""
+			while verbosity != "v" and verbosity != "vv" and verbosity != "vvv":
+				verbosity = input("Enter verbosity level (v, vv, or vvv): ")
+				verbosity = verbosity.lower()
+			nmapOptions["verbosity"] = verbosity
+		elif menuChoice2 == 4:
+			TCP= ""
+			while TCP!= "S" and TCP!= "T" and TCP!= "A" and TCP!= "W" and TCP!= "M":
+				TCP= input("Enter the tcp scan type (S, T, A, W, or M): ")
+				TCP= TCP.upper()
+			nmapOptions["TCP"] = TCP
+		elif menuChoice2 == 5:
+			v = input("Do you want to run service versioning? (Y/N): ")
+			v = v[0].lower()
+			if v == "y":
+				nmapOptions["versioning"] = "V"
+			else:
+				nmapOptions["versioning"] = ""
+		elif menuChoice2 == 6:
+			v = input("Do you want to run  OS detection? (Y/N): ")
+			v = v[0].lower()
+			if v == "y":
+				nmapOptions["OS"] = "-O"
+			else:
+				nmapOptions["OS"] = ""
+		elif menuChoice2 == 7:
+			v = input("Do you want to treat all hosts as online? (Y/N): ")
+			v = v[0].lower()
+			if v == "y":
+				nmapOptions["Pn"] = "-Pn"
+			else:
+				nmapOptions["Pn"] = ""
+		elif menuChoice2 == 8:
+			v = input("Do you want to only show open ports? (Y/N): ")
+			v = v[0].lower()
+			if v == "y":
+				nmapOptions["Open"] = "--open"
+			else:
+				nmapOptions["Open"] = ""
+		elif menuChoice2 == 9:
+			nmapOptions["custom"] = input("Enter custom flags, space delimited: ")
+		elif menuChoice2 != 0:
+			message2 = "Enter a correct option"
+	return nmapOptions
+			
 def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn,Open,type,shell):
 	if port == "Light":
 		ports = "21,22,23,25,42,53,80,88,110,111,135,139,143,389,397,443,445,446,447,448,449,512,513,514,515,523,548,554,992,993,995,1080,1125,1159,1352,1433,1494,1521,1522,1523,1524,1525,1526,1761,1993,2000,2001,2010,2049,2100,2103,3000,3268,3306,3389,3527,3632,3690,4001,4105,4848,5010,5040,5060,5432,5544,5555,5566,5631,5632,5800,5900,5985,6000,6001,6050,6070,6101,6106,6112,6129,8000,8008,8009,8080,8085,8088,8090,8105,8109,8180,8222,8333,8443,8470,8471,8472,8473,8474,8475,8476,8480,8888,9001,9084,9087,9100,9470,9471,9472,9473,9474,9475,9476,9480,9999,10000,10202,10203,20031,41523,41524"
@@ -939,6 +848,7 @@ def vncPW(ip, port):
 ##########################################################
 # Utility functions
 ##########################################################
+
 def num(s):
 	try:
 		return int(s)
@@ -950,7 +860,7 @@ def log(str):
 	if logger is not None:
 		logger.write(str)
 
-def init():
+def initDirs():
 	# TODO REMOVE
 	os.system("rm -r " + root + "discovery")
 	checkandmk(root + 'issues')
@@ -983,6 +893,35 @@ def checkandmk(path):
 	if not os.path.exists(path):
 		os.makedirs(path)
 
+def executeMenu(title, message, options):
+	menuChoice = ""
+	while (menuChoice != "q"):
+		print(chr(27) + "[2J")
+		print (message + "\n")
+		print (title + "\n")
+		count = 1
+		for opt in options:
+			print (str(count) + ") " + opt)
+			count = count + 1
+		
+		print ("\n0) Main Menu")
+		print ("Q) Quit\n")
+		menuChoice = input('Option #:')
+		if menuChoice == '':
+			message = "Enter a correct Option"
+		elif menuChoice[0].lower() != "q":
+			temp = num(menuChoice)
+			if temp is not None:
+				return temp
+			else:
+				menuChoice = ""
+				message =  "Enter a correct option"
+		else:
+			menuChoice = ""
+			choice = input ("Are you sure you want to quit? (Y/N): ")
+			if (choice[0].lower() == "y"):
+				sys.exit()
+
 ##########################################################
 # Main function
 ##########################################################
@@ -990,4 +929,4 @@ if __name__=='__main__':
 	if sys.version_info[0] != 3 or sys.version_info[1] < 1:
 		print("\nEXIT: This script requires Python version 3.1 or higher\n")
 		sys.exit(1)
-	mainMenu(sys.argv)
+	run(sys.argv)

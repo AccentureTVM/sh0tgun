@@ -20,7 +20,7 @@ def main(args):
 		nbtresults = nbtresults.decode("utf-8")
 		if "Connection refused" not in nbtresults and "Connect error" not in nbtresults and "Connection reset" not in nbtresults:
 			print("FOUND: NBTSCAN User accounts/domains found on " + ip + " check discovery/smb for results")
-			resultsfile = root + "discovery/smb/" + ip + "_nbtscan.txt"
+			resultsfile = root + "discovery/smb/" + ip + ":" + port + "_nbtscan.txt"
 			f = open(resultsfile, "w+")
 			f.write(nbtresults)
 			f.close
@@ -34,7 +34,7 @@ def main(args):
 		enumresults = enumresults.decode("utf-8")
 		if ("Connection refused" not in enumresults) and ("Connect error" not in enumresults) and ("Connection reset" not in enumresults):
 			print("FOUND: ENUM4LINUX User accounts/domains found on " + ip + " check discovery/smb for results")
-			resultsfile = root + "discovery/smb/" + ip + "_enum4linux.txt"
+			resultsfile = root + "discovery/smb/" + ip + ":" + port + "_enum4linux.txt"
 			f = open(resultsfile, "w+")
 			f.write(enumresults)
 			f.close
@@ -55,7 +55,7 @@ def main(args):
 		#			print("Exploiting MS08-067")
 		#			cmd = "gnome-terminal -x msfcli exploit/windows/smb/ms08_067_netapi RHOST=" + ip + " E"
 		#			subprocess.call(cmd.split(" "))
-		resultsfile = root + "discovery/smb/" + ip + "_nse.txt"
+		resultsfile = root + "discovery/smb/" + ip + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseresults)
 		f.close

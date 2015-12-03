@@ -16,7 +16,7 @@ def main(args):
 	try:
 		results = subprocess.check_output(FTPSCAN, shell=True)
 		results = results.decode('utf-8')
-		outfile = root + "discovery/ftp/" + ip_address + "_ftp.txt"
+		outfile = root + "discovery/ftp/" + ip_address + ":" + port + "_ftp.txt"
 		lines = results.split("\n")
 		for line in lines:
 			if "Anonymous FTP login allowed" in line:
