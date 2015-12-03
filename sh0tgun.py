@@ -124,7 +124,6 @@ def testInit():
 	global logger
 	logger = open(root+"reconscan.log", 'w+')
 	logger.close
-	message += "\nProject root directories successfully created\n"
 	procs = 4
 	global pool
 	pool = Pool(processes=procs)
