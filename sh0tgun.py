@@ -141,13 +141,16 @@ def initialize():
 			r = input("Enter valid project root folder: ")
 			print (r)
 			v = input("Is this correct? (Y/N): ")
-			v = v[0].lower()
+			if len(v) != 0:
+				v = v[0].lower()
 	if r[-1] != "/":
 		r = r+"/"
 	root = r
 	if os.path.isfile(root+"serviceDict.dat"):
 		v = input("Previous NMAP Data was found here.  Would you like to load? If not, all previous data will be erased upon directory initialization (2). (Y/N): ")
-		if v[0].lower() == "y":
+		if len(v) != 0:
+			v = v[0].lower()
+		if v == "y":
 			with open(root+"serviceDict.dat","rb") as f:
 				global serviceDict
 				serviceDict = pickle.load(f)
@@ -173,8 +176,9 @@ def initialize():
 	
 	v = ""
 	while v!="y" and v!="n":
-		r = input("Do you want to run Responder.py? (Y/N): ")
-		v = v[0].lower()
+		v = input("Do you want to run Responder.py? (Y/N): ")
+		if len(v) != 0:
+			v = v[0].lower()
 	if v == "y":
 		responder()
 		
@@ -276,66 +280,69 @@ def runNmap():
 			shell = ""
 			while shell!="y" and shell!="n":
 				shell = input("Do you want to spawn new windows for each nmap scan? (versus running in the background) (Y/N): ")
-				shell = shell[0].lower()
+				if len(shell) != 0:
+					shell = shell[0].lower()
 	
 			print("You are about to run an NMAP scan.  You cannot close this window until it is finished.")
-			v = "n"
-			while v!="y":
+			v = ""
+			while v!="y" and v!="n":
 				v = input("Do you want to continue? (Y/N): ")
-				v = v[0].lower()
-	
-			jobs = [pool.apply_async(nmapScan, args=(ip,nmapOptions["timing"],nmapOptions["verbosity"],nmapOptions["port"],nmapOptions["versioning"],nmapOptions["online"],nmapOptions["TCP"],nmapOptions["OS"],nmapOptions["custom"],nmapOptions["Pn"],nmapOptions["Open"],"TCP",shell)) for ip in targets]
-			for p in jobs:
-				temp = p.get()
-				for key in temp:
-					if key in serviceDict:
-						serviceDict[key] = serviceDict[key]+ temp[key]
-					else:
-						serviceDict[key] = temp[key]
+				if len(v) != 0:
+					v = v[0].lower()
+			if v == "y":
+				jobs = [pool.apply_async(nmapScan, args=(ip,nmapOptions["timing"],nmapOptions["verbosity"],nmapOptions["port"],nmapOptions["versioning"],nmapOptions["online"],nmapOptions["TCP"],nmapOptions["OS"],nmapOptions["custom"],nmapOptions["Pn"],nmapOptions["Open"],"TCP",shell)) for ip in targets]
+				for p in jobs:
+					temp = p.get()
+					for key in temp:
+						if key in serviceDict:
+							serviceDict[key] = serviceDict[key]+ temp[key]
+						else:
+							serviceDict[key] = temp[key]
 		
-			subprocess.check_output("cat " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_*.csv >> " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
-			subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
+				subprocess.check_output("cat " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_*.csv >> " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
+				subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
 			
-			if os.path.isfile(root+"serviceDict.dat"):
-				os.system("rm " + root + "serviceDict.dat")
-			with open(root+"serviceDict.dat","wb") as f:
-				pickle.dump(serviceDict, f)
-				f.close()
-			print("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
-			input("Press Enter to continue.  Log data available at " + root + "reconscan.log")
+				if os.path.isfile(root+"serviceDict.dat"):
+					os.system("rm " + root + "serviceDict.dat")
+				with open(root+"serviceDict.dat","wb") as f:
+					pickle.dump(serviceDict, f)
+					f.close()
+				print("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
+				input("Press Enter to continue.  Log data available at " + root + "reconscan.log")
 		
 		elif menuChoice == 3:
 			shell = ""
 			while shell!="y" and shell!="n":
 				shell = input("Do you want to spawn new windows for each nmap scan? (versus running in the background) (Y/N): ")
-				shell = shell[0].lower()
+				if len(shell) != 0:
+					shell = shell[0].lower()
 		
 			print("You are about to run an NMAP scan.  You cannot close this window until it is finished.")
-			v = "n"
-			while v!="y":
+			v = ""
+			while v!="y" and v!="n":
 				v = input("Do you want to continue? (Y/N): ")
-				v = v[0].lower()
-	
-			jobs = [pool.apply_async(nmapScan, args=(ip,nmapOptions["timing"],nmapOptions["verbosity"],nmapOptions["port"],nmapOptions["versioning"],nmapOptions["online"],nmapOptions["TCP"],nmapOptions["OS"],nmapOptions["custom"],nmapOptions["Pn"],nmapOptions["Open"],"TCP",shell)) for ip in targets]
-			
-			for p in jobs:
-				temp = p.get()
-				for key in temp:
-					if key in serviceDict:
-						serviceDict[key] = serviceDict[key]+ temp[key]
-					else:
-						serviceDict[key] = temp[key]
+				if len(v) != 0:
+					v = v[0].lower()
+			if v == "y":
+				jobs = [pool.apply_async(nmapScan, args=(ip,nmapOptions["timing"],nmapOptions["verbosity"],nmapOptions["port"],nmapOptions["versioning"],nmapOptions["online"],nmapOptions["TCP"],nmapOptions["OS"],nmapOptions["custom"],nmapOptions["Pn"],nmapOptions["Open"],"TCP",shell)) for ip in targets]
+				for p in jobs:
+					temp = p.get()
+					for key in temp:
+						if key in serviceDict:
+							serviceDict[key] = serviceDict[key]+ temp[key]
+						else:
+							serviceDict[key] = temp[key]
 
-			subprocess.check_output("cat " + root + "discovery"+sep+"nmap"+sep+"udp/udp*.csv >> " + root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
-			subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
+				subprocess.check_output("cat " + root + "discovery"+sep+"nmap"+sep+"udp/udp*.csv >> " + root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
+				subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
 			
-			if os.path.isfile(root+"serviceDict.dat"):
-				os.system("rm " + root + "serviceDict.dat")
-			with open(root+"serviceDict.dat","wb") as f:
-				pickle.dump(serviceDict, f)
-				f.close()
-			log("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
-			input("Press Enter to continue.  Log data available at " + root + "reconscan.log")
+				if os.path.isfile(root+"serviceDict.dat"):
+					os.system("rm " + root + "serviceDict.dat")
+				with open(root+"serviceDict.dat","wb") as f:
+					pickle.dump(serviceDict, f)
+					f.close()
+				log("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
+				input("Press Enter to continue.  Log data available at " + root + "reconscan.log")
 		
 		else:
 			message = "Enter a correct option"
@@ -566,7 +573,8 @@ def responder():
 				temp = input("Enter the interface: ")
 				print (temp)
 				v = input("Is this correct? (Y/N): ")
-				v = v[0].lower()
+				if len(v) != 0:
+					v = v[0].lower()
 			interface = temp
 		elif menuChoice == 4:
 			v = "n"
@@ -574,7 +582,8 @@ def responder():
 				temp = input("Enter the responding IP: ")
 				print (temp)
 				v = input("Is this correct? (Y/N): ")
-				v = v[0].lower()
+				if len(v) != 0:
+					v = v[0].lower()
 			rip = temp
 		else:
 			message = "Enter a correct option"
@@ -645,28 +654,32 @@ def setNmapOptions(nmapOptions):
 			nmapOptions["TCP"] = TCP
 		elif menuChoice2 == 5:
 			v = input("Do you want to run service versioning? (Y/N): ")
-			v = v[0].lower()
+			if len(v) != 0:
+				v = v[0].lower()
 			if v == "y":
 				nmapOptions["versioning"] = "V"
 			else:
 				nmapOptions["versioning"] = ""
 		elif menuChoice2 == 6:
 			v = input("Do you want to run  OS detection? (Y/N): ")
-			v = v[0].lower()
+			if len(v) != 0:
+				v = v[0].lower()
 			if v == "y":
 				nmapOptions["OS"] = "-O"
 			else:
 				nmapOptions["OS"] = ""
 		elif menuChoice2 == 7:
 			v = input("Do you want to treat all hosts as online? (Y/N): ")
-			v = v[0].lower()
+			if len(v) != 0:
+				v = v[0].lower()
 			if v == "y":
 				nmapOptions["Pn"] = "-Pn"
 			else:
 				nmapOptions["Pn"] = ""
 		elif menuChoice2 == 8:
 			v = input("Do you want to only show open ports? (Y/N): ")
-			v = v[0].lower()
+			if len(v) != 0:
+				v = v[0].lower()
 			if v == "y":
 				nmapOptions["Open"] = "--open"
 			else:
@@ -1084,7 +1097,9 @@ def executeMenu(title, message, options):
 		else:
 			menuChoice = ""
 			choice = input ("Are you sure you want to quit? (Y/N): ")
-			if (choice[0].lower() == "y"):
+			if len(choice) != 0:
+				choice = choice[0].lower()
+			if (choice == "y"):
 				sys.exit()
 
 ##########################################################
