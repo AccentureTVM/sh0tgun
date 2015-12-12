@@ -529,10 +529,12 @@ def responder():
 		"Set flags",
 		"Set interface",
 		"Set respondeing ip"
+		"Set responder location"
 	]
 	flags = "vbwFr"
 	interface = "eth0"
 	rip = ""
+	loc = "/usr/share/responder/Responder.py"
 	
 	message = ""
 	menuChoice = ""
@@ -547,7 +549,7 @@ def responder():
 			t2 = "-i " + rip
 		if flags != "":
 			t3 = "-" + flags
-		title = "python /usr/share/responder/Responder.py " + t3 + " " + t2 + " " + t1
+		title = "python " + loc + " " + t3 + " " + t2 + " " + t1
 		menuChoice = executeMenu(title,message,options)
 		if menuChoice == 1:
 			print( "I made it here")
@@ -592,6 +594,17 @@ def responder():
 				if len(v) != 0:
 					v = v[0].lower()
 			rip = temp
+		elif menuChoice == 5:
+			r = "/THIS/IS/NOT/A/DIRECTORY!!!!/"
+			while checkResponder(r) == False:
+				v = "n"
+				while v!="y":
+					r = input("Enter the full path to Responder.py: ")
+					print (r)
+					v = input("Is this correct? (Y/N): ")
+					if len(v) != 0:
+						v = v[0].lower()		
+			loc = r
 		else:
 			message = "Enter a correct option"
 		
@@ -996,6 +1009,15 @@ def vncPW(ip, port, service, options):
 ##########################################################
 # Utility functions
 ##########################################################
+
+def checkResponder(r):
+	if os.path.isfile(r):
+		if r[-12:] == "Responder.py":
+			return True
+		else:
+			return False
+	else:
+		return False
 
 def enumCallback(retVal):
 	global enumCounter
