@@ -170,6 +170,14 @@ def initialize():
 	global pool
 	pool = Pool(processes=procs)
 	message += "\nProcesses set to " + str(procs)
+	
+	v = ""
+	while v!="y" and v!="n":
+		r = input("Do you want to run Responder.py? (Y/N): ")
+		v = v[0].lower()
+	if v == "y":
+		responder()
+		
 	return (message)
 	
 def manageTargets():
@@ -508,10 +516,78 @@ def pwGuess():
 def exploit():
 	input("ERROR: This feature is not available yet. Press Enter to continue.")
 
+def responder():
+	options = [
+		"Run Responder",
+		"Set flags",
+		"Set interface",
+		"Set respondeing ip"
+	]
+	flags = "vbwFr"
+	interface = "eth0"
+	rip = ""
+	
+	message = ""
+	menuChoice = ""
+	title = ""
+	while menuChoice != 0:
+		if interface != "":
+			t1 = "-I " + interface
+		if rip != "":
+			t2 = "i " + rip
+		if flags != "":
+			t3 = "-" + flags
+		title = "python /usr/share/responder/Responder.py " + t3 + " " + t2 + " " + t1
+		menuChoice = executeMenu(title,message,options)
+		if menuChoice == 1:
+			if rip != "":
+				RESPONDER = "gnome-terminal -x " + title
+				pool.apply_async(runResponder, args=(RESPONDER))
+		elif menuChoice == 2:
+			f = "-"
+			while f != "":
+				f = input("Enter the desired option flags (no -): ")
+				ft = ft.replace("A", "")
+				ft = ft.replace("b", "")
+				ft = ft.replace("r", "")
+				ft = ft.replace("d", "")
+				ft = ft.replace("F", "")
+				ft = ft.replace("w", "")
+				ft = ft.replace("f", "")
+				ft = ft.replace("v", "")
+				if ft != "":
+					print("Not a valid set of flags (NB -u and --lm are not available\n)")
+				else:
+					flags = f
+					f = ""							
+		elif menuChoice == 3:
+			v = "n"
+			while v!="y":
+				temp = input("Enter the interface: ")
+				print (temp)
+				v = input("Is this correct? (Y/N): ")
+				v = v[0].lower()
+			interface = temp
+		elif menuChoice == 4:
+			v = "n"
+			while v!="y":
+				temp = input("Enter the responding IP: ")
+				print (temp)
+				v = input("Is this correct? (Y/N): ")
+				v = v[0].lower()
+			rip = temp
+		else:
+			message = "Enter a correct option"
+		
+
 ##########################################################
 # NMAP functions
 ##########################################################
 
+def runResponder(RESPONDER):
+	log("INFO: Running Responder")
+	subprocess.check_output(RESPONDER.split(" "), stderr=subprocess.STDOUT)
+	
 def setNmapOptions(nmapOptions):
 	menuChoice2 = -1
 	message2 = ""
