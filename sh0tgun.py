@@ -538,6 +538,7 @@ def responder():
 	menuChoice = ""
 	title = ""
 	while menuChoice != 0:
+	    t1, t2, t3 = ""
 		if interface != "":
 			t1 = "-I " + interface
 		if rip != "":
