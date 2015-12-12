@@ -544,20 +544,24 @@ def responder():
 		if interface != "":
 			t1 = "-I " + interface
 		if rip != "":
-			t2 = "i " + rip
+			t2 = "-i " + rip
 		if flags != "":
 			t3 = "-" + flags
 		title = "python /usr/share/responder/Responder.py " + t3 + " " + t2 + " " + t1
 		menuChoice = executeMenu(title,message,options)
 		if menuChoice == 1:
+			print( "I made it here")
 			if rip != "":
+				print ("AND HERE")
 				RESPONDER = "gnome-terminal -x " + title
-				pool.apply_async(runResponder, args=(RESPONDER))
+				log("INFO: Running Responder")
+				subprocess.check_output(RESPONDER.split(" "), stderr=subprocess.STDOUT)
+				print("PROBABLY HERE")
 		elif menuChoice == 2:
 			f = "-"
 			while f != "":
 				f = input("Enter the desired option flags (no -): ")
-				ft = ft.replace("A", "")
+				ft = f.replace("A", "")
 				ft = ft.replace("b", "")
 				ft = ft.replace("r", "")
 				ft = ft.replace("d", "")
@@ -566,7 +570,7 @@ def responder():
 				ft = ft.replace("f", "")
 				ft = ft.replace("v", "")
 				if ft != "":
-					print("Not a valid set of flags (NB -u and --lm are not available\n)")
+					message = "Not a valid set of flags (NB -u and --lm are not available\n)"
 				else:
 					flags = f
 					f = ""							
@@ -595,10 +599,6 @@ def responder():
 ##########################################################
 # NMAP functions
 ##########################################################
-
-def runResponder(RESPONDER):
-	log("INFO: Running Responder")
-	subprocess.check_output(RESPONDER.split(" "), stderr=subprocess.STDOUT)
 	
 def setNmapOptions(nmapOptions):
 	menuChoice2 = -1
