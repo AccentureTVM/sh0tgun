@@ -521,9 +521,9 @@ def pwGuess():
 					while jb != "" and jb != "ns" and jb != "n" and jb != "s":
 						jb = input("Do you want to test blanks and/or joes? (Enter \"n\", \"s\", \"ns\" or press ENTER for neither): ")
 					if jb == "":
-					    medusaFlags["jb"] = ""
+						medusaFlags["jb"] = ""
 					else:
-					    medusaFlags["jb"] = "-e " + jb
+						medusaFlags["jb"] = "-e " + jb
 				elif menuChoice2 == 5:
 					v = ""
 					while v!="y" and v!="n":
@@ -541,12 +541,12 @@ def pwGuess():
 						try:
 							v = int(v)
 							if v < 1 or v > 6:
-							    print ("Setting1")
+								print ("Setting1")
 								v = -1
 							else:
 								medusaOptions["verbosity"] = "-v" + v
 						except:
-						    print ("Setting2")
+							print ("Setting2")
 							v = -1
 				elif menuChoice2 == 7:
 					v = "n"
