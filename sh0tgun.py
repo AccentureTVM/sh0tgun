@@ -452,7 +452,7 @@ def pwGuess():
 		"users":"-U wordlists/test.txt",
 		"pws": "-P wordlists/test.txt",
 		"jb": "-e ns",
-		"verbosity": "6",
+		"verbosity": "-v6",
 		"combo" : "",
 		"ssl" : "",
 		"custom" : ""
@@ -520,7 +520,7 @@ def pwGuess():
 					jb = "a"
 					while jb != "" and jb != "ns" and jb != "n" and jb != "s":
 						jb = input("Do you want to test blanks and/or joes? (Enter \"n\", \"s\", \"ns\" or press ENTER for neither): ")
-					jb = "-e " + jb
+					medusaFlags["jb"] = "-e " + jb
 				elif menuChoice2 == 5:
 					v = ""
 					while v!="y" and v!="n":
@@ -535,12 +535,14 @@ def pwGuess():
 					v = -1
 					while v == -1:
 						v = input("Enter verbosity 1-6: ")
-						if math.isnan(v):
+						try:
+						    v = int(v)
+						    if v < 1 or v > 6:
+                                v = -1
+                            else:
+                                medusaOptions["verbosity"] = "-v" + v
+						except:
 							v = -1
-						elif v < 1 or v > 6:
-							v = -1
-						else:
-							medusaOptions["verbosity"] = "-v" + v
 				elif menuChoice2 == 7:
 					v = "n"
 					while v != "y":
