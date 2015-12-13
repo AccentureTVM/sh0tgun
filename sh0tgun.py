@@ -539,14 +539,15 @@ def pwGuess():
 					while v == -1:
 						v = input("Enter verbosity 1-6: ")
 						v = int(v)
-						if v < 1 or v > 6:
-							print ("Setting1")
+						try:
+                            if v < 1 or v > 6:
+                                print ("Setting1")
+                                v = -1
+                            else:
+                                medusaOptions["verbosity"] = "-v" + str(v)
+						except:
+							print ("Setting2")
 							v = -1
-						else:
-							medusaOptions["verbosity"] = "-v" + v
-						#except:
-						#	print ("Setting2")
-						#	v = -1
 				elif menuChoice2 == 7:
 					v = "n"
 					while v != "y":
