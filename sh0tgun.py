@@ -475,12 +475,14 @@ def pwGuess():
 	message = ""	
 	menuChoice = ""
 	while menuChoice != 0:
-		menuChoice = executeMenu("",message,options)
+		title = "medusa -h ip_address -n port " + medusaFlags["users"] + " " + medusaFlags["pws"] + " " + medusaFlags["jb"] + " " + medusaFlags["verbosity"] + " " + medusaFlags["combo"] + " " + medusaFlags["ssl"] + " " + medusaFlags["custom"] + " -M module"
+		menuChoice = executeMenu(title,message,options)
 		if menuChoice == 1:
 			message2 = ""	
 			menuChoice2 = ""
 			while menuChoice2 != 0:
-				menuChoice2 = executeMenu("",message2,medusaOptions)
+				title = "medusa -h ip_address -n port " + medusaFlags["users"] + " " + medusaFlags["pws"] + " " + medusaFlags["jb"] + " " + medusaFlags["verbosity"] + " " + medusaFlags["combo"] + " " + medusaFlags["ssl"] + " " + medusaFlags["custom"] + " -M module"
+				menuChoice2 = executeMenu(title,message2,medusaOptions)
 				if menuChoice2 == 1:
 					r = "/THIS/IS/NOT/A/DIRECTORY!!!!/"
 					while not os.path.isfile(r):
@@ -491,7 +493,7 @@ def pwGuess():
 							v = input("Is this correct? (Y/N): ")
 							if len(v) != 0:
 								v = v[0].lower()	
-					medusaFlags["users"] = r	
+					medusaFlags["users"] = "-U " + r	
 				elif menuChoice2 == 2:
 					r = "/THIS/IS/NOT/A/DIRECTORY!!!!/"
 					while not os.path.isfile(r):
@@ -502,7 +504,7 @@ def pwGuess():
 							v = input("Is this correct? (Y/N): ")
 							if len(v) != 0:
 								v = v[0].lower()	
-					medusaFlags["pws"] = r	
+					medusaFlags["pws"] = "-P " + r	
 				elif menuChoice2 == 3:
 					r = "/THIS/IS/NOT/A/DIRECTORY!!!!/"
 					while not os.path.isfile(r):
@@ -513,11 +515,12 @@ def pwGuess():
 							v = input("Is this correct? (Y/N): ")
 							if len(v) != 0:
 								v = v[0].lower()	
-					medusaFlags["combo"] = r	
+					medusaFlags["combo"] = "-C " + r	
 				elif menuChoice2 == 4:
 					jb = "a"
 					while jb != "" and jb != "ns" and jb != "n" and jb != "s":
 						jb = input("Do you want to test blanks and/or joes? (Enter \"n\", \"s\", \"ns\" or press ENTER for neither): ")
+					jb = "-e " + jb
 				elif menuChoice2 == 5:
 					v = ""
 					while v!="y" and v!="n":
@@ -537,7 +540,7 @@ def pwGuess():
 						elif v < 1 or v > 6:
 							v = -1
 						else:
-							medusaOptions["verbosity"] = v
+							medusaOptions["verbosity"] = "-v" + v
 				elif menuChoice2 == 7:
 					v = "n"
 					while v != "y":
