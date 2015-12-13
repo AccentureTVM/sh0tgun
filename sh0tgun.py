@@ -543,7 +543,7 @@ def pwGuess():
 						if v < 1 or v > 6:
 							v = -1
 						else:
-							medusaOptions["verbosity"] = "-v" + str(v)
+							medusaFlags["verbosity"] = "-v" + str(v)
 						#except:
 						#	v = -1
 				elif menuChoice2 == 7:
@@ -554,7 +554,7 @@ def pwGuess():
 						v = input("Is this correct? (Y/N): ")
 						if len(v) != 0:
 							v = v[0].lower()
-					medusaOptions["custom"]
+					medusaFlags["custom"]
 				else:
 					message2 = "Enter a correct option"
 		elif menuChoice == 2:
