@@ -520,7 +520,10 @@ def pwGuess():
 					jb = "a"
 					while jb != "" and jb != "ns" and jb != "n" and jb != "s":
 						jb = input("Do you want to test blanks and/or joes? (Enter \"n\", \"s\", \"ns\" or press ENTER for neither): ")
-					medusaFlags["jb"] = "-e " + jb
+					if jb == "":
+					    medusaFlags["jb"] = ""
+					else:
+					    medusaFlags["jb"] = "-e " + jb
 				elif menuChoice2 == 5:
 					v = ""
 					while v!="y" and v!="n":
