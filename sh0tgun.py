@@ -448,12 +448,24 @@ def pwGuess():
 		"vnc":vncPW,
 		"vnc-http":vncPW
 	}
-	medusaOptions = {
+	medusaFlags = {
 		"users":"-U wordlists/test.txt",
 		"pws": "-P wordlists/test.txt",
 		"jb": "-e ns",
 		"verbosity": "6",
+		"combo" : "",
+		"ssl" : "",
+		"custom" : ""
 	}
+	medusaOptions = [
+		"Set user wordlist",
+		"Set pw wordlist",
+		"Set combo file",
+		"Set blanks and joes",
+		"Enable SSL",
+		"Set verbosity",
+		"Custom flags"
+	]
 	options = [
 		"Change medusa settings",
 		"PW guess specific service",
@@ -465,8 +477,78 @@ def pwGuess():
 	while menuChoice != 0:
 		menuChoice = executeMenu("",message,options)
 		if menuChoice == 1:
-			pass
-			# medusa options
+			message2 = ""	
+			menuChoice2 = ""
+			while menuChoice2 != 0:
+				menuChoice2 = executeMenu("",message2,medusaOptions)
+				if menuChoice2 == 1:
+					r = "/THIS/IS/NOT/A/DIRECTORY!!!!/"
+					while not os.path.isfile(r):
+						v = "n"
+						while v!="y":
+							r = input("Enter the full path to the wordlist: ")
+							print (r)
+							v = input("Is this correct? (Y/N): ")
+							if len(v) != 0:
+								v = v[0].lower()	
+					medusaFlags["users"] = r	
+				elif menuChoice2 == 2:
+					r = "/THIS/IS/NOT/A/DIRECTORY!!!!/"
+					while not os.path.isfile(r):
+						v = "n"
+						while v!="y":
+							r = input("Enter the full path to the wordlist: ")
+							print (r)
+							v = input("Is this correct? (Y/N): ")
+							if len(v) != 0:
+								v = v[0].lower()	
+					medusaFlags["pws"] = r	
+				elif menuChoice2 == 3:
+					r = "/THIS/IS/NOT/A/DIRECTORY!!!!/"
+					while not os.path.isfile(r):
+						v = "n"
+						while v!="y":
+							r = input("Enter the full path to the wordlist: ")
+							print (r)
+							v = input("Is this correct? (Y/N): ")
+							if len(v) != 0:
+								v = v[0].lower()	
+					medusaFlags["combo"] = r	
+				elif menuChoice2 == 4:
+					jb = "a"
+					while jb != "" and jb != "ns" and jb != "n" and jb != "s":
+						jb = input("Do you want to test blanks and/or joes? (Enter \"n\", \"s\", \"ns\" or press ENTER for neither): ")
+				elif menuChoice2 == 5:
+					v = ""
+					while v!="y" and v!="n":
+						v = input("Do you want to enable SSL? (Y/N): ")
+						if len(v) != 0:
+							v = v[0].lower()
+					if v == "y":
+						medusaFlags["ssl"] = "-s"
+					else:
+						medusaFlags["ssl"] = ""
+				elif menuChoice2 == 6:
+					v = -1
+					while v == -1:
+						v = input("Enter verbosity 1-6: ")
+						if math.isnan(v):
+							v = -1
+						elif v < 1 or v > 6:
+							v = -1
+						else:
+							medusaOptions["verbosity"] = v
+				elif menuChoice2 == 7:
+					v = "n"
+					while v != "y":
+						custom = input("Enter custom options: ")
+						print (custom)
+						v = input("Is this correct? (Y/N): ")
+						if len(v) != 0:
+							v = v[0].lower()
+					medusaOptions["custom"]
+				else:
+					message2 = "Enter a correct option"
 		elif menuChoice == 2:
 			choice = ""
 			if serviceDict == {}:
@@ -528,7 +610,7 @@ def responder():
 		"Run Responder",
 		"Set flags",
 		"Set interface",
-		"Set respondeing ip"
+		"Set respondeing ip",
 		"Set responder location"
 	]
 	flags = "vbwFr"
@@ -606,8 +688,7 @@ def responder():
 						v = v[0].lower()		
 			loc = r
 		else:
-			message = "Enter a correct option"
-		
+			message = "Enter a correct option"	
 
 ##########################################################
 # NMAP functions
