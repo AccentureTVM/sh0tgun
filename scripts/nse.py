@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import subprocess
 import sys
+import logging
 
 def Daytime(ip, port):
 	SCAN = "nmap  -Pn -n --open -p "+ port + " --script=daytime --host-timeout 5m --min-hostgroup 100 " + str(ip) 

@@ -17,14 +17,15 @@ import scripts.sshrecon as sshrecon
 import scripts.medusa as medusa
 import scripts.nse as nse
 import time
-from multiprocessing import Pool
+import logging
+import threading
+from multiprocessing import Pool, Queue
 
 sep = os.path.sep
 root = ""
 targets = []
 procs = 1
 serviceDict = {}
-logger = None
 enumCounter = {
 	"http":0, 
 	"ssl/http":0, 
@@ -58,9 +59,13 @@ pwCounter = {
 	"vnc":0,
 	"vnc-http":0
 }
+knownServices = {}
+knownPwServices = {}
 pool = None
-
-
+lp = None
+q = None
+logger = None
+FOUND_LEVEL_NUM = 35 
 
 ##########################################################
 # Main functions
@@ -75,17 +80,14 @@ def run(args):
 	print ("***************************")
 	print ("")
 	
-	if len(args)> 1:
-		message = testInit()
-	else:
-		message = initialize()
+	message = initialize(args)
 	
 	options = [
 		"Manage Targets",
 		"Run Nmap",
 		"Enumerate Services",
 		"Password Guess",
-		"Exploit"
+		"Show Findings"
 	]
 	menuChoice = ""
 	while 1 == 1:
@@ -105,36 +107,29 @@ def run(args):
 			pwGuess()
 			message = ""
 		elif menuChoice == 5:
-			exploit()
+			findings()
 			message = ""
 		elif menuChoice == 0:
 			message = "This is the main menu!"
 		else:
 			message = "Enter a correct option"
-
-def testInit():
-
-	global root
-	root = "/root/TEST/"
-	with open(root+"serviceDict.dat","rb") as f:
-		global serviceDict
-		serviceDict = pickle.load(f)
-	f.close()
-	initDirs()
-	global logger
-	logger = open(root+"reconscan.log", 'w+')
-	logger.close
-	procs = 4
-	global pool
-	pool = Pool(processes=procs)
-	message = "Project root set to: " + root
-	message += "\nProject root directories successfully created\n"
-	message += "\nProcesses set to " + str(procs)
-	return (message)
 	
-def initialize():
+def initialize(args):
+	parser = argparse.ArgumentParser(description="Sh0tgun Network Scanning and Service Enumeration")
+	parser.add_argument('-v', '--verbosity', help='Set verbosity as 1 (Silent), 2 (Normal), 3 (Verbose)')
+	parser.add_argument('-p', '--processes', help='Set the maximum concurrent processes to spawn')
+	parser.add_argument('-r', '--root', help='Set the project root directory')
+	args = parser.parse_args()
+
+	verbArg = args.verbosity
+	procArg = args.processes
+	rootArg = args.root
+	
 	global root
-	r = "/THIS/IS/NOT/A/DIRECTORY!!!!/"
+	if rootArg != None:
+		r = rootArg
+	else:
+		r = "/THIS/IS/NOT/A/DIRECTORY!!!!/"
 	while not os.path.exists(r):
 		v = "n"
 		while v!="y":
@@ -157,13 +152,19 @@ def initialize():
 			f.close()
 	message = "Project root set to: " + root
 	initDirs()
-	global logger
-	logger = open(root+"reconscan.log", 'w+')
-	logger.close
 	message += "\nProject root directories successfully created\n"
 	
+	if not os.path.isfile(root + "findings.csv"):
+		fi = open(root + "findings.csv", 'w+')
+		fi.write("ip,port,service,finding,tool,notes")
+		fi.close()
+	
+	loggingInit(verbArg)
+	
 	global procs
-	p = -1
+	p = num(procArg)
+	if p == None:
+		p = -1
 	while p < 1:
 		p = input("Enter the MAXIMUM number of conncurrent processes to run (standard is 4): ")
 		p = num(p)
@@ -181,6 +182,40 @@ def initialize():
 			v = v[0].lower()
 	if v == "y":
 		responder()
+		
+	global knownServices
+	knownServices = {
+		"http":httpEnum, 
+		"ssl/http":httpsEnum, 
+		"https":httpsEnum, 
+		"ssh":sshEnum, 
+		"snmp":snmpEnum, 
+		"smtp":smtpEnum, 
+		"domain":dnsEnum, 
+		"ftp":ftpEnum, 
+		"microsoft-ds":smbEnum, 
+		"msrpc":smbEnum,
+		"netbios-ssn":smbEnum,
+		"ms-sql":mssqlEnum, 
+		"ms-sql-s":mssqlEnum,
+		"mysql":mysqlEnum,
+		"drda":drdaEnum,
+		"ms-wbt-server":rdpEnum,
+		"rmiregistry":rmiEnum
+	}
+	
+	knownPwServices = {
+		"http":httpPW, 
+		"ssl/http":httpPW, 
+		"https":httpPW, 
+		"ssh":sshPW, 
+		"ftp":ftpPW, 
+		"ms-sql":mssqlPW, 
+		"ms-sql-s":mssqlPW,
+		"mysql":mysqlPW,
+		"vnc":vncPW,
+		"vnc-http":vncPW
+	}
 		
 	return (message)
 	
@@ -277,20 +312,14 @@ def runNmap():
 		if menuChoice == 1:
 			nmapOptions = setNmapOptions(nmapOptions)
 		elif menuChoice == 2:
-			shell = ""
-			while shell!="y" and shell!="n":
-				shell = input("Do you want to spawn new windows for each nmap scan? (versus running in the background) (Y/N): ")
-				if len(shell) != 0:
-					shell = shell[0].lower()
-	
-			print("You are about to run an NMAP scan.  You cannot close this window until it is finished.")
+			logger.info("You are about to run an NMAP scan.  You cannot close this window until it is finished.")
 			v = ""
 			while v!="y" and v!="n":
 				v = input("Do you want to continue? (Y/N): ")
 				if len(v) != 0:
 					v = v[0].lower()
 			if v == "y":
-				jobs = [pool.apply_async(nmapScan, args=(ip,nmapOptions["timing"],nmapOptions["verbosity"],nmapOptions["port"],nmapOptions["versioning"],nmapOptions["online"],nmapOptions["TCP"],nmapOptions["OS"],nmapOptions["custom"],nmapOptions["Pn"],nmapOptions["Open"],"TCP",shell)) for ip in targets]
+				jobs = [pool.apply_async(nmapScan, args=(ip,nmapOptions["timing"],nmapOptions["verbosity"],nmapOptions["port"],nmapOptions["versioning"],nmapOptions["online"],nmapOptions["TCP"],nmapOptions["OS"],nmapOptions["custom"],nmapOptions["Pn"],nmapOptions["Open"],"TCP")) for ip in targets]
 				for p in jobs:
 					temp = p.get()
 					for key in temp:
@@ -307,24 +336,27 @@ def runNmap():
 				with open(root+"serviceDict.dat","wb") as f:
 					pickle.dump(serviceDict, f)
 					f.close()
-				print("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
-				input("Press Enter to continue.  Log data available at " + root + "reconscan.log")
+				logger.info("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
+				v = ""
+				while v!="y" and v!="n":
+					v = input("Would you like to open the results file? (Y/N): ")
+					if len(v) != 0:
+						v = v[0].lower()
+				if v == "y":
+					CMD = "/usr/bin/leafpad " + root + "discover/nmap/nmap_all.csv"
+					subprocess.check_output(CMD.split(" "), stderr=subprocess.STDOUT)
+				logger.info("Log data available at " + root + "reconscan.log")
+				input("Press Enter to continue.")
 		
 		elif menuChoice == 3:
-			shell = ""
-			while shell!="y" and shell!="n":
-				shell = input("Do you want to spawn new windows for each nmap scan? (versus running in the background) (Y/N): ")
-				if len(shell) != 0:
-					shell = shell[0].lower()
-		
-			print("You are about to run an NMAP scan.  You cannot close this window until it is finished.")
+			logger.info("You are about to run an NMAP scan.  You cannot close this window until it is finished.")
 			v = ""
 			while v!="y" and v!="n":
 				v = input("Do you want to continue? (Y/N): ")
 				if len(v) != 0:
 					v = v[0].lower()
 			if v == "y":
-				jobs = [pool.apply_async(nmapScan, args=(ip,nmapOptions["timing"],nmapOptions["verbosity"],nmapOptions["port"],nmapOptions["versioning"],nmapOptions["online"],nmapOptions["TCP"],nmapOptions["OS"],nmapOptions["custom"],nmapOptions["Pn"],nmapOptions["Open"],"TCP",shell)) for ip in targets]
+				jobs = [pool.apply_async(nmapScan, args=(ip,nmapOptions["timing"],nmapOptions["verbosity"],nmapOptions["port"],nmapOptions["versioning"],nmapOptions["online"],nmapOptions["TCP"],nmapOptions["OS"],nmapOptions["custom"],nmapOptions["Pn"],nmapOptions["Open"],"TCP")) for ip in targets]
 				for p in jobs:
 					temp = p.get()
 					for key in temp:
@@ -341,32 +373,23 @@ def runNmap():
 				with open(root+"serviceDict.dat","wb") as f:
 					pickle.dump(serviceDict, f)
 					f.close()
-				log("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
-				input("Press Enter to continue.  Log data available at " + root + "reconscan.log")
+				logger.info("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
+				
+				while v!="y" and v!="n":
+					v = input("Would you like to open the results file? (Y/N): ")
+					if len(v) != 0:
+						v = v[0].lower()
+				if v == "y":
+					CMD = "/usr/bin/leafpad " + root + "discover/nmap/nmap_all.csv"
+					subprocess.check_output(CMD.split(" "), stderr=subprocess.STDOUT)
+				logger.info("Log data available at " + root + "reconscan.log")
+				input("Press Enter to continue.")
 		
 		else:
 			message = "Enter a correct option"
 		
 def enumServices():		
-	knownServices = {
-		"http":httpEnum, 
-		"ssl/http":httpsEnum, 
-		"https":httpsEnum, 
-		"ssh":sshEnum, 
-		"snmp":snmpEnum, 
-		"smtp":smtpEnum, 
-		"domain":dnsEnum, 
-		"ftp":ftpEnum, 
-		"microsoft-ds":smbEnum, 
-		"msrpc":smbEnum,
-		"netbios-ssn":smbEnum,
-		"ms-sql":mssqlEnum, 
-		"ms-sql-s":mssqlEnum,
-		"mysql":mysqlEnum,
-		"drda":drdaEnum,
-		"ms-wbt-server":rdpEnum,
-		"rmiregistry":rmiEnum
-	}
+	
 	options = [
 		"Show All discovered Services",
 		"Enumerate specific service",
@@ -402,52 +425,40 @@ def enumServices():
 							if serv in serviceDict:
 								print (serv)
 						choice = input('>>')
-					log("INFO: Starting enumeration for " + choice)
+					logger.info("Starting enumeration for " + choice)
 					global enumCounter
 					for serv in serviceDict[choice]:
 						enumCounter[choice] += 1
 						enumCounter["total"] += 1
-						pool.apply_async(knownServices[choice], args=(serv[0], serv[1], choice), callback=enumCallback)
+						pool.apply_async(enumWorker, args=(serv[0], serv[1], choice), callback=enumCallback)
 	
 		elif menuChoice == 3:
 			if serviceDict == {}:
 				message = "No services detected: Please run NMAP scans first"
 			else:
-				log("No enum tool for the following services: ")
+				logger.info("No enum tool for the following services: ")
 				for serv in serviceDict:
 					if serv not in knownServices:
 						for ips in serviceDict[serv]:
 							temp = ips[0]+":"+ips[1]+" "
-						log(" -"+serv+": "+ temp)
+						logger.info(" -"+serv+": "+ temp)
 			
-				log("Starting Enumeration")
+				logger.info("Starting Enumeration")
 				jobs = []
 				for services in knownServices:
 					if services in serviceDict:
 						for serv in serviceDict[services]:
-							jobs.append(pool.apply_async(knownServices[services], args=(serv[0], serv[1], services)))
+							jobs.append(pool.apply_async(enumWorker, args=(serv[0], serv[1], services)))
 				
 				for job in jobs:
 					job.wait()
-				log("INFO: Enumeration has completed. See " + root + "discovery/ for details")
+				logger.info("Enumeration has completed. See " + root + "discovery/ for details")
 				input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
 	
 		else:
 			message = "Enter a correct option"
 	
 def pwGuess():
-	knownServices = {
-		"http":httpPW, 
-		"ssl/http":httpPW, 
-		"https":httpPW, 
-		"ssh":sshPW, 
-		"ftp":ftpPW, 
-		"ms-sql":mssqlPW, 
-		"ms-sql-s":mssqlPW,
-		"mysql":mysqlPW,
-		"vnc":vncPW,
-		"vnc-http":vncPW
-	}
 	medusaFlags = {
 		"users":"-U wordlists/test.txt",
 		"pws": "-P wordlists/test.txt",
@@ -538,14 +549,13 @@ def pwGuess():
 					v = -1
 					while v == -1:
 						v = input("Enter verbosity 1-6: ")
-						v = int(v)
-						#try:
-						if v < 1 or v > 6:
+						v = num(v)
+						if v == None:
+							v = -1
+						elif v < 1 or v > 6:
 							v = -1
 						else:
 							medusaFlags["verbosity"] = "-v" + str(v)
-						#except:
-						#	v = -1
 				elif menuChoice2 == 7:
 					v = "n"
 					while v != "y":
@@ -554,7 +564,7 @@ def pwGuess():
 						v = input("Is this correct? (Y/N): ")
 						if len(v) != 0:
 							v = v[0].lower()
-					medusaFlags["custom"]
+					medusaFlags["custom"] = custom
 				else:
 					message2 = "Enter a correct option"
 		elif menuChoice == 2:
@@ -576,11 +586,11 @@ def pwGuess():
 								print (serv)
 						choice = input('>>')
 					if choice != "0":
-						log("INFO: Starting guess for " + choice)
+						logger.info("Starting guess for " + choice)
 						for serv in serviceDict[choice]:
 							pwCounter[choice] += 1
 							pwCounter["total"] += 1
-							pool.apply_async(knownServices[choice], args=(serv[0], serv[1], choice, medusaOptions), callback = pwCallback)
+							pool.apply_async(pwWorker, args=(serv[0], serv[1], choice, medusaFlags), callback = pwCallback)
 					
 					input("Press ENTER to go back to the main menu\n\n")
 
@@ -588,30 +598,28 @@ def pwGuess():
 			if serviceDict == {}:
 				message = "No services detected: Please run NMAP scans first"
 			else:
-				log("No PW guess tool for the following services: ")
+				logger.info("No PW guess tool for the following services: ")
 				for serv in serviceDict:
 					if serv not in knownServices:
 						for ips in serviceDict[serv]:
 							temp = ips[0]+":"+ips[1]+" "
-						log(" -"+serv+": "+ temp)
+						logger.info(" -"+serv+": "+ temp)
 			
-				log("Starting Guessing")
+				logger.info("Starting Guessing on all possible services")
 				jobs = []
 				for services in knownServices:
 					if services in serviceDict:
 						for serv in serviceDict[services]:
-							jobs.append(pool.apply_async(knownServices[services], args=(serv[0], serv[1])))
+							jobs.append(pool.apply_async(pwWorker, args=(serv[0], serv[1], choice, medusaFlags), callback = pwCallback))
 							
 				for job in jobs:
 					job.wait()
 				
-				log("INFO: Guessing has completed. See " + root + "password/ for details")
-				input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
+				logger.info("Guessing has completed. See " + root + "password/ for details")
+				logger.info("Log data available at " + root + "reconscan.log")
+				input("\nPress Enter to continue.")
 		else:
 			message = "Enter a correct option"
-				
-def exploit():
-	input("ERROR: This feature is not available yet. Press Enter to continue.")
 
 def responder():
 	options = [
@@ -642,13 +650,10 @@ def responder():
 		title = "python " + loc + " " + t3 + " " + t2 + " " + t1
 		menuChoice = executeMenu(title,message,options)
 		if menuChoice == 1:
-			print( "I made it here")
 			if rip != "":
-				print ("AND HERE")
 				RESPONDER = "gnome-terminal -x " + title
-				log("INFO: Running Responder")
+				logger.info("Running Responder")
 				subprocess.check_output(RESPONDER.split(" "), stderr=subprocess.STDOUT)
-				print("PROBABLY HERE")
 		elif menuChoice == 2:
 			f = "-"
 			while f != "":
@@ -662,7 +667,7 @@ def responder():
 				ft = ft.replace("f", "")
 				ft = ft.replace("v", "")
 				if ft != "":
-					message = "Not a valid set of flags (NB -u and --lm are not available\n)"
+					message = "Not a valid set of flags (NB: -u and --lm are not available\n)"
 				else:
 					flags = f
 					f = ""							
@@ -697,6 +702,51 @@ def responder():
 			loc = r
 		else:
 			message = "Enter a correct option"	
+
+def findings():
+	options = [
+		"Open findings file",
+		"Display All Findings",
+		"Display findings by IP"
+	]
+	title = ""
+	message = ""
+	menuChoice = ""
+	while menuChoice != 0:
+		menuChoice = executeMenu(title,message,options)
+		if menuChoice == 1:
+			CMD = "/usr/bin/leafpad "+ root + "findings.csv"
+			logging.info("Opening " + root + "findings.csv")
+			subprocess.check_output(CMD.split(" "))
+		elif menuChoice == 2:
+			fi = open(root + "findings.csv", "r")
+			count = 1
+			logging.info("Showing all findings")
+			while line == fi.readline():
+				line = line.split(",")
+				print (line[3] + " found on " + line[0] + ":"  + line[1])
+				if count % 10 == 0:
+					input ("Press any continue to continue")
+				count = count + 1
+			fi.close()
+		elif menuChoice == 3:
+			fi = open(root + "findings.csv", "r")
+			count = 1
+			ip = "123"
+			while not re.match(r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', ip.strip()):
+				ip = input("Enter a valid ip address: ")
+			
+			logging.info("Showing findings for" + ip)
+			while line == fi.readline():
+				line = line.split(",")
+				if line[0] == ip:
+					print (line[3] + " found on " + line[0] + ":" + line[1])
+					if count % 10 == 0:
+						input ("Press any continue to continue")
+					count = count + 1
+			fi.close()
+		else:
+			message = "Enter a correct option"
 
 ##########################################################
 # NMAP functions
@@ -795,7 +845,7 @@ def setNmapOptions(nmapOptions):
 			message2 = "Enter a correct option"
 	return nmapOptions
 			
-def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn,Open,type,shell):
+def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn,Open,type):
 	if port == "Light":
 		ports = "21,22,23,25,42,53,80,88,110,111,135,139,143,389,397,443,445,446,447,448,449,512,513,514,515,523,548,554,992,993,995,1080,1125,1159,1352,1433,1494,1521,1522,1523,1524,1525,1526,1761,1993,2000,2001,2010,2049,2100,2103,3000,3268,3306,3389,3527,3632,3690,4001,4105,4848,5010,5040,5060,5432,5544,5555,5566,5631,5632,5800,5900,5985,6000,6001,6050,6070,6101,6106,6112,6129,8000,8008,8009,8080,8085,8088,8090,8105,8109,8180,8222,8333,8443,8470,8471,8472,8473,8474,8475,8476,8480,8888,9001,9084,9087,9100,9470,9471,9472,9473,9474,9475,9476,9480,9999,10000,10202,10203,20031,41523,41524"
 	elif port == "Moderate":
@@ -808,11 +858,9 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 	TCPSCAN = "nmap -" + verbosity + " -T " + str(timing) + " -p " + ports + " -s" + TCP + versioning + " " + Pn + " " + Open + " " + OS + custom +" -oA " + root + "discovery/nmap/tcp/tcp_%s %s"  % (ip_format, ip_address)
 	UDPSCAN = "nmap -" + verbosity + " -T " + str(timing) + " -p " + ports + " -s" + TCP + versioning + " " + Pn + " " + Open + " " + OS + custom +" -oA " + root + "discovery/nmap/tcp/udp_%s %s"  % (ip_format, ip_address)
 	tempDict = {}
-	if shell == "y":
-		TCPSCAN = "gnome-terminal -x " + TCPSCAN
-		UDPSCAN = "gnome-terminal -x " + UDPSCAN
+
 	if type == "TCP":
-		log("INFO: Running TCP nmap scans for " + ip_address)
+		logging.info("Running TCP nmap scans for " + ip_address)
 		try:
 			subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
 			try:
@@ -820,13 +868,13 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 				tempDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_format+".xml", fo)
 				fo.close()
 			except:
-				print ("Error Processing NMAP Results.  Nmap scans still available at /discover/nmap/tcp")
+				logging.error ("Error Processing NMAP Results.  Nmap scans still available at /discover/nmap/tcp")
 		except:
-			print("Error running NMAP scans")
+			logging.error("Error running NMAP scans")
 		
 		
 	if type == "UDP":
-		log("INFO: Running UDP nmap scans for " + ip_address)
+		logging.info("Running UDP nmap scans for " + ip_address)
 		try:
 			subprocess.check_output(UDPSCAN, shell=True, stderr=subprocess.STDOUT)
 			try:
@@ -834,11 +882,11 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 				fo.close()
 				tempDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"udp/udp_"+ip_format+".xml", fo)
 			except:
-				print ("Error Processing NMAP Results.  Nmap scans still available at /discover/nmap/tcp")
+				logging.error ("Error Processing NMAP Results.  Nmap scans still available at /discover/nmap/tcp")
 		except:
-			print("Error running NMAP scans")
+			logging.error("Error running NMAP scans")
 
-	log("INFO: " + type + " Nmap scans completed for " + ip_address)
+	logging.info(type + " Nmap scans completed for " + ip_address)
 	return tempDict		
 				
 ##########################################################
@@ -846,8 +894,8 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 ##########################################################
 
 def drdaEnum(ip_address, port, service):
-	log("INFO: Detected DRDA on " + ip_address + ":" + port)
-	log("INFO: Performing nmap DRDA script scan for " + ip_address + ":" + port)
+	logging.info("Detected DRDA on " + ip_address + ":" + port)
+	logging.info("Performing nmap DRDA script scan for " + ip_address + ":" + port)
 	DRDASCAN = nse.DRDA(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(DRDASCAN.split(' '))
@@ -856,12 +904,12 @@ def drdaEnum(ip_address, port, service):
 		f.write(nseout)
 		f.close
 	except:
-		log("ERROR: NSE failed for DRDA " + ip + ":"+ port)
+		logging.error("NSE failed for DRDA " + ip + ":"+ port)
 	return [service, ip_address, port]
 	
 def rdpEnum(ip_address, port, service):
-	log("INFO: Detected RDP on " + ip_address + ":" + port)
-	log("INFO: Performing nmap RDP script scan for " + ip_address + ":" + port)
+	logging.info("Detected RDP on " + ip_address + ":" + port)
+	logging.info("Performing nmap RDP script scan for " + ip_address + ":" + port)
 	RDPSCAN = nse.Remote_Desktop(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(RDPSCAN.split(' '))
@@ -870,12 +918,12 @@ def rdpEnum(ip_address, port, service):
 		f.write(nseout)
 		f.close
 	except:
-		log("ERROR: NSE failed for RDP " + ip + ":"+ port)
+		logging.error("NSE failed for RDP " + ip + ":"+ port)
 	return [service, ip_address, port]
 	
 def rmiEnum(ip_address, port, service):
-	log("INFO: Detected JAVA RMI on " + ip_address + ":" + port)
-	log("INFO: Performing nmap RMI script scan for " + ip_address + ":" + port)
+	logging.info("Detected JAVA RMI on " + ip_address + ":" + port)
+	logging.info("Performing nmap RMI script scan for " + ip_address + ":" + port)
 	RMISCAN = nse.RMI_Registry(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(RMISCAN.split(' '))
@@ -884,17 +932,17 @@ def rmiEnum(ip_address, port, service):
 		f.write(nseout)
 		f.close
 	except:
-		log("ERROR: NSE failed for DRDA " + ip + ":"+ port)
+		logging.error("NSE failed for DRDA " + ip + ":"+ port)
 	return [service, ip_address, port]
 
 def dnsEnum(ip_address, port, service):
-	log("INFO: Detected DNS on " + ip_address + ":" + port)
+	logging.info("Detected DNS on " + ip_address + ":" + port)
 	if port.strip() == "53":
 		dnsrecon.main(["",ip_address, root])
 	else:
-		log("ERROR: Can only run dns enum on port 53")
+		logging.error("Can only run dns enum on port 53")
 	
-	log("INFO: Performing nmap DNS script scan for " + ip_address + ":" + port)
+	logging.info("Performing nmap DNS script scan for " + ip_address + ":" + port)
 	DNSSCAN = nse.DNS(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(DNSSCAN, shell=True)
@@ -903,12 +951,12 @@ def dnsEnum(ip_address, port, service):
 		f.write(nseout)
 		f.close
 	except:
-		log("ERROR: NSE failed for snmp " + ip + ":"+ port)
+		logging.error("NSE failed for snmp " + ip + ":"+ port)
 	return [service, ip_address, port]
 
 def httpEnum(ip_address, port, service):
-	log("INFO: Detected http on " + ip_address + ":" + port)
-	log("INFO: Performing nmap web script scan for " + ip_address + ":" + port + " see directory/http for results")
+	logging.info("Detected http on " + ip_address + ":" + port)
+	logging.info("Performing nmap web script scan for " + ip_address + ":" + port + " see directory/http for results")
 	#HTTPSCAN = "nmap -Pn -vv -p %s --script=http-vhosts,http-userdir-enum,http-apache-negotiation,http-backup-finder,http-config-backup,http-default-accounts,http-email-harvest,http-methods,http-method-tamper,http-passwd,http-robots.txt -oN discovery/http/%s_http.nmap %s" % (port, ip_address, ip_address)
 	HTTPSCAN = nse.http(ip_address, port)
 	try:
@@ -918,12 +966,12 @@ def httpEnum(ip_address, port, service):
 		f.write(nseout)
 		f.close
 	except:
-		log("ERROR: NSE failed for http " + ip + ":"+ port)
+		logging.error("NSE failed for http " + ip + ":"+ port)
 
-	log("INFO: Using Dirbuster for " + ip_address + ":" + port + " see directory/http for results")
+	logging.info("Using Dirbuster for " + ip_address + ":" + port + " see directory/http for results")
 	dirbust.main(["",ip_address,port,False])
 
-	log("INFO: Performing NIKTO scan for " + ip_address + ":" + port + " see directory/http for results")
+	logging.info("Performing NIKTO scan for " + ip_address + ":" + port + " see directory/http for results")
 	NIKTOSCAN = "nikto -host %s -p %s" % (ip_address, port)
 	try:
 		NIKTOSCAN = subprocess.check_output(NIKTOSCAN, shell=True)
@@ -932,12 +980,12 @@ def httpEnum(ip_address, port, service):
 		niktoout.write(NIKTOSCAN)
 		niktoout.close()
 	except:
-		log("ERROR: NIKTO failed for " + ip + ":"+ port)
+		logging.error("NIKTO failed for " + ip + ":"+ port)
 	return  [service, ip_address, port]
 
 def httpsEnum(ip_address, port, service):
-	log("INFO: Detected https on " + ip_address + ":" + port)
-	log("INFO: Performing nmap web script scan for " + ip_address + ":" + port)
+	logging.info("Detected https on " + ip_address + ":" + port)
+	logging.info("Performing nmap web script scan for " + ip_address + ":" + port)
 	HTTPSSCAN = "nmap -Pn -vv -p %s --script=http-vhosts,http-userdir-enum,http-apache-negotiation,http-backup-finder,http-config-backup,http-default-accounts,http-email-harvest,http-methods,http-method-tamper,http-passwd,http-robots.txt -oN discovery/http/%s_https.nmap %s" % (port, ip_address, ip_address)
 	try:
 		nseout = subprocess.check_output(HTTPSSCAN, shell=True)
@@ -946,12 +994,12 @@ def httpsEnum(ip_address, port, service):
 		f.write(nseout)
 		f.close
 	except:
-		log("ERROR: NSE failed for https " + ip + ":"+ port)
+		logging.error("NSE failed for https " + ip + ":"+ port)
 
-	log("INFO: Using Dirbuster for " + ip_address + ":" + port + " see directory/http for results")
+	logging.info("Using Dirbuster for " + ip_address + ":" + port + " see directory/http for results")
 	dirbust.main(["",ip_address,port, True])
 
-	log("INFO: Performing NIKTO scan for " + ip_address + ":" + port + " see directory/http for results")
+	logging.info("Performing NIKTO scan for " + ip_address + ":" + port + " see directory/http for results")
 	NIKTOSCAN = "nikto -host %s -p %s" % (ip_address, port)
 	try:
 		NIKTOSCAN = subprocess.check_output(NIKTOSCAN, shell=True)
@@ -960,12 +1008,12 @@ def httpsEnum(ip_address, port, service):
 		niktoout.write(NIKTOSCAN)
 		niktoout.close()
 	except:
-		log("ERROR: NIKTO failed for " + ip + ":"+ port)
+		logging.error("NIKTO failed for " + ip + ":"+ port)
 	return  [service, ip_address, port]
 
 def mssqlEnum(ip_address, port, service):
-	log("INFO: Detected MS-SQL on " + ip_address + ":" + port)
-	log("INFO: Performing nmap mssql script scan for " + ip_address + ":" + port)
+	logging.info("Detected MS-SQL on " + ip_address + ":" + port)
+	logging.info("Performing nmap mssql script scan for " + ip_address + ":" + port)
 	MSSQLSCAN = "nmap -vv -sV -Pn -p %s --script=ms-sql-info,ms-sql-config,ms-sql-dump-hashes --script-args=mssql.instance-port=1433,mssql.username-sa,mssql.password-sa -oX discovery/mssql/%s_mssql.xml %s" % (port, ip_address, ip_address)
 	try:
 		nseout = subprocess.check_output(MSSQLSCAN, shell=True)
@@ -974,13 +1022,13 @@ def mssqlEnum(ip_address, port, service):
 		f.write(nseout)
 		f.close
 	except:
-		log("ERROR: NSE failed for mssql" + ip + ":"+ port)
+		logging.error("NSE failed for mssql" + ip + ":"+ port)
 
 	return [service, ip_address, port]
 
 def mysqlEnum(ip_address, port, service):
-	log("INFO: Detected mySQL on " + ip_address + ":" + port)
-	log("INFO: Performing nmap mysql script scan for " + ip_address + ":" + port)
+	logging.info("Detected mySQL on " + ip_address + ":" + port)
+	logging.info("Performing nmap mysql script scan for " + ip_address + ":" + port)
 	# mysql-vuln-cve2012-2122
 	MYSQLSCAN = "nmap -vv -sV -Pn -p %s --script=mysql-enum, mysql-empty-password  -oX discovery/mysql/%s_mysql.xml %s" % (port, ip_address, ip_address)
 	try:
@@ -990,15 +1038,15 @@ def mysqlEnum(ip_address, port, service):
 		f.write(nseout)
 		f.close
 	except:
-		log("ERROR: NSE failed for mysql" + ip + ":"+ port)
+		logging.error("NSE failed for mysql" + ip + ":"+ port)
 
 
 	return [service, ip_address, port]
 
 def sshEnum(ip_address, port, service):
-	log("INFO: Detected SSH on " + ip_address + ":" + port)
+	logging.info("Detected SSH on " + ip_address + ":" + port)
 	# sshrecon.main(["", ip_address, port])				 NOTHING HERE YET
-	log("INFO: Performing nmap SSH script scan for " + ip_address + ":" + port)
+	logging.info("Performing nmap SSH script scan for " + ip_address + ":" + port)
 	SSHSCAN = nse.SSH(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(SSHSCAN, shell=True)
@@ -1007,14 +1055,14 @@ def sshEnum(ip_address, port, service):
 		f.write(nseout)
 		f.close
 	except:
-		log("ERROR: NSE failed for ssh " + ip + ":"+ port)
+		logging.error("NSE failed for ssh " + ip + ":"+ port)
 	return [service, ip_address, port]
 
 def snmpEnum(ip_address, port, service):
-	log("INFO: Detected snmp on " + ip_address + ":" + port)
+	logging.info("Detected snmp on " + ip_address + ":" + port)
 	snmprecon.main(["", ip_address, root])
 	
-	log("INFO: Performing nmap snmp script scan for " + ip_address + ":" + port)
+	logging.info("Performing nmap snmp script scan for " + ip_address + ":" + port)
 	SNMPSCAN = nse.SNMP(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(SNMPSCAN, shell=True)
@@ -1023,15 +1071,15 @@ def snmpEnum(ip_address, port, service):
 		f.write(nseout)
 		f.close
 	except:
-		log("ERROR: NSE failed for snmp " + ip + ":"+ port)
+		logging.error("NSE failed for snmp " + ip + ":"+ port)
 		
 	return [service, ip_address, port]
 
 def smtpEnum(ip_address, port, service):
-	log("INFO: Detected smtp on " + ip_address + ":" + port)
+	logging.info("Detected smtp on " + ip_address + ":" + port)
 	smtprecon.main(["", ip_address, port])
 	
-	log("INFO: Performing nmap smtp script scan for " + ip_address + ":" + port)
+	logging.info("Performing nmap smtp script scan for " + ip_address + ":" + port)
 	SMTPSCAN = nse.SMTP(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(SMTPSCAN, shell=True)
@@ -1040,17 +1088,17 @@ def smtpEnum(ip_address, port, service):
 		f.write(nseout)
 		f.close
 	except:
-		log("ERROR: NSE failed for smtp " + ip + ":"+ port)
+		logging.error("NSE failed for smtp " + ip + ":"+ port)
 		
 	return [service, ip_address, port]
 
 def smbEnum(ip_address, port, service):
-	log("INFO: Detected SMB on " + ip_address + ":" + port)
+	logging.info("Detected SMB on " + ip_address + ":" + port)
 	smbrecon.main(["",ip_address, port,root])
 	return [service, ip_address, port]
 
 def ftpEnum(ip_address, port, service):
-	log("INFO: Detected ftp on " + ip_address + ":" + port)
+	logging.info("Detected ftp on " + ip_address + ":" + port)
 	ftprecon.main(["",ip_address,port,root])
 
 	return [service, ip_address, port]
@@ -1060,44 +1108,70 @@ def ftpEnum(ip_address, port, service):
 ##########################################################
 		
 def httpPW(ip, port, service, options):
-	log("INFO: Starting password guess for http web form at " + ip + ":" + port)
+	logging.info("Starting password guess for http web form at " + ip + ":" + port)
 	medusa.webformCrack(ip, port, root, options)
-	log("INFO: Password guess for http at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+	logging.info("Password guess for http at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
 	return [service, ip, port]
 	
 def sshPW(ip, port, service, options):
-	log("INFO: Starting password guess for ssh  at " + ip + ":" + port)
+	logging.info("Starting password guess for ssh  at " + ip + ":" + port)
 	medusa.sshCrack(ip, port, root, options)
-	log("INFO: Password guess for ssh at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+	logging.info("Password guess for ssh at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
 	return [service, ip, port]
 	
 def ftpPW(ip, port, service, options):
-	log("INFO: Starting password guess for ftp at " + ip + ":" + port)
+	logging.info("Starting password guess for ftp at " + ip + ":" + port)
 	medusa.ftpCrack(ip, port, root, options)
-	log("INFO: Password guess for ftp at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+	logging.info("Password guess for ftp at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
 	return [service, ip, port]
 
 def mssqlPW(ip, port, service, options):
-	log("INFO: Starting password guess for MS SQL at " + ip + ":" + port)
+	logging.info("Starting password guess for MS SQL at " + ip + ":" + port)
 	medusa.mssqlCrack(ip, port, root, options)
-	log("INFO: Password guess for mssql at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+	logging.info("Password guess for mssql at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
 	return [service, ip, port]
 
 def mysqlPW(ip, port, service, options):
-	log("INFO: Starting password guess for MySQL at " + ip + ":" + port)
+	logging.info("Starting password guess for MySQL at " + ip + ":" + port)
 	medusa.mysqlCrack(ip, port, root, options)
-	log("INFO: Password guess for mysql at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+	logging.info("Password guess for mysql at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
 	return [service, ip, port]
 	
 def vncPW(ip, port, service, options):
-	log("INFO: Starting password guess for VNC at " + ip + ":" + port)
+	logging.info("Starting password guess for VNC at " + ip + ":" + port)
 	medusa.vncCrack(ip, port, root, options)
-	log("INFO: Password guess for vnc at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
+	logging.info("Password guess for vnc at " + ip + ":" + port + " has completed.  See " + root + "password/ for more details")
 	return [service, ip, port]
 
 ##########################################################
 # Utility functions
 ##########################################################
+
+def enumWorker(ip, port, service):
+	qh = logging.handlers.QueueHandler(q)
+	root = logging.getLogger()
+	root.setLevel(logging.DEBUG)
+	root.addHandler(qh)
+	
+	knownServices[service](ip, port, service)
+	return [service, ip, port]
+	
+def pwWorker(ip, port, service, options):
+	qh = logging.handlers.QueueHandler(q)
+	root = logging.getLogger()
+	root.setLevel(logging.DEBUG)
+	root.addHandler(qh)
+	
+	knownPwServices[service](ip, port, service, options)
+	return [service, ip, port]
+	
+def logger_thread(q):
+	while True:
+		record = q.get()
+		if record is None:
+			break
+		logger = logging.getLogger('sh0tgun_logger')
+		logger.handle(record)
 
 def checkResponder(r):
 	if os.path.isfile(r):
@@ -1111,23 +1185,23 @@ def checkResponder(r):
 def enumCallback(retVal):
 	global enumCounter
 	enumCounter[retVal[0] ] -= 1
-	print ("Enumeration of " + retVal[0] + " has completed for " +retVal[1] + ":" + retVal[2])
+	logging.info ("Enumeration of " + retVal[0] + " has completed for " +retVal[1] + ":" + retVal[2])
 	if enumCounter[retVal[0] ] == 0:
-		print ("Enumeration of all " + retVal[0] + " instances has completed. See " + root + "discovery/ for details")
+		logging.info ("Enumeration of all " + retVal[0] + " instances has completed. See " + root + "discovery/ for details")
 		input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
 	if enumCounter["total"] == 0:
-		print ("Guessing of all services has completed. See " + root + "discovery/ for details")
+		logging.info ("Guessing of all services has completed. See " + root + "discovery/ for details")
 		input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
 	
 def pwCallback(retVal):
 	global pwCounter
 	pwCounter[retVal[0] ] -= 1
-	print ("Guessing of " + retVal[0] + " has completed for " +retVal[1] + ":" + retVal[2])
+	logging.info ("Guessing of " + retVal[0] + " has completed for " +retVal[1] + ":" + retVal[2])
 	if pwCounter[retVal[0] ] == 0:
-		print ("Guessing of all " + retVal[0] + " instances has completed. See " + root + "password/ for details")
+		logging.info ("Guessing of all " + retVal[0] + " instances has completed. See " + root + "password/ for details")
 		input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
 	if pwCounter["total"] == 0:
-		print ("Guessing of all services has completed. See " + root + "password/ for details")
+		logging.info ("Guessing of all services has completed. See " + root + "password/ for details")
 		input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
 	
 def num(s):
@@ -1136,11 +1210,47 @@ def num(s):
 	except:
 		return None
 
-def log(str):
-	print (str)
-	if logger is not None:
-		logger.write(str)
+def loggingInit(verbArg):
+	global q
+	q = Queue()
+	global lp	
+	
+	l = num(verbArg)
+	if l == None:
+		lev = logging.Warning
+	elif l < 2:
+		lev = logging.CRITICAL
+	elif l == 2:
+		lev = logging.WARNING
+	elif l > 2:
+		lev = logging.INFO
+	
+	logging.addLevelName(FOUND_LEVEL_NUM, "FOUND")
+	logging.Logger.found = found
+	
+	global logger
+	logger = logging.getLogger('sh0tgun_logger')
+	fh = logging.FileHandler(root+"sh0tgun.log")
+	fh.setLevel(logging.DEBUG)
+	
+	ch = logging.StreamHandler()
+	ch.setLevel(lev)
+	
+	formatter = logging.Formatter('%(levelname)s: %(message)s')
+	fh.setFormatter(formatter)
+	ch.setFormatter(formatter)
+	
+	logger.addHandler(fh)
+	logger.addHandler(ch)
+	
+	lp = threading.Thread(target=logger_thread, args=(q,))
+	lp.start()
 
+def found(self, message, *args, **kws):
+	# Yes, logger takes its '*args' as 'args'.
+	if self.isEnabledFor(FOUND_LEVEL_NUM):
+		self._log(FOUND_LEVEL_NUM, message, args, **kws) 
+			
 def initDirs():
 	# TODO REMOVE
 	os.system("rm -r " + root + "discovery")
@@ -1214,6 +1324,8 @@ def executeMenu(title, message, options):
 			if len(choice) != 0:
 				choice = choice[0].lower()
 			if (choice == "y"):
+				q.put(None)
+				lp.join()
 				sys.exit()
 
 ##########################################################

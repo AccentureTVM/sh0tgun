@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-
+import logging
 import sys
 import argparse
 import xml.etree.ElementTree as ET
@@ -94,7 +94,7 @@ def process(inputfile, fo):
 				out = ip + ',' + hostname + ',' + portnum + ',' + protocol + ',' + service + ',' + versioning + '\n'
 				fo.write(out)
 		else:
-			print("No open ports on " + ip)
+			logging.warning("No open ports on " + ip)
 			fo.write(ip + ",,no open ports")
 
 	return serviceDict

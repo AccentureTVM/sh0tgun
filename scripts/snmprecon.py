@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 import subprocess
 import sys
+import logging
 
 def main(args):
 	if len(args) != 3:
-		print("Usage: snmprecon.py <ip address> <root>")
+		logging.error("Usage: snmprecon.py <ip address> <root>")
 		return
 
 	snmpdetect = 0
@@ -24,14 +25,14 @@ def main(args):
 				results = results.split("[public] ")[1]
 				snmpdetect = 1
 			if snmpdetect == 1:
-				print("INFO: SNMP running on " + ip_address + "; OS Detect: " + results)
+				logging.info("SNMP running on " + ip_address + "; OS Detect: " + results)
 				SNMPWALK = "snmpwalk -c public -v1 %s 1 > " + root + "discovery/snmp/%s_snmpwalk.txt" % (ip_address, ip_address)
 				try:
 					results = subprocess.check_output(SNMPWALK, shell=True)
 				except:
-					print("ERROR: Snmpwalk scan failed for " + ip + ":" + port)
+					logging.error("Snmpwalk scan failed for " + ip + ":" + port)
 	except:
-		print("ERROR: Onesixtyone scan failed for " + ip + ":" + port)
+		logging.error("Onesixtyone scan failed for " + ip + ":" + port)
 
 if __name__=='__main__':
 	main(sys.argv)

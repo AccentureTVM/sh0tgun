@@ -3,10 +3,11 @@
 import sys
 import os
 import subprocess
+import logging
 
 def main(args):
 	if len(args) < 4 :
-		print("Usage: dirbust.py <target url> <root folder>")
+		logging.error("Usage: dirbust.py <target url> <root folder>")
 		return
 
 	url = str(args[1])
@@ -19,7 +20,7 @@ def main(args):
 	folders = ["/usr/share/dirb/wordlists", "/usr/share/dirb/wordlists/vulns"]
 
 	found = []
-	print("INFO: Starting dirb scan for " + url)
+	logging.info("Starting dirb scan for " + url)
 	for folder in folders:
 		for filename in os.listdir(folder):
 
@@ -34,14 +35,14 @@ def main(args):
 						if line not in found:
 							found.append(line)
 			except:
-				print ("ERROR: Dirbscan failed for " + url)
+				logging.error ("Dirbscan failed for " + url)
 
 	if found[0] != "":
-			print("[*] Dirb found the following items...")
+			logging.info("Dirb found the following items...")
 			for item in found:
-				print("   " + item)
+				logging.info("   " + item)
 	else:
-		print("INFO: No items found during dirb scan of " + url)
+		logging.info("No items found during dirb scan of " + url)
 
 
 if __name__=='__main__':
