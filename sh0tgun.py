@@ -1247,6 +1247,9 @@ def loggingInit(verbArg):
 	logger.addHandler(fh)
 	logger.addHandler(ch)
 	
+	logger.critical("THIS IS CRITICAL")
+	logger.info("THIS IS INFO")
+	
 	lp = threading.Thread(target=logger_thread, args=(q,))
 	lp.start()
 
