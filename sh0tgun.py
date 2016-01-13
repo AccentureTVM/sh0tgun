@@ -336,7 +336,7 @@ def runNmap():
 				with open(root+"serviceDict.dat","wb") as f:
 					pickle.dump(serviceDict, f)
 					f.close()
-				logger.info("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
+				logger.info("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/tcp_nmap_all.csv")
 				v = ""
 				while v!="y" and v!="n":
 					v = input("Would you like to open the results file? (Y/N): ")
@@ -373,7 +373,7 @@ def runNmap():
 				with open(root+"serviceDict.dat","wb") as f:
 					pickle.dump(serviceDict, f)
 					f.close()
-				logger.info("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/nmap_all.csv")
+				logger.info("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/udp_nmap_all.csv")
 				
 				while v!="y" and v!="n":
 					v = input("Would you like to open the results file? (Y/N): ")
@@ -1218,12 +1218,16 @@ def loggingInit(verbArg):
 	l = num(verbArg)
 	if l == None:
 		lev = logging.WARNING
+		print("Log level set to warning")
 	elif l < 2:
 		lev = logging.CRITICAL
+		print("Log level set to critical")
 	elif l == 2:
 		lev = logging.WARNING
+		print("Log level set to warning")
 	elif l > 2:
 		lev = logging.INFO
+		print("Log level set to info")
 	
 	logging.addLevelName(FOUND_LEVEL_NUM, "FOUND")
 	logging.Logger.found = found
