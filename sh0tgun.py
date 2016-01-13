@@ -1217,7 +1217,7 @@ def loggingInit(verbArg):
 	
 	l = num(verbArg)
 	if l == None:
-		lev = logging.Warning
+		lev = logging.WARNING
 	elif l < 2:
 		lev = logging.CRITICAL
 	elif l == 2:
