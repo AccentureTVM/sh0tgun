@@ -1217,16 +1217,16 @@ def loggingInit(verbArg):
 	
 	l = num(verbArg)
 	if l == None:
-		lev = logging.WARNING
+		lev = 30
 		print("Log level set to warning")
 	elif l < 2:
-		lev = logging.CRITICAL
+		lev = 50
 		print("Log level set to critical")
 	elif l == 2:
-		lev = logging.WARNING
+		lev = 30
 		print("Log level set to warning")
 	elif l > 2:
-		lev = logging.DEBUG
+		lev = 5
 		print("Log level set to info")
 	
 	logging.addLevelName(FOUND_LEVEL_NUM, "FOUND")
@@ -1239,7 +1239,7 @@ def loggingInit(verbArg):
 	fh.setLevel(logging.DEBUG)
 	
 	ch = logging.StreamHandler()
-	ch.setLevel(5)
+	ch.setLevel(lev)
 	
 	formatter = logging.Formatter('%(levelname)s: %(message)s')
 	fh.setFormatter(formatter)
