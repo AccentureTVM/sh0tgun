@@ -1226,7 +1226,7 @@ def loggingInit(verbArg):
 		lev = logging.WARNING
 		print("Log level set to warning")
 	elif l > 2:
-		lev = logging.INFO
+		lev = logging.DEBUG
 		print("Log level set to info")
 	
 	logging.addLevelName(FOUND_LEVEL_NUM, "FOUND")
