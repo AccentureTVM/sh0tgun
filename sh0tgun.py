@@ -1234,6 +1234,7 @@ def loggingInit(verbArg):
 	
 	global logger
 	logger = logging.getLogger('sh0tgun_logger')
+	logger.setLevel(5)
 	fh = logging.FileHandler(root+"sh0tgun.log")
 	fh.setLevel(logging.DEBUG)
 	
