@@ -343,7 +343,7 @@ def runNmap():
 					if len(v) != 0:
 						v = v[0].lower()
 				if v == "y":
-					CMD = "/usr/bin/leafpad " + root + "discover/nmap/nmap_all.csv"
+					CMD = "/usr/bin/leafpad " + root + "discover/nmap/tcp_nmap_all.csv"
 					subprocess.check_output(CMD.split(" "), stderr=subprocess.STDOUT)
 				logger.info("Log data available at " + root + "reconscan.log")
 				input("Press Enter to continue.")
@@ -380,7 +380,7 @@ def runNmap():
 					if len(v) != 0:
 						v = v[0].lower()
 				if v == "y":
-					CMD = "/usr/bin/leafpad " + root + "discover/nmap/nmap_all.csv"
+					CMD = "/usr/bin/leafpad " + root + "discover/nmap/udp_nmap_all.csv"
 					subprocess.check_output(CMD.split(" "), stderr=subprocess.STDOUT)
 				logger.info("Log data available at " + root + "reconscan.log")
 				input("Press Enter to continue.")
