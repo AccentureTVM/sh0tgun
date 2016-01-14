@@ -343,7 +343,7 @@ def runNmap():
 					if len(v) != 0:
 						v = v[0].lower()
 				if v == "y":
-					CMD = "/usr/bin/leafpad " + root + "discover/nmap/tcp_nmap_all.csv"
+					CMD = "/usr/bin/leafpad " + root + "discovery/nmap/tcp_nmap_all.csv"
 					subprocess.check_output(CMD.split(" "), stderr=subprocess.STDOUT)
 				logger.info("Log data available at " + root + "reconscan.log")
 				input("Press Enter to continue.")
@@ -380,7 +380,7 @@ def runNmap():
 					if len(v) != 0:
 						v = v[0].lower()
 				if v == "y":
-					CMD = "/usr/bin/leafpad " + root + "discover/nmap/udp_nmap_all.csv"
+					CMD = "/usr/bin/leafpad " + root + "discovery/nmap/udp_nmap_all.csv"
 					subprocess.check_output(CMD.split(" "), stderr=subprocess.STDOUT)
 				logger.info("Log data available at " + root + "reconscan.log")
 				input("Press Enter to continue.")
@@ -860,7 +860,7 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 	tempDict = {}
 
 	if type == "TCP":
-		logging.info("Running TCP nmap scans for " + ip_address)
+		logger.info("Running TCP nmap scans for " + ip_address)
 		try:
 			subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
 			try:
@@ -1152,8 +1152,9 @@ def enumWorker(ip, port, service):
 	root = logging.getLogger()
 	root.setLevel(logging.DEBUG)
 	root.addHandler(qh)
-	
+	print("TEST")
 	knownServices[service](ip, port, service)
+	print("TEST2")
 	return [service, ip, port]
 	
 def pwWorker(ip, port, service, options):
@@ -1247,9 +1248,6 @@ def loggingInit(verbArg):
 	
 	logger.addHandler(fh)
 	logger.addHandler(ch)
-	
-	logger.critical("THIS IS CRITICAL")
-	logger.info("THIS IS INFO")
 	
 	lp = threading.Thread(target=logger_thread, args=(q,))
 	lp.start()
