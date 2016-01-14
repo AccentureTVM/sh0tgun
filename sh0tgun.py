@@ -1238,7 +1238,7 @@ def loggingInit(verbArg):
 	fh.setLevel(logging.DEBUG)
 	
 	ch = logging.StreamHandler()
-	ch.setLevel(lev)
+	ch.setLevel(logging.DEBUG)
 	
 	formatter = logging.Formatter('%(levelname)s: %(message)s')
 	fh.setFormatter(formatter)
