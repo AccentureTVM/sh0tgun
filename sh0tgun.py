@@ -1155,8 +1155,8 @@ def enumWorker(ip, port, service):
 	root = logging.getLogger()
 	root.setLevel(logging.DEBUG)
 	root.addHandler(qh)
-	print(knownServices)
 	global knownServices
+	print(knownServices)
 	knownServices[service](ip, port, service)
 	print("TEST2")
 	return [service, ip, port]
