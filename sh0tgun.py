@@ -319,7 +319,7 @@ def runNmap():
 				if len(v) != 0:
 					v = v[0].lower()
 			if v == "y":
-				jobs = [pool.apply_async(nmapScan, args=(ip,nmapOptions["timing"],nmapOptions["verbosity"],nmapOptions["port"],nmapOptions["versioning"],nmapOptions["online"],nmapOptions["TCP"],nmapOptions["OS"],nmapOptions["custom"],nmapOptions["Pn"],nmapOptions["Open"],"TCP")) for ip in targets]
+				jobs = [pool.apply_async(nmapScan, args=(ip,nmapOptions["timing"],nmapOptions["verbosity"],nmapOptions["port"],nmapOptions["versioning"],nmapOptions["online"],nmapOptions["TCP"],nmapOptions["OS"],nmapOptions["custom"],nmapOptions["Pn"],nmapOptions["Open"],"TCP"), error_callback=errorHandler) for ip in targets]
 				for p in jobs:
 					temp = p.get()
 					for key in temp:
@@ -356,7 +356,7 @@ def runNmap():
 				if len(v) != 0:
 					v = v[0].lower()
 			if v == "y":
-				jobs = [pool.apply_async(nmapScan, args=(ip,nmapOptions["timing"],nmapOptions["verbosity"],nmapOptions["port"],nmapOptions["versioning"],nmapOptions["online"],nmapOptions["TCP"],nmapOptions["OS"],nmapOptions["custom"],nmapOptions["Pn"],nmapOptions["Open"],"TCP")) for ip in targets]
+				jobs = [pool.apply_async(nmapScan, args=(ip,nmapOptions["timing"],nmapOptions["verbosity"],nmapOptions["port"],nmapOptions["versioning"],nmapOptions["online"],nmapOptions["TCP"],nmapOptions["OS"],nmapOptions["custom"],nmapOptions["Pn"],nmapOptions["Open"],"TCP"), error_callback=errorHandler) for ip in targets]
 				for p in jobs:
 					temp = p.get()
 					for key in temp:
@@ -430,7 +430,7 @@ def enumServices():
 					for serv in serviceDict[choice]:
 						enumCounter[choice] += 1
 						enumCounter["total"] += 1
-						pool.apply_async(enumWorker, args=(serv[0], serv[1], choice), callback=enumCallback)
+						pool.apply_async(enumWorker, args=(serv[0], serv[1], choice), callback=enumCallback, error_callback=errorHandler)
 	
 		elif menuChoice == 3:
 			if serviceDict == {}:
@@ -448,7 +448,7 @@ def enumServices():
 				for services in knownServices:
 					if services in serviceDict:
 						for serv in serviceDict[services]:
-							jobs.append(pool.apply_async(enumWorker, args=(serv[0], serv[1], services)))
+							jobs.append(pool.apply_async(enumWorker, args=(serv[0], serv[1], services), error_callback=errorHandler))
 				
 				for job in jobs:
 					job.wait()
@@ -590,7 +590,7 @@ def pwGuess():
 						for serv in serviceDict[choice]:
 							pwCounter[choice] += 1
 							pwCounter["total"] += 1
-							pool.apply_async(pwWorker, args=(serv[0], serv[1], choice, medusaFlags), callback = pwCallback)
+							pool.apply_async(pwWorker, args=(serv[0], serv[1], choice, medusaFlags), callback = pwCallback, error_callback=errorHandler)
 					
 					input("Press ENTER to go back to the main menu\n\n")
 
@@ -610,7 +610,7 @@ def pwGuess():
 				for services in knownServices:
 					if services in serviceDict:
 						for serv in serviceDict[services]:
-							jobs.append(pool.apply_async(pwWorker, args=(serv[0], serv[1], choice, medusaFlags), callback = pwCallback))
+							jobs.append(pool.apply_async(pwWorker, args=(serv[0], serv[1], choice, medusaFlags), callback = pwCallback, error_callback=errorHandler))
 							
 				for job in jobs:
 					job.wait()
@@ -1160,7 +1160,11 @@ def enumWorker(ip, port, service):
 	knownServices[service](ip, port, service)
 	print("TEST2")
 	return [service, ip, port]
-	
+
+def errorHandler(e):
+	print('<--{}-->'.format(e.__cause__))
+	print('<--{}-->'.format(e.__traceback__))
+
 def pwWorker(ip, port, service, options):
 	qh = logging.handlers.QueueHandler(q)
 	root = logging.getLogger()
