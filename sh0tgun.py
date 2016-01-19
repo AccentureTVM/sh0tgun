@@ -433,7 +433,7 @@ def enumServices():
 					for serv in serviceDict[choice]:
 						enumCounter[choice] += 1
 						enumCounter["total"] += 1
-						pool.apply_async(enumWorker, args=(serv[0], serv[1], choice), callback=enumCallback, error_callback=errorHandler)
+						pool.apply_async(enumWorker, args=(serv[0], serv[1], choice, knownServices), callback=enumCallback, error_callback=errorHandler)
 	
 		elif menuChoice == 3:
 			if serviceDict == {}:
@@ -451,7 +451,7 @@ def enumServices():
 				for services in knownServices:
 					if services in serviceDict:
 						for serv in serviceDict[services]:
-							jobs.append(pool.apply_async(enumWorker, args=(serv[0], serv[1], services), error_callback=errorHandler))
+							jobs.append(pool.apply_async(enumWorker, args=(serv[0], serv[1], services, knownServices), error_callback=errorHandler))
 				
 				for job in jobs:
 					job.wait()
@@ -1150,12 +1150,11 @@ def vncPW(ip, port, service, options):
 # Utility functions
 ##########################################################
 
-def enumWorker(ip, port, service):
+def enumWorker(ip, port, service, knownServices):
 	qh = handlers.QueueHandler(q)
 	root = logging.getLogger()
 	root.setLevel(logging.DEBUG)
 	root.addHandler(qh)
-	global knownServices
 	print(knownServices)
 	knownServices[service](ip, port, service)
 	print("TEST2")
