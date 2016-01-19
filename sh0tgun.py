@@ -18,6 +18,7 @@ import scripts.medusa as medusa
 import scripts.nse as nse
 import time
 import logging
+import logging.handlers as handlers
 import threading
 import traceback
 import sys
@@ -1151,7 +1152,7 @@ def vncPW(ip, port, service, options):
 
 def enumWorker(ip, port, service):
 	print("Hello1")
-	qh = logging.handlers.QueueHandler(q)
+	qh = handlers.QueueHandler(q)
 	print("Hello2")
 	root = logging.getLogger()
 	print("Hello3")
@@ -1164,8 +1165,6 @@ def enumWorker(ip, port, service):
 	return [service, ip, port]
 
 def errorHandler(e):
-	print('<--{}-->'.format(e.__cause__))
-	print('<--{}-->'.format(e.__traceback__))
 	traceback.print_exception(type(e), e, e.__traceback__)
 
 def pwWorker(ip, port, service, options):
