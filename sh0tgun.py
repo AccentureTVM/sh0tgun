@@ -1151,15 +1151,11 @@ def vncPW(ip, port, service, options):
 ##########################################################
 
 def enumWorker(ip, port, service):
-	print("Hello1")
 	qh = handlers.QueueHandler(q)
-	print("Hello2")
 	root = logging.getLogger()
-	print("Hello3")
 	root.setLevel(logging.DEBUG)
-	print("Hello4")
 	root.addHandler(qh)
-	print("TEST")
+	print(knownServices)
 	knownServices[service](ip, port, service)
 	print("TEST2")
 	return [service, ip, port]
