@@ -1164,6 +1164,7 @@ def enumWorker(ip, port, service):
 def errorHandler(e):
 	print('<--{}-->'.format(e.__cause__))
 	print('<--{}-->'.format(e.__traceback__))
+	traceback.print_exception(type(e), e, e.__traceback__)
 
 def pwWorker(ip, port, service, options):
 	qh = logging.handlers.QueueHandler(q)
