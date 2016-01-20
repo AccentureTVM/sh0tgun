@@ -1189,10 +1189,8 @@ def enumCallback(retVal):
 	logger.info ("Enumeration of " + retVal[0] + " has completed for " +retVal[1] + ":" + retVal[2])
 	if enumCounter[retVal[0] ] == 0:
 		logger.info ("Enumeration of all " + retVal[0] + " instances has completed. See " + root + "discovery/ for details")
-		input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
 	if enumCounter["total"] == 0:
-		logger.info ("Guessing of all services has completed. See " + root + "discovery/ for details")
-		input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
+		logger.info ("Enumeration of all services has completed. See " + root + "discovery/ for details")
 	
 def pwCallback(retVal):
 	global pwCounter
@@ -1200,10 +1198,8 @@ def pwCallback(retVal):
 	logger.info ("Guessing of " + retVal[0] + " has completed for " +retVal[1] + ":" + retVal[2])
 	if pwCounter[retVal[0] ] == 0:
 		logger.info ("Guessing of all " + retVal[0] + " instances has completed. See " + root + "password/ for details")
-		input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
 	if pwCounter["total"] == 0:
 		logger.info ("Guessing of all services has completed. See " + root + "password/ for details")
-		input("\nPress Enter to continue.  Log data available at " + root + "reconscan.log")
 	
 def num(s):
 	try:
