@@ -1235,7 +1235,6 @@ def loggingInit(verbArg):
 	global logger
 	global rootlogger
 	rootlogger = logging.getLogger('sh0tgun_logger')
-	rootlogger.setLevel(5)
 	fh = logging.FileHandler(root+"sh0tgun.log")
 	fh.setLevel(logging.DEBUG)
 	
@@ -1250,8 +1249,8 @@ def loggingInit(verbArg):
 	rootlogger.addHandler(ch)
 	
 	qh = handlers.QueueHandler(q)
+	qh.setLevel(logging.DEBUG)
 	logger = logging.getLogger("qlogger")
-	logger.setLevel(logging.DEBUG)
 	logger.addHandler(qh)
 	
 	lp = threading.Thread(target=logger_thread, args=(q,))
