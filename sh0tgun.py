@@ -209,7 +209,7 @@ def initialize(args):
 		"ms-wbt-server":rdpEnum,
 		"rmiregistry":rmiEnum
 	}
-	
+	global knownPwServices
 	knownPwServices = {
 		"http":httpPW, 
 		"ssl/http":httpPW, 
