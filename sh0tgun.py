@@ -76,10 +76,11 @@ FOUND_LEVEL_NUM = 35
 
 def run(args):
 	print ("***************************")
-	print ("***	   SH0TGUN	   ***")
-	print ("***					 ***")
+	print ("***	   SH0TGUN      ***")
+	print ("***			***")
 	print ("***   Network Scanner   ***")
 	print ("***  Service Enumerator ***")
+	print ("***   By Tucker Pettis  ***")
 	print ("***************************")
 	print ("")
 	
@@ -163,7 +164,6 @@ def initialize(args):
 		fi.close()
 	
 	loggingInit(verbArg)
-	
 	global procs
 	p = num(procArg)
 	if p == None:
@@ -1237,6 +1237,9 @@ def loggingInit(verbArg):
 	logging.addLevelName(FOUND_LEVEL_NUM, "FOUND")
 	logging.Logger.found = found
 	
+	logging.addLevelName(30, "FOUND")
+	logging.warning("TEST")
+	
 	global logger
 	logger = logging.getLogger('sh0tgun_logger')
 	logger.setLevel(5)
@@ -1253,11 +1256,11 @@ def loggingInit(verbArg):
 	logger.addHandler(fh)
 	logger.addHandler(ch)
 	
+	logger.warning("TEST2")
 	lp = threading.Thread(target=logger_thread, args=(q,))
 	lp.start()
 
 def found(self, message, *args, **kws):
-	# Yes, logger takes its '*args' as 'args'.
 	if self.isEnabledFor(FOUND_LEVEL_NUM):
 		self._log(FOUND_LEVEL_NUM, message, args, **kws) 
 			

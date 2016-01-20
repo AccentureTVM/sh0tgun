@@ -25,7 +25,7 @@ def main(args):
 		lines = results.split("\n")
 		for line in lines:
 			if "Anonymous FTP login allowed" in line:
-				logging.found("Anonymous FTP Login on " + ip_address) 
+				logging.warning("Anonymous FTP Login on " + ip_address) 
 				f = open(root+"findings.csv", "a+")
 				f.write(ip_address,port,"ftp","Anonymous FTP", "NSE","")
 				f.close()
@@ -33,7 +33,7 @@ def main(args):
 		f.write(results)
 		f.close
 	except:
-		logging.error("FTP NSE scan succeeded, however post processing has failed for " + ip_address + ":" + port + "\n\t\tSee nmap scan results in " + root + "discovery/ftp/")
+		logging.error("FTP NSE scan succeeded, however post processing has failed for " + ip_address + ":" + port + "\n\t\tSee raw nmap scan results in " + root + "discovery/ftp/")
 
 if __name__=='__main__':
 	main(sys.argv)
