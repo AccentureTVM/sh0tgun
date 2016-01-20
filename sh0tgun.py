@@ -76,10 +76,11 @@ FOUND_LEVEL_NUM = 35
 
 def run(args):
 	print ("***************************")
-	print ("***	   SH0TGUN      ***")
+	print ("***	   SH0TGUN	  ***")
 	print ("***			***")
 	print ("***   Network Scanner   ***")
 	print ("***  Service Enumerator ***")
+	print ("***			***")
 	print ("***   By Tucker Pettis  ***")
 	print ("***************************")
 	print ("")
@@ -1152,7 +1153,7 @@ def vncPW(ip, port, service, options):
 
 def enumWorker(ip, port, service, knownServices):
 	qh = handlers.QueueHandler(q)
-	root = logging.getLogger()
+	root = logging.getLogger("sh0tgun_logger.enum_logger")
 	root.setLevel(logging.DEBUG)
 	root.addHandler(qh)
 	knownServices[service](ip, port, service)
@@ -1163,7 +1164,7 @@ def errorHandler(e):
 
 def pwWorker(ip, port, service, options, knownPwServices):
 	qh = handlers.QueueHandler(q)
-	root = logging.getLogger()
+	root = logging.getLogger("sh0tgun_logger.pw_logger")
 	root.setLevel(logging.DEBUG)
 	root.addHandler(qh)
 	
@@ -1226,16 +1227,13 @@ def loggingInit(verbArg):
 		print("Log level set to warning")
 	elif l < 2:
 		lev = 50
-		print("Log level set to critical")
+		print("Log level set to Critical")
 	elif l == 2:
 		lev = 30
-		print("Log level set to warning")
+		print("Log level set to Findings and Errors")
 	elif l > 2:
 		lev = 5
-		print("Log level set to info")
-	
-	logging.addLevelName(FOUND_LEVEL_NUM, "FOUND")
-	logging.Logger.found = found
+		print("Log level set to Verbose")
 	
 	logging.addLevelName(30, "FOUND")
 	
@@ -1257,11 +1255,7 @@ def loggingInit(verbArg):
 	
 	lp = threading.Thread(target=logger_thread, args=(q,))
 	lp.start()
-
-def found(self, message, *args, **kws):
-	if self.isEnabledFor(FOUND_LEVEL_NUM):
-		self._log(FOUND_LEVEL_NUM, message, args, **kws) 
-			
+		
 def initDirs():
 	# TODO REMOVE
 	os.system("rm -r " + root + "discovery")
