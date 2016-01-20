@@ -436,7 +436,9 @@ def enumServices():
 					for serv in serviceDict[choice]:
 						enumCounter[choice] += 1
 						enumCounter["total"] += 1
-						pool.apply_async(enumWorker, args=(serv[0], serv[1], choice, knownServices), callback=enumCallback, error_callback=errorHandler)
+						pool.apply_async(knownServices[choice], args=(serv[0], serv[1], choice), callback=enumCallback, error_callback=errorHandler)
+						
+					input("Press ENTER to return to the menu.  Note: messages from background process may still be printed")
 	
 		elif menuChoice == 3:
 			if serviceDict == {}:
@@ -454,7 +456,7 @@ def enumServices():
 				for services in knownServices:
 					if services in serviceDict:
 						for serv in serviceDict[services]:
-							jobs.append(pool.apply_async(enumWorker, args=(serv[0], serv[1], services, knownServices), error_callback=errorHandler))
+							jobs.append(pool.apply_async(knownServices[services], args=(serv[0], serv[1], services), error_callback=errorHandler))
 				
 				for job in jobs:
 					job.wait()
@@ -579,24 +581,24 @@ def pwGuess():
 				message = "No services detected: Please run NMAP scans first"
 			else:
 				count = 0
-				for serv in knownServices:
+				for serv in knownPwServices:
 					if serv in serviceDict:
 						count += 1
 				if count == 0:
 					message = "No discovered services are guessable."
 				else:
 					print("Type the full name of the service you would like to guess or press 0 to go back")
-					while choice not in knownServices and choice != "0":
-						for serv in knownServices:
+					while choice not in knownPwServices and choice != "0":
+						for serv in knownPwServices:
 							if serv in serviceDict:
 								print (serv)
 						choice = input('>>')
 					if choice != "0":
-						logger.info("Starting guess for " + choice)
+						logger.info("Starting pw guess for " + choice)
 						for serv in serviceDict[choice]:
 							pwCounter[choice] += 1
 							pwCounter["total"] += 1
-							pool.apply_async(pwWorker, args=(serv[0], serv[1], choice, medusaFlags, knownPwServices), callback = pwCallback, error_callback=errorHandler)
+							pool.apply_async(knownPwServices[choice], args=(serv[0], serv[1], choice, medusaFlags), callback = pwCallback, error_callback=errorHandler)
 					
 					input("Press ENTER to go back to the main menu\n\n")
 
@@ -606,17 +608,17 @@ def pwGuess():
 			else:
 				logger.info("No PW guess tool for the following services: ")
 				for serv in serviceDict:
-					if serv not in knownServices:
+					if serv not in knownPwServices:
 						for ips in serviceDict[serv]:
 							temp = ips[0]+":"+ips[1]+" "
 						logger.info(" -"+serv+": "+ temp)
 			
 				logger.info("Starting Guessing on all possible services")
 				jobs = []
-				for services in knownServices:
+				for services in knownPwServices:
 					if services in serviceDict:
 						for serv in serviceDict[services]:
-							jobs.append(pool.apply_async(pwWorker, args=(serv[0], serv[1], choice, medusaFlags, knownPwServices), callback = pwCallback, error_callback=errorHandler))
+							jobs.append(pool.apply_async(knownPwServices[services], args=(serv[0], serv[1], services, medusaFlags), callback = pwCallback, error_callback=errorHandler))
 							
 				for job in jobs:
 					job.wait()
