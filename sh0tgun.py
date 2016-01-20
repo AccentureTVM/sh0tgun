@@ -333,9 +333,10 @@ def runNmap():
 							serviceDict[key] = serviceDict[key]+ temp[key]
 						else:
 							serviceDict[key] = temp[key]
-		
-				subprocess.check_output("cat " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_*.csv >> " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
-				subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
+				CMD = "cat " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_*.csv >> " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv"
+				subprocess.check_output(CMD.split(' '), stderr=subprocess.STDOUT)
+				CMD = "echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv"
+				subprocess.check_output(CMD.split(' '), stderr=subprocess.STDOUT)
 			
 				if os.path.isfile(root+"serviceDict.dat"):
 					os.system("rm " + root + "serviceDict.dat")
@@ -870,7 +871,7 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 	if type == "TCP":
 		logger.info("Running TCP nmap scans for " + ip_address)
 		try:
-			subprocess.check_output(TCPSCAN, shell=True, stderr=subprocess.STDOUT)
+			subprocess.check_output(TCPSCAN.split(' '), stderr=subprocess.STDOUT)
 			try:
 				fo = open(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_format+".csv", 'w+')
 				tempDict = nmapparser.process(root+"discovery"+sep+"nmap"+sep+"tcp/tcp_"+ip_format+".xml", fo)
@@ -884,7 +885,7 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 	if type == "UDP":
 		logger.info("Running UDP nmap scans for " + ip_address)
 		try:
-			subprocess.check_output(UDPSCAN, shell=True, stderr=subprocess.STDOUT)
+			subprocess.check_output(UDPSCAN.split(' '), stderr=subprocess.STDOUT)
 			try:
 				fo = open(root + "discovery"+sep+"nmap"+sep+"udp/udp_"+ip_format+".csv", 'w+')
 				fo.close()
@@ -907,12 +908,13 @@ def drdaEnum(ip_address, port, service):
 	DRDASCAN = nse.DRDA(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(DRDASCAN.split(' '))
+		nseout = nseout.decode('utf-8')
 		resultsfile = root + "discovery/drda/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
 	except:
-		logger.error("NSE failed for DRDA " + ip_address + ":"+ port)
+		logger.error("Unknown: NSE failed for DRDA " + ip_address + ":"+ port)
 	return [service, ip_address, port]
 	
 def rdpEnum(ip_address, port, service):
@@ -921,6 +923,7 @@ def rdpEnum(ip_address, port, service):
 	RDPSCAN = nse.Remote_Desktop(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(RDPSCAN.split(' '))
+		nseout = nseout.decode('utf-8')
 		resultsfile = root + "discovery/rdp/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
@@ -935,6 +938,7 @@ def rmiEnum(ip_address, port, service):
 	RMISCAN = nse.RMI_Registry(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(RMISCAN.split(' '))
+		nseout = nseout.decode('utf-8')
 		resultsfile = root + "discovery/rmi/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
@@ -953,7 +957,8 @@ def dnsEnum(ip_address, port, service):
 	logger.info("Performing nmap DNS script scan for " + ip_address + ":" + port)
 	DNSSCAN = nse.DNS(ip_address, port)	
 	try:
-		nseout = subprocess.check_output(DNSSCAN, shell=True)
+		nseout = subprocess.check_output(DNSSCAN.split(' '))
+		nseout = nseout.decode('utf-8')
 		resultsfile = root + "discovery/dns/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
@@ -968,7 +973,8 @@ def httpEnum(ip_address, port, service):
 	#HTTPSCAN = "nmap -Pn -vv -p %s --script=http-vhosts,http-userdir-enum,http-apache-negotiation,http-backup-finder,http-config-backup,http-default-accounts,http-email-harvest,http-methods,http-method-tamper,http-passwd,http-robots.txt -oN discovery/http/%s_http.nmap %s" % (port, ip_address, ip_address)
 	HTTPSCAN = nse.http(ip_address, port)
 	try:
-		nseout = subprocess.check_output(HTTPSCAN, shell=True)
+		nseout = subprocess.check_output(HTTPSCAN.split(' '))
+		nseout = nseout.decode('utf-8')
 		resultsfile = root + "discovery/http/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
@@ -982,7 +988,8 @@ def httpEnum(ip_address, port, service):
 	logger.info("Performing NIKTO scan for " + ip_address + ":" + port + " see directory/http for results")
 	NIKTOSCAN = "nikto -host %s -p %s" % (ip_address, port)
 	try:
-		NIKTOSCAN = subprocess.check_output(NIKTOSCAN, shell=True)
+		NIKTOSCAN = subprocess.check_output(NIKTOSCAN.split(' '))
+		NIKTOSCAN = NIKTOSCAN.decode('utf-8')
 		out = root + "discovery/http/" + ip_address + "NIKTO.txt"
 		niktoout = open(out, "w+")
 		niktoout.write(NIKTOSCAN)
@@ -996,7 +1003,8 @@ def httpsEnum(ip_address, port, service):
 	logger.info("Performing nmap web script scan for " + ip_address + ":" + port)
 	HTTPSSCAN = "nmap -Pn -vv -p %s --script=http-vhosts,http-userdir-enum,http-apache-negotiation,http-backup-finder,http-config-backup,http-default-accounts,http-email-harvest,http-methods,http-method-tamper,http-passwd,http-robots.txt -oN %sdiscovery/http/%s_https.nmap %s" % (port, root, ip_address, ip_address)
 	try:
-		nseout = subprocess.check_output(HTTPSSCAN, shell=True)
+		nseout = subprocess.check_output(HTTPSSCAN.split(' '))
+		nseout = nseout.decode('utf-8')
 		resultsfile = root + "discovery/http/" + ip_address + ":" + port + "_ssl_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
@@ -1010,7 +1018,8 @@ def httpsEnum(ip_address, port, service):
 	logger.info("Performing NIKTO scan for " + ip_address + ":" + port + " see directory/http for results")
 	NIKTOSCAN = "nikto -host %s -p %s" % (ip_address, port)
 	try:
-		NIKTOSCAN = subprocess.check_output(NIKTOSCAN, shell=True)
+		NIKTOSCAN = subprocess.check_output(NIKTOSCAN.split(' '))
+		NIKTOSCAN = NIKTOSCAN.decode('utf-8')
 		out = "discover/http/" + ip_address + "NIKTO_SSL.txt"
 		niktoout = open(out, "w+")
 		niktoout.write(NIKTOSCAN)
@@ -1024,7 +1033,8 @@ def mssqlEnum(ip_address, port, service):
 	logger.info("Performing nmap mssql script scan for " + ip_address + ":" + port)
 	MSSQLSCAN = "nmap -vv -sV -Pn -p %s --script=ms-sql-info,ms-sql-config,ms-sql-dump-hashes --script-args=mssql.instance-port=1433,mssql.username-sa,mssql.password-sa -oX %sdiscovery/mssql/%s_mssql.xml %s" % (port, root, ip_address, ip_address)
 	try:
-		nseout = subprocess.check_output(MSSQLSCAN, shell=True)
+		nseout = subprocess.check_output(MSSQLSCAN.split(' '))
+		nseout = nseout.decode('utf-8')
 		resultsfile = root + "discovery/mssql/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
@@ -1040,7 +1050,8 @@ def mysqlEnum(ip_address, port, service):
 	# mysql-vuln-cve2012-2122
 	MYSQLSCAN = "nmap -vv -sV -Pn -p %s --script=mysql-databases,mysql-empty-password,mysql-info,mysql-users,mysql-variables -oX %sdiscovery/mysql/%s_mysql.xml %s" % (port, root, ip_address, ip_address)
 	try:
-		nseout = subprocess.check_output(MYSQLSCAN, shell=True)
+		nseout = subprocess.check_output(MYSQLSCAN.split(' '))
+		nseout = nseout.decode('utf-8')
 		resultsfile = root + "discovery/mysql/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
@@ -1057,7 +1068,8 @@ def sshEnum(ip_address, port, service):
 	logger.info("Performing nmap SSH script scan for " + ip_address + ":" + port)
 	SSHSCAN = nse.SSH(ip_address, port)	
 	try:
-		nseout = subprocess.check_output(SSHSCAN, shell=True)
+		nseout = subprocess.check_output(SSHSCAN.split(' '))
+		nseout = nseout.decode('utf-8')
 		resultsfile = root + "discovery/ssh/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
@@ -1073,7 +1085,8 @@ def snmpEnum(ip_address, port, service):
 	logger.info("Performing nmap snmp script scan for " + ip_address + ":" + port)
 	SNMPSCAN = nse.SNMP(ip_address, port)	
 	try:
-		nseout = subprocess.check_output(SNMPSCAN, shell=True)
+		nseout = subprocess.check_output(SNMPSCAN.split(' '))
+		nseout = nseout.decode('utf-8')
 		resultsfile = root + "discovery/snmp/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
@@ -1090,7 +1103,8 @@ def smtpEnum(ip_address, port, service):
 	logger.info("Performing nmap smtp script scan for " + ip_address + ":" + port)
 	SMTPSCAN = nse.SMTP(ip_address, port)	
 	try:
-		nseout = subprocess.check_output(SMTPSCAN, shell=True)
+		nseout = subprocess.check_output(SMTPSCAN.split(' '))
+		nseout = nseout.decode('utf-8')
 		resultsfile = root + "discovery/smtp/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
