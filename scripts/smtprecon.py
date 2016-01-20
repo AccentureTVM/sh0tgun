@@ -32,9 +32,9 @@ def main(args):
 		if ("not implemented" in result) or ("disallowed" in result):
 			logging.error("VRFY Command not implemented on " + ip)
 		if (("250" in result) or ("252" in result) and ("Cannot VRFY" not in result)):
-			logging.found("SMTP VRFY Account found on " + ip + ": " + name.strip()	)
+			logging.warning("SMTP VRFY Account found on " + ip + ": " + name.strip()	)
 			f = open(root+"findings.csv", "a+")
-			f.write(ip,port,"SMTP","SMTP ACCOUNT: " + name.strip(), "SMTP VRFY","")
+			f.write(ip+","+port+",SMTP,SMTP ACCOUNT: " + name.strip() + ",SMTP VRFY,\n")
 			f.close()
 		s.close()
 

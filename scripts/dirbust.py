@@ -38,7 +38,7 @@ def main(args):
 				logging.error ("Dirbscan failed for " + url)
 
 	if found[0] != "":
-			logging.info("Dirb found the following items...")
+			logging.warning("Dirb found the following items...")
 			for item in found:
 				logging.info("   " + item)
 	else:

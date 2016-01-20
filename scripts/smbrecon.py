@@ -20,7 +20,7 @@ def main(args):
 		nbtresults = subprocess.check_output(NBTSCAN.split(' '))
 		nbtresults = nbtresults.decode("utf-8")
 		if "Connection refused" not in nbtresults and "Connect error" not in nbtresults and "Connection reset" not in nbtresults:
-			logging.found("NBTSCAN User accounts/domains found on " + ip + " check discovery/smb for results")
+			logging.warning("NBTSCAN User accounts/domains found on " + ip + " check discovery/smb for results")
 			resultsfile = root + "discovery/smb/" + ip + ":" + port + "_nbtscan.txt"
 			f = open(resultsfile, "w+")
 			f.write(nbtresults)
@@ -34,7 +34,7 @@ def main(args):
 		enumresults = subprocess.check_output(ENUM4LINUX.split(' '))
 		enumresults = enumresults.decode("utf-8")
 		if ("Connection refused" not in enumresults) and ("Connect error" not in enumresults) and ("Connection reset" not in enumresults):
-			logging.found("ENUM4LINUX User accounts/domains found on " + ip + " check discovery/smb for results")
+			logging.warning("ENUM4LINUX User accounts/domains found on " + ip + " check discovery/smb for results")
 			resultsfile = root + "discovery/smb/" + ip + ":" + port + "_enum4linux.txt"
 			f = open(resultsfile, "w+")
 			f.write(enumresults)
@@ -50,9 +50,9 @@ def main(args):
 		lines = nseresults.split("\n")
 		for line in lines:
 			if "VULNERABLE" in line and "NOT VULNERABLE" not in line:
-				logging.found("SMB VULN on " +ip+ ": " +line + " | check discovery/smb for full results")
+				logging.warning("SMB VULN on " +ip+ ": " +line + " | check discovery/smb for full results")
 				f = open(root+"findings.csv", "a+")
-				f.write(ip,port,"smb","MS08-067", "NSE","")
+				f.write(ip+ "," + port + "," + "smb,MS08-067,NSE,\n")
 				f.close()
 		resultsfile = root + "discovery/smb/" + ip + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")

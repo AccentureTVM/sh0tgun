@@ -27,7 +27,7 @@ def main(args):
 		if "Anonymous FTP login allowed" in line:
 			logging.warning("Anonymous FTP Login on " + ip_address) 
 			f = open(root+"findings.csv", "a+")
-			f.write(ip_address + "," + port + ",ftp,Anonymous FTP,NSE,")
+			f.write(ip_address + "," + port + ",ftp,Anonymous FTP,NSE,\n")
 			f.close()
 	f = open(outfile, "w")
 	f.write(results)

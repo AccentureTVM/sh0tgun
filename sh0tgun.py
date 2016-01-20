@@ -160,7 +160,7 @@ def initialize(args):
 	
 	if not os.path.isfile(root + "findings.csv"):
 		fi = open(root + "findings.csv", 'w+')
-		fi.write("ip,port,service,finding,tool,notes")
+		fi.write("ip,port,service,finding,tool,notes\n")
 		fi.close()
 	
 	loggingInit(verbArg)
@@ -1238,7 +1238,6 @@ def loggingInit(verbArg):
 	logging.Logger.found = found
 	
 	logging.addLevelName(30, "FOUND")
-	logging.warning("TEST")
 	
 	global logger
 	logger = logging.getLogger('sh0tgun_logger')
@@ -1256,7 +1255,6 @@ def loggingInit(verbArg):
 	logger.addHandler(fh)
 	logger.addHandler(ch)
 	
-	logger.warning("TEST2")
 	lp = threading.Thread(target=logger_thread, args=(q,))
 	lp.start()
 
