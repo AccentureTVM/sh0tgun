@@ -1316,7 +1316,7 @@ def executeMenu(title, message, options):
 		
 		print ("\n0) Main Menu")
 		print ("Q) Quit\n")
-		menuChoice = input('Option #:')
+		menuChoice = input('Option #:\n')
 		if menuChoice == '':
 			message = "Enter a correct Option"
 		elif menuChoice[0].lower() != "q":
