@@ -1155,16 +1155,8 @@ def vncPW(ip, port, service, options):
 # Utility functions
 ##########################################################
 
-def enumWorker(ip, port, service, knownServices):
-	knownServices[service](ip, port, service)
-	return [service, ip, port]
-
 def errorHandler(e):
 	traceback.print_exception(type(e), e, e.__traceback__)
-
-def pwWorker(ip, port, service, options, knownPwServices):
-	knownPwServices[service](ip, port, service, options)
-	return [service, ip, port]
 	
 def logger_thread(q):
 	while True:
