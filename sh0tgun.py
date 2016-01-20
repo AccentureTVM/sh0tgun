@@ -147,7 +147,7 @@ def initialize(args):
 		r = r+"/"
 	root = r
 	if os.path.isfile(root+"serviceDict.dat"):
-		v = input("Previous NMAP Data was found here.  Would you like to load? If not, all previous data will be erased upon directory initialization (2). (Y/N): ")
+		v = input("Previous NMAP Data was found here.  Would you like to load? If not, all previous data will be erased upon directory initialization. (Y/N): ")
 		if len(v) != 0:
 			v = v[0].lower()
 		if v == "y":
@@ -164,7 +164,8 @@ def initialize(args):
 		fi.write("ip,port,service,finding,tool,notes\n")
 		fi.close()
 	
-	loggingInit(verbArg)
+	message += loggingInit(verbArg)
+	
 	global procs
 	p = num(procArg)
 	if p == None:
@@ -1224,16 +1225,16 @@ def loggingInit(verbArg):
 	l = num(verbArg)
 	if l == None:
 		lev = 30
-		print("Log level set to warning")
+		message = "Log level set to Findings and Errors\n\t\tNOTE: all events are logged to " + root + "sh0tgun.log"
 	elif l < 2:
 		lev = 50
-		print("Log level set to Critical")
+		message = "Log level set to Critical\n\tNOTE: all events are logged to " + root + "sh0tgun.log"
 	elif l == 2:
 		lev = 30
-		print("Log level set to Findings and Errors")
+		message = "Log level set to Findings and Errors\n\tNOTE: all events are logged to " + root + "sh0tgun.log"
 	elif l > 2:
 		lev = 5
-		print("Log level set to Verbose")
+		message = "Log level set to Verbose\n\tNOTE: all events are logged to " + root + "sh0tgun.log"
 	
 	logging.addLevelName(30, "FOUND")
 	
@@ -1255,6 +1256,8 @@ def loggingInit(verbArg):
 	
 	lp = threading.Thread(target=logger_thread, args=(q,))
 	lp.start()
+	
+	return message
 		
 def initDirs():
 	# TODO REMOVE
