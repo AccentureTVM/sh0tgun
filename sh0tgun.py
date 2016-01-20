@@ -6,16 +6,16 @@ import argparse
 import re
 import os
 import math
-import utilities.nmapxmltocsv as nmapparser
-import scripts.dirbust as dirbust
-import scripts.dnsrecon as dnsrecon
-import scripts.ftprecon as ftprecon
-import scripts.smbrecon as smbrecon
-import scripts.smtprecon as smtprecon
-import scripts.snmprecon as snmprecon
-import scripts.sshrecon as sshrecon
-import scripts.medusa as medusa
-import scripts.nse as nse
+import utility_scripts.nmapxmltocsv as nmapparser
+import service_scripts.dirbust as dirbust
+import service_scripts.dnsrecon as dnsrecon
+import service_scripts.ftprecon as ftprecon
+import service_scripts.smbrecon as smbrecon
+import service_scripts.smtprecon as smtprecon
+import service_scripts.snmprecon as snmprecon
+import service_scripts.sshrecon as sshrecon
+import service_scripts.medusa as medusa
+import service_scripts.nse as nse
 import time
 import logging
 import logging.handlers as handlers
