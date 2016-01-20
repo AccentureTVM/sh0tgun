@@ -1247,8 +1247,9 @@ def loggingInit(verbArg):
 	
 	qh = handlers.QueueHandler(q)
 	qh.setLevel(logging.DEBUG)
-	logger.setLevel(5)
+	
 	logger = logging.getLogger("qlogger")
+	logger.setLevel(5)
 	logger.addHandler(qh)
 	
 	lp = threading.Thread(target=logger_thread, args=(q,))
