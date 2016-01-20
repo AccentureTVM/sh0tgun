@@ -438,7 +438,7 @@ def enumServices():
 						enumCounter["total"] += 1
 						pool.apply_async(knownServices[choice], args=(serv[0], serv[1], choice), callback=enumCallback, error_callback=errorHandler)
 						
-					input("Press ENTER to return to the menu.  Note: messages from background process may still be printed")
+					input("Press ENTER to return to the menu.  Note: messages from background process may still be printed\n\n")
 	
 		elif menuChoice == 3:
 			if serviceDict == {}:
@@ -1316,7 +1316,7 @@ def executeMenu(title, message, options):
 		
 		print ("\n0) Main Menu")
 		print ("Q) Quit\n")
-		menuChoice = input('Option #:\n')
+		menuChoice = input('Option #:')
 		if menuChoice == '':
 			message = "Enter a correct Option"
 		elif menuChoice[0].lower() != "q":
