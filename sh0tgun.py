@@ -1035,7 +1035,7 @@ def mysqlEnum(ip_address, port, service):
 	logging.info("Detected mySQL on " + ip_address + ":" + port)
 	logging.info("Performing nmap mysql script scan for " + ip_address + ":" + port)
 	# mysql-vuln-cve2012-2122
-	MYSQLSCAN = "nmap -vv -sV -Pn -p %s --script=mysql-enum, mysql-empty-password  -oX %sdiscovery/mysql/%s_mysql.xml %s" % (port, root, ip_address, ip_address)
+	MYSQLSCAN = "nmap -vv -sV -Pn -p %s --script=mysql-databases,mysql-empty-password,mysql-info,mysql-users,mysql-variables -oX %sdiscovery/mysql/%s_mysql.xml %s" % (port, root, ip_address, ip_address)
 	try:
 		nseout = subprocess.check_output(MYSQLSCAN, shell=True)
 		resultsfile = root + "discovery/mysql/" + ip_address + ":" + port + "_nse.txt"
