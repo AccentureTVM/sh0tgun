@@ -593,7 +593,7 @@ def pwGuess():
 						for serv in serviceDict[choice]:
 							pwCounter[choice] += 1
 							pwCounter["total"] += 1
-							pool.apply_async(pwWorker, args=(serv[0], serv[1], choice, medusaFlags), callback = pwCallback, error_callback=errorHandler)
+							pool.apply_async(pwWorker, args=(serv[0], serv[1], choice, medusaFlags, knownPwServices), callback = pwCallback, error_callback=errorHandler)
 					
 					input("Press ENTER to go back to the main menu\n\n")
 
@@ -613,7 +613,7 @@ def pwGuess():
 				for services in knownServices:
 					if services in serviceDict:
 						for serv in serviceDict[services]:
-							jobs.append(pool.apply_async(pwWorker, args=(serv[0], serv[1], choice, medusaFlags), callback = pwCallback, error_callback=errorHandler))
+							jobs.append(pool.apply_async(pwWorker, args=(serv[0], serv[1], choice, medusaFlags, knownPwServices), callback = pwCallback, error_callback=errorHandler))
 							
 				for job in jobs:
 					job.wait()
@@ -1155,16 +1155,14 @@ def enumWorker(ip, port, service, knownServices):
 	root = logging.getLogger()
 	root.setLevel(logging.DEBUG)
 	root.addHandler(qh)
-	print(knownServices)
 	knownServices[service](ip, port, service)
-	print("TEST2")
 	return [service, ip, port]
 
 def errorHandler(e):
 	traceback.print_exception(type(e), e, e.__traceback__)
 
-def pwWorker(ip, port, service, options):
-	qh = logging.handlers.QueueHandler(q)
+def pwWorker(ip, port, service, options, knownPwServices):
+	qh = handlers.QueueHandler(q)
 	root = logging.getLogger()
 	root.setLevel(logging.DEBUG)
 	root.addHandler(qh)
