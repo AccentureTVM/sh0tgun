@@ -904,12 +904,12 @@ def drdaEnum(ip_address, port, service):
 	DRDASCAN = nse.DRDA(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(DRDASCAN.split(' '))
-		resultsfile = root + "discovery/drda/" + ip + ":" + port + "_nse.txt"
+		resultsfile = root + "discovery/drda/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
 	except:
-		logging.error("NSE failed for DRDA " + ip + ":"+ port)
+		logging.error("NSE failed for DRDA " + ip_address + ":"+ port)
 	return [service, ip_address, port]
 	
 def rdpEnum(ip_address, port, service):
@@ -918,12 +918,12 @@ def rdpEnum(ip_address, port, service):
 	RDPSCAN = nse.Remote_Desktop(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(RDPSCAN.split(' '))
-		resultsfile = root + "discovery/rdp/" + ip + ":" + port + "_nse.txt"
+		resultsfile = root + "discovery/rdp/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
 	except:
-		logging.error("NSE failed for RDP " + ip + ":"+ port)
+		logging.error("NSE failed for RDP " + ip_address + ":"+ port)
 	return [service, ip_address, port]
 	
 def rmiEnum(ip_address, port, service):
@@ -932,12 +932,12 @@ def rmiEnum(ip_address, port, service):
 	RMISCAN = nse.RMI_Registry(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(RMISCAN.split(' '))
-		resultsfile = root + "discovery/rmi/" + ip + ":" + port + "_nse.txt"
+		resultsfile = root + "discovery/rmi/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
 	except:
-		logging.error("NSE failed for DRDA " + ip + ":"+ port)
+		logging.error("NSE failed for DRDA " + ip_address + ":"+ port)
 	return [service, ip_address, port]
 
 def dnsEnum(ip_address, port, service):
@@ -951,12 +951,12 @@ def dnsEnum(ip_address, port, service):
 	DNSSCAN = nse.DNS(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(DNSSCAN, shell=True)
-		resultsfile = root + "discovery/dns/" + ip + ":" + port + "_nse.txt"
+		resultsfile = root + "discovery/dns/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
 	except:
-		logging.error("NSE failed for snmp " + ip + ":"+ port)
+		logging.error("NSE failed for snmp " + ip_address + ":"+ port)
 	return [service, ip_address, port]
 
 def httpEnum(ip_address, port, service):
@@ -966,12 +966,12 @@ def httpEnum(ip_address, port, service):
 	HTTPSCAN = nse.http(ip_address, port)
 	try:
 		nseout = subprocess.check_output(HTTPSCAN, shell=True)
-		resultsfile = root + "discovery/http/" + ip + ":" + port + "_nse.txt"
+		resultsfile = root + "discovery/http/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
 	except:
-		logging.error("NSE failed for http " + ip + ":"+ port)
+		logging.error("NSE failed for http " + ip_address + ":"+ port)
 
 	logging.info("Using Dirbuster for " + ip_address + ":" + port + " see directory/http for results")
 	dirbust.main(["",ip_address,port,False])
@@ -980,7 +980,7 @@ def httpEnum(ip_address, port, service):
 	NIKTOSCAN = "nikto -host %s -p %s" % (ip_address, port)
 	try:
 		NIKTOSCAN = subprocess.check_output(NIKTOSCAN, shell=True)
-		out = "discover/http/" + ip_address + "NIKTO.txt"
+		out = root + "discovery/http/" + ip_address + "NIKTO.txt"
 		niktoout = open(out, "w+")
 		niktoout.write(NIKTOSCAN)
 		niktoout.close()
@@ -991,15 +991,15 @@ def httpEnum(ip_address, port, service):
 def httpsEnum(ip_address, port, service):
 	logging.info("Detected https on " + ip_address + ":" + port)
 	logging.info("Performing nmap web script scan for " + ip_address + ":" + port)
-	HTTPSSCAN = "nmap -Pn -vv -p %s --script=http-vhosts,http-userdir-enum,http-apache-negotiation,http-backup-finder,http-config-backup,http-default-accounts,http-email-harvest,http-methods,http-method-tamper,http-passwd,http-robots.txt -oN discovery/http/%s_https.nmap %s" % (port, ip_address, ip_address)
+	HTTPSSCAN = "nmap -Pn -vv -p %s --script=http-vhosts,http-userdir-enum,http-apache-negotiation,http-backup-finder,http-config-backup,http-default-accounts,http-email-harvest,http-methods,http-method-tamper,http-passwd,http-robots.txt -oN %sdiscovery/http/%s_https.nmap %s" % (port, root, ip_address, ip_address)
 	try:
 		nseout = subprocess.check_output(HTTPSSCAN, shell=True)
-		resultsfile = root + "discovery/http/" + ip + ":" + port + "_ssl_nse.txt"
+		resultsfile = root + "discovery/http/" + ip_address + ":" + port + "_ssl_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
 	except:
-		logging.error("NSE failed for https " + ip + ":"+ port)
+		logging.error("NSE failed for https " + ip_address + ":"+ port)
 
 	logging.info("Using Dirbuster for " + ip_address + ":" + port + " see directory/http for results")
 	dirbust.main(["",ip_address,port, True])
@@ -1019,15 +1019,15 @@ def httpsEnum(ip_address, port, service):
 def mssqlEnum(ip_address, port, service):
 	logging.info("Detected MS-SQL on " + ip_address + ":" + port)
 	logging.info("Performing nmap mssql script scan for " + ip_address + ":" + port)
-	MSSQLSCAN = "nmap -vv -sV -Pn -p %s --script=ms-sql-info,ms-sql-config,ms-sql-dump-hashes --script-args=mssql.instance-port=1433,mssql.username-sa,mssql.password-sa -oX discovery/mssql/%s_mssql.xml %s" % (port, ip_address, ip_address)
+	MSSQLSCAN = "nmap -vv -sV -Pn -p %s --script=ms-sql-info,ms-sql-config,ms-sql-dump-hashes --script-args=mssql.instance-port=1433,mssql.username-sa,mssql.password-sa -oX %sdiscovery/mssql/%s_mssql.xml %s" % (port, root, ip_address, ip_address)
 	try:
 		nseout = subprocess.check_output(MSSQLSCAN, shell=True)
-		resultsfile = root + "discovery/mssql/" + ip + ":" + port + "_nse.txt"
+		resultsfile = root + "discovery/mssql/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
 	except:
-		logging.error("NSE failed for mssql" + ip + ":"+ port)
+		logging.error("NSE failed for mssql" + ip_address + ":"+ port)
 
 	return [service, ip_address, port]
 
@@ -1035,15 +1035,15 @@ def mysqlEnum(ip_address, port, service):
 	logging.info("Detected mySQL on " + ip_address + ":" + port)
 	logging.info("Performing nmap mysql script scan for " + ip_address + ":" + port)
 	# mysql-vuln-cve2012-2122
-	MYSQLSCAN = "nmap -vv -sV -Pn -p %s --script=mysql-enum, mysql-empty-password  -oX discovery/mysql/%s_mysql.xml %s" % (port, ip_address, ip_address)
+	MYSQLSCAN = "nmap -vv -sV -Pn -p %s --script=mysql-enum, mysql-empty-password  -oX %sdiscovery/mysql/%s_mysql.xml %s" % (port, root, ip_address, ip_address)
 	try:
 		nseout = subprocess.check_output(MYSQLSCAN, shell=True)
-		resultsfile = root + "discovery/mysql/" + ip + ":" + port + "_nse.txt"
+		resultsfile = root + "discovery/mysql/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
 	except:
-		logging.error("NSE failed for mysql" + ip + ":"+ port)
+		logging.error("NSE failed for mysql" + ip_address + ":"+ port)
 
 
 	return [service, ip_address, port]
@@ -1055,12 +1055,12 @@ def sshEnum(ip_address, port, service):
 	SSHSCAN = nse.SSH(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(SSHSCAN, shell=True)
-		resultsfile = root + "discovery/ssh/" + ip + ":" + port + "_nse.txt"
+		resultsfile = root + "discovery/ssh/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
 	except:
-		logging.error("NSE failed for ssh " + ip + ":"+ port)
+		logging.error("NSE failed for ssh " + ip_address + ":"+ port)
 	return [service, ip_address, port]
 
 def snmpEnum(ip_address, port, service):
@@ -1071,7 +1071,7 @@ def snmpEnum(ip_address, port, service):
 	SNMPSCAN = nse.SNMP(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(SNMPSCAN, shell=True)
-		resultsfile = root + "discovery/snmp/" + ip + ":" + port + "_nse.txt"
+		resultsfile = root + "discovery/snmp/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
@@ -1088,12 +1088,12 @@ def smtpEnum(ip_address, port, service):
 	SMTPSCAN = nse.SMTP(ip_address, port)	
 	try:
 		nseout = subprocess.check_output(SMTPSCAN, shell=True)
-		resultsfile = root + "discovery/smtp/" + ip + ":" + port + "_nse.txt"
+		resultsfile = root + "discovery/smtp/" + ip_address + ":" + port + "_nse.txt"
 		f = open(resultsfile, "w")
 		f.write(nseout)
 		f.close
 	except:
-		logging.error("NSE failed for smtp " + ip + ":"+ port)
+		logging.error("NSE failed for smtp " + ip_address + ":"+ port)
 		
 	return [service, ip_address, port]
 
