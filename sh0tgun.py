@@ -650,11 +650,9 @@ def responder():
 		t3 = ""
 		if interface != "":
 			t1 = "-I " + interface
-		if rip != "":
-			t2 = "-i " + rip
 		if flags != "":
 			t3 = "-" + flags
-		title = "python " + loc + " " + t3 + " " + t2 + " " + t1
+		title = "python " + loc + " " + t3 + " " + t1
 		menuChoice = executeMenu(title,message,options)
 		if menuChoice == 1:
 			if interface != "":
