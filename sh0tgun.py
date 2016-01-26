@@ -635,12 +635,10 @@ def responder():
 		"Run Responder",
 		"Set flags",
 		"Set interface",
-		"Set respondeing ip",
 		"Set responder location"
 	]
 	flags = "vbwFr"
 	interface = "eth0"
-	rip = ""
 	loc = "/usr/share/responder/Responder.py"
 	
 	message = ""
@@ -659,7 +657,7 @@ def responder():
 		title = "python " + loc + " " + t3 + " " + t2 + " " + t1
 		menuChoice = executeMenu(title,message,options)
 		if menuChoice == 1:
-			if rip != "":
+			if interface != "":
 				RESPONDER = "gnome-terminal -x " + title
 				logger.info("Running Responder")
 				subprocess.check_output(RESPONDER.split(" "), stderr=subprocess.STDOUT)
@@ -689,15 +687,6 @@ def responder():
 				if len(v) != 0:
 					v = v[0].lower()
 			interface = temp
-		elif menuChoice == 4:
-			v = "n"
-			while v!="y":
-				temp = input("Enter the responding IP: ")
-				print (temp)
-				v = input("Is this correct? (Y/N): ")
-				if len(v) != 0:
-					v = v[0].lower()
-			rip = temp
 		elif menuChoice == 5:
 			r = "/THIS/IS/NOT/A/DIRECTORY!!!!/"
 			while checkResponder(r) == False:
