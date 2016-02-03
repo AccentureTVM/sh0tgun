@@ -6,7 +6,7 @@ import argparse
 import re
 import os
 from os import listdir
-from os import isfile, join
+from os.path import isfile, join
 import math
 import utility_scripts.nmapxmltocsv as nmapparser
 import service_scripts.dirbust as dirbust
