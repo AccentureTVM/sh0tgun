@@ -806,7 +806,7 @@ def findings():
 					for line in lines:
 						if count != 1:
 							line = line.split(",")
-							print (line[2] + "/" + line[3] + " for " + line[4] + " on " + line[0] + ":"  + line[1])
+							print (line[2] + "/" + line[3] + " for " + line[4].rstrip() + " on " + line[0] + ":"  + line[1])
 							if count % 10 == 0:
 								input ("Press any button to continue")
 						count = count + 1
@@ -828,8 +828,8 @@ def findings():
 				if len(lines) > 0:
 					for line in lines:
 						line = line.split(",")
-						if line[0] == ip or line[4] == ip:
-							print (line[2] + "/" + line[3] + " for " + line[4] + " on " + line[0] + ":"  + line[1])
+						if line[0] == ip or line[4].rstrip() == ip:
+							print (line[2] + "/" + line[3] + " for " + line[4].rstrip() + " on " + line[0] + ":"  + line[1])
 							if count % 10 == 0:
 								input ("Press any button to continue")
 							count = count + 1
