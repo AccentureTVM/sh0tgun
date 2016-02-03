@@ -792,12 +792,12 @@ def findings():
 					time.sleep(.2)
 			input("Press ENTER to continue...")
 		elif menuChoice == 4:
-		    CMD = "gnome-terminal -x /usr/bin/leafpad "+ root + "password/passwords.csv"
+			CMD = "gnome-terminal -x /usr/bin/leafpad "+ root + "password/passwords.csv"
 			logger.info("Opening " + root + "password/passwords.csv")
 			subprocess.check_output(CMD.split(" "))
 			message = "Findings opened with leafpad"
 		elif menuChoice == 5:
-		    count = 1
+			count = 1
 			logger.info("Showing all credentials")
 			time.sleep(.2)
 			with open(root + "password/passwords.csv", "r") as fi:
@@ -815,7 +815,7 @@ def findings():
 					time.sleep(.2)
 			input("Press ENTER to continue...")
 		elif menuChoice == 6:
-		    count = 1
+			count = 1
 			ip = "123"
 			flag = 0
 			while ip not in knownPwServices and not re.match(r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', ip.strip()):
