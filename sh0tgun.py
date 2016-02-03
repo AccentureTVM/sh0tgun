@@ -347,14 +347,18 @@ def runNmap():
 							serviceDict[key] = serviceDict[key]+ temp[key]
 						else:
 							serviceDict[key] = temp[key]
+				
+				csvs = [f for f in listdir(root + "discovery"+sep+"nmap"+sep+"tcp/") if isfile(join(root + "discovery"+sep+"nmap"+sep+"tcp/", f)) and join(root + "discovery"+sep+"nmap"+sep+"tcp/", f)[:-3] == "csv"]
+				print (csvs)
 				try:
 					CMD = "cat " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_*.csv >> " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv"
+					print(CMD)
 					subprocess.check_output(CMD.split(' '), stderr=subprocess.STDOUT)
 					CMD = "echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv"
+					print(CMD)
 					subprocess.check_output(CMD.split(' '), stderr=subprocess.STDOUT)
 				except subprocess.CalledProcessError as e:
 					print (e.output.decode('utf-8'))
-					pool.join()
 					sys.exit(1)
 			
 				if os.path.isfile(root+"serviceDict.dat"):
