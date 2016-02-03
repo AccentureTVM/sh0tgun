@@ -353,7 +353,7 @@ def runNmap():
 					CMD = "echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv"
 					subprocess.check_output(CMD.split(' '), stderr=subprocess.STDOUT)
 				except CalledProcessError as e:
-					print e.output
+					print (e.output)
 			
 				if os.path.isfile(root+"serviceDict.dat"):
 					os.system("rm " + root + "serviceDict.dat")
