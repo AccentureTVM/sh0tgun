@@ -353,7 +353,7 @@ def runNmap():
 							serviceDict[key] = temp[key]
 				
 				csvs = glob.glob(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_*.csv")
-				with open(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv", "wb") as outfile:
+				with open(root + "discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv", "wb") as outfile:
 					outfile.write(bytes('ip,hostname,port,protocol,service,version\n','utf-8'))
 					for f in csvs:
 						with open(f, "rb") as infile:
@@ -365,6 +365,7 @@ def runNmap():
 					pickle.dump(serviceDict, f)
 					f.close()
 				logger.info("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/tcp_nmap_all.csv")
+				time.sleep(.5)
 				v = ""
 				while v!="y" and v!="n":
 					v = input("Would you like to open the results file? (Y/N): ")
@@ -374,6 +375,7 @@ def runNmap():
 					CMD = "/usr/bin/leafpad " + root + "discovery/nmap/tcp_nmap_all.csv"
 					subprocess.check_output(CMD.split(" "), stderr=subprocess.STDOUT)
 				logger.info("Log data available at " + root + "reconscan.log")
+				time.sleep(.5)
 				input("Press Enter to continue.")
 		
 		elif menuChoice == 3:
@@ -394,7 +396,7 @@ def runNmap():
 							serviceDict[key] = temp[key]
 				
 				csvs = glob.glob(root + "discovery"+sep+"nmap"+sep+"udp/udp*.csv")
-				with open(root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv", "wb") as outfile:
+				with open(root + "discovery"+sep+"nmap"+sep+"udp_nmap_all.csv", "wb") as outfile:
 					outfile.write(bytes('ip,hostname,port,protocol,service,version\n','utf-8'))
 					for f in csvs:
 						with open(f, "rb") as infile:
@@ -406,7 +408,7 @@ def runNmap():
 					pickle.dump(serviceDict, f)
 					f.close()
 				logger.info("NMAP Scans complete for all ips.  inidividual results in " + root + "discovery/nmap full results in " + root + "discovery/nmap/udp_nmap_all.csv")
-				time.sleep(.5)
+				time.sleep(1)
 				while v!="y" and v!="n":
 					v = input("Would you like to open the results file? (Y/N): ")
 					if len(v) != 0:
@@ -415,7 +417,7 @@ def runNmap():
 					CMD = "/usr/bin/leafpad " + root + "discovery/nmap/udp_nmap_all.csv"
 					subprocess.check_output(CMD.split(" "), stderr=subprocess.STDOUT)
 				logger.info("Log data available at " + root + "reconscan.log")
-				time.sleep(.5)
+				time.sleep(1)
 				input("Press Enter to continue.")
 		
 		else:
@@ -1352,7 +1354,6 @@ def executeMenu(title, message, options):
 			if (choice == "y"):
 				q.put(None)
 				lp.join()
-				pool.join()
 				sys.exit()
 
 ##########################################################
