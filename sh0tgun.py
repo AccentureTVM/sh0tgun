@@ -371,7 +371,7 @@ def runNmap():
 					if len(v) != 0:
 						v = v[0].lower()
 				if v == "y":
-					CMD = "/usr/bin/leafpad " + root + "discovery/nmap/tcp_nmap_all.csv"
+					CMD = "gnome-terminal -x /usr/bin/leafpad " + root + "discovery/nmap/tcp_nmap_all.csv"
 					subprocess.check_output(CMD.split(" "), stderr=subprocess.STDOUT)
 				logger.info("Log data available at " + root + "reconscan.log")
 				time.sleep(.5)
@@ -414,7 +414,7 @@ def runNmap():
 					if len(v) != 0:
 						v = v[0].lower()
 				if v == "y":
-					CMD = "/usr/bin/leafpad " + root + "discovery/nmap/udp_nmap_all.csv"
+					CMD = "gnome-terminal -x /usr/bin/leafpad " + root + "discovery/nmap/udp_nmap_all.csv"
 					subprocess.check_output(CMD.split(" "), stderr=subprocess.STDOUT)
 				logger.info("Log data available at " + root + "reconscan.log")
 				time.sleep(1)
@@ -732,7 +732,10 @@ def findings():
 	options = [
 		"Open findings file",
 		"Display All Findings",
-		"Display findings by IP"
+		"Display findings by IP",
+		"Open passwords file",
+		"Display all credentials",
+		"Display credentials by IP or service"
 	]
 	title = ""
 	message = ""
@@ -786,6 +789,55 @@ def findings():
 						time.sleep(.2)
 				else:
 					logger.info("No findings found")
+					time.sleep(.2)
+			input("Press ENTER to continue...")
+		elif menuChoice == 4:
+		    CMD = "gnome-terminal -x /usr/bin/leafpad "+ root + "password/passwords.csv"
+			logger.info("Opening " + root + "password/passwords.csv")
+			subprocess.check_output(CMD.split(" "))
+			message = "Findings opened with leafpad"
+		elif menuChoice == 5:
+		    count = 1
+			logger.info("Showing all credentials")
+			time.sleep(.2)
+			with open(root + "password/passwords.csv", "r") as fi:
+				lines = fi.readlines()
+				if len(lines) > 0:
+					for line in lines:
+						if count != 1:
+							line = line.split(",")
+							print (line[2] + "/" + line[3] + " for " + line[4] + " on " + line[0] + ":"  + line[1])
+							if count % 10 == 0:
+								input ("Press any button to continue")
+						count = count + 1
+				else:
+					logger.info("No findings found")
+					time.sleep(.2)
+			input("Press ENTER to continue...")
+		elif menuChoice == 6:
+		    count = 1
+			ip = "123"
+			flag = 0
+			while ip not in knownPwServices and not re.match(r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', ip.strip()):
+				ip = input("Enter a valid ip address or service: ")
+			
+			logger.info("Showing findings for " + ip)
+			time.sleep(.2)
+			with open(root + "password/passwords.csv", "r") as fi:
+				lines = fi.readlines()
+				if len(lines) > 0:
+					for line in lines:
+						line = line.split(",")
+						if line[0] == ip or line[4] == ip:
+							print (line[2] + "/" + line[3] + " for " + line[4] + " on " + line[0] + ":"  + line[1])
+							if count % 10 == 0:
+								input ("Press any button to continue")
+							count = count + 1
+					if count == 1:
+						logger.info("No credentials for " + ip)
+						time.sleep(.2)
+				else:
+					logger.info("No credentials found")
 					time.sleep(.2)
 			input("Press ENTER to continue...")
 		else:
