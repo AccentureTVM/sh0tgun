@@ -354,6 +354,7 @@ def runNmap():
 					subprocess.check_output(CMD.split(' '), stderr=subprocess.STDOUT)
 				except subprocess.CalledProcessError as e:
 					print (e.output.decode('utf-8'))
+					sys.exit(1)
 			
 				if os.path.isfile(root+"serviceDict.dat"):
 					os.system("rm " + root + "serviceDict.dat")
