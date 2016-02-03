@@ -158,7 +158,6 @@ def initialize(args):
 			with open(root+"serviceDict.dat","rb") as f:
 				global serviceDict
 				serviceDict = pickle.load(f)
-			f.close()
 	message = "Project root set to: " + root
 	initDirs()
 	message += "\nProject root directories successfully created\n"
@@ -363,7 +362,7 @@ def runNmap():
 					os.system("rm " + root + "serviceDict.dat")
 				with open(root+"serviceDict.dat","wb") as f:
 					pickle.dump(serviceDict, f)
-					f.close()
+
 				logger.info("NMAP Scans complete for all ips.  inidividual results in " + root + "discovery/nmap full results in " + root + "discovery/nmap/tcp_nmap_all.csv")
 				time.sleep(.5)
 				v = ""
@@ -407,7 +406,7 @@ def runNmap():
 					os.system("rm " + root + "serviceDict.dat")
 				with open(root+"serviceDict.dat","wb") as f:
 					pickle.dump(serviceDict, f)
-					f.close()
+
 				logger.info("NMAP Scans complete for all ips.  inidividual results in " + root + "discovery/nmap full results in " + root + "discovery/nmap/udp_nmap_all.csv")
 				time.sleep(1)
 				while v!="y" and v!="n":
@@ -750,9 +749,9 @@ def findings():
 			logger.info("Showing all findings")
 			time.sleep(.2)
 			with open(root + "findings.csv", "r") as fi:
-				num_lines = sum(1 for line in fi)
-				if num_lines > 0:
-					for line in fi:
+			    lines = fi.readlines()
+			    if len(lines) > 0
+					for line in lines:
 						line = line.split(",")
 						print (line[3] + " found on " + line[0] + ":"  + line[1])
 						if count % 10 == 0:
@@ -760,7 +759,7 @@ def findings():
 						count = count + 1
 				else:
 					logger.info("No findings found")
-			fi.close()
+			        time.sleep(.2)
 			input("Press ENTER to continue...")
 		elif menuChoice == 3:
 			count = 1
@@ -772,18 +771,21 @@ def findings():
 			logger.info("Showing findings for " + ip)
 			time.sleep(.2)
 			with open(root + "findings.csv", "r") as fi:
-				num_lines = sum(1 for line in fi if ip in line)
-				if num_lines > 0:
-					for line in fi:
+				lines = fi.readlines()
+				if len(lines) > 0:
+					for line in lines:
 						line = line.split(",")
 						if line[0] == ip:
 							print (line[3] + " found on " + line[0] + ":" + line[1])
 							if count % 10 == 0:
-								input ("Press any continue to continue")
+								input ("Press any button to continue")
 							count = count + 1
+					if count == 1:
+					    logger.info("No findings for " + ip)
+					    time.sleep(.2)
 				else:
-					logger.info("No findings for " + ip)
-			fi.close()
+					logger.info("No findings found")
+					time.sleep(.2)
 			input("Press ENTER to continue...")
 		else:
 			message = "Enter a correct option"
