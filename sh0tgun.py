@@ -336,7 +336,7 @@ def runNmap():
 			nmapOptions = setNmapOptions(nmapOptions)
 		elif menuChoice == 2:
 			logger.info("You are about to run an NMAP scan.  You cannot close this window until it is finished.")
-			time.sleep(1)
+			time.sleep(.5)
 			v = ""
 			while v!="y" and v!="n":
 				v = input("Do you want to continue? (Y/N): ")
@@ -364,7 +364,7 @@ def runNmap():
 				with open(root+"serviceDict.dat","wb") as f:
 					pickle.dump(serviceDict, f)
 					f.close()
-				logger.info("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/tcp_nmap_all.csv")
+				logger.info("NMAP Scans complete for all ips.  inidividual results in " + root + "discovery/nmap full results in " + root + "discovery/nmap/tcp_nmap_all.csv")
 				time.sleep(.5)
 				v = ""
 				while v!="y" and v!="n":
@@ -380,6 +380,7 @@ def runNmap():
 		
 		elif menuChoice == 3:
 			logger.info("You are about to run an NMAP scan.  You cannot close this window until it is finished.")
+			time.sleep(.5)
 			v = ""
 			while v!="y" and v!="n":
 				v = input("Do you want to continue? (Y/N): ")
@@ -747,11 +748,11 @@ def findings():
 			fi = open(root + "findings.csv", "r")
 			count = 1
 			logger.info("Showing all findings")
-			while line == fi.readline():
+			while line = fi.readline():
 				line = line.split(",")
 				print (line[3] + " found on " + line[0] + ":"  + line[1])
 				if count % 10 == 0:
-					input ("Press any continue to continue")
+					input ("Press any button to continue")
 				count = count + 1
 			fi.close()
 		elif menuChoice == 3:
@@ -762,7 +763,7 @@ def findings():
 				ip = input("Enter a valid ip address: ")
 			
 			logger.info("Showing findings for" + ip)
-			while line == fi.readline():
+			while line = fi.readline():
 				line = line.split(",")
 				if line[0] == ip:
 					print (line[3] + " found on " + line[0] + ":" + line[1])
