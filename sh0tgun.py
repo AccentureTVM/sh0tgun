@@ -741,12 +741,14 @@ def findings():
 	while menuChoice != 0:
 		menuChoice = executeMenu(title,message,options)
 		if menuChoice == 1:
-			CMD = "/usr/bin/leafpad "+ root + "findings.csv"
+			CMD = "gnome-terminal -x /usr/bin/leafpad "+ root + "findings.csv"
 			logger.info("Opening " + root + "findings.csv")
 			subprocess.check_output(CMD.split(" "))
+			message = "Findings opened with leafpad"
 		elif menuChoice == 2:
 			count = 1
 			logger.info("Showing all findings")
+			time.sleep(.2)
 			with open(root + "findings.csv", "r") as fi:
 				for line in fi:
 					line = line.split(",")
@@ -755,14 +757,15 @@ def findings():
 						input ("Press any button to continue")
 					count = count + 1
 			fi.close()
+			input("Press ENTER to continue...")
 		elif menuChoice == 3:
-			
 			count = 1
 			ip = "123"
 			while not re.match(r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', ip.strip()):
 				ip = input("Enter a valid ip address: ")
 			
 			logger.info("Showing findings for" + ip)
+			time.sleep(.2)
 			with open(root + "findings.csv", "r") as fi:
 				for line in fi:
 					line = line.split(",")
@@ -772,6 +775,7 @@ def findings():
 							input ("Press any continue to continue")
 						count = count + 1
 			fi.close()
+			input("Press ENTER to continue...")
 		else:
 			message = "Enter a correct option"
 
