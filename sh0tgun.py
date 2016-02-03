@@ -336,6 +336,7 @@ def runNmap():
 			nmapOptions = setNmapOptions(nmapOptions)
 		elif menuChoice == 2:
 			logger.info("You are about to run an NMAP scan.  You cannot close this window until it is finished.")
+			time.sleep(1)
 			v = ""
 			while v!="y" and v!="n":
 				v = input("Do you want to continue? (Y/N): ")
@@ -353,7 +354,7 @@ def runNmap():
 				
 				csvs = glob.glob(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_*.csv")
 				with open(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv", "wb") as outfile:
-					outfile.write('ip,hostname,port,protocol,service,version\n')
+					outfile.write(bytes('ip,hostname,port,protocol,service,version\n','utf-8'))
 					for f in csvs:
 						with open(f, "rb") as infile:
 							outfile.write(infile.read())
@@ -394,7 +395,7 @@ def runNmap():
 				
 				csvs = glob.glob(root + "discovery"+sep+"nmap"+sep+"udp/udp*.csv")
 				with open(root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv", "wb") as outfile:
-					outfile.write("ip,hostname,port,protocol,service,version\n")
+					outfile.write(bytes('ip,hostname,port,protocol,service,version\n','utf-8'))
 					for f in csvs:
 						with open(f, "rb") as infile:
 							outfile.write(infile.read())
