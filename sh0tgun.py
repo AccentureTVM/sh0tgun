@@ -753,11 +753,11 @@ def findings():
 				if len(lines) > 0:
 					for line in lines:
 						if count != 1:
-						line = line.split(",")
-						print (line[3] + " found on " + line[0] + ":"  + line[1])
-						if count % 10 == 0:
-							input ("Press any button to continue")
-						count = count + 1
+							line = line.split(",")
+							print (line[3] + " found on " + line[0] + ":"  + line[1])
+							if count % 10 == 0:
+								input ("Press any button to continue")
+							count = count + 1
 				else:
 					logger.info("No findings found")
 					time.sleep(.2)
