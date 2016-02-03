@@ -747,7 +747,7 @@ def findings():
 		elif menuChoice == 2:
 			count = 1
 			logger.info("Showing all findings")
-			with open(root + "findings.csv", "r") as fi
+			with open(root + "findings.csv", "r") as fi:
 			for line in fi:
 				line = line.split(",")
 				print (line[3] + " found on " + line[0] + ":"  + line[1])
@@ -763,7 +763,7 @@ def findings():
 				ip = input("Enter a valid ip address: ")
 			
 			logger.info("Showing findings for" + ip)
-			with open(root + "findings.csv", "r") as fi
+			with open(root + "findings.csv", "r") as fi:
 			for line in fi:
 				line = line.split(",")
 				if line[0] == ip:
