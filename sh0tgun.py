@@ -5,7 +5,7 @@ import pickle
 import argparse
 import re
 import os
-import os.listdir
+from os import listdir
 import math
 import utility_scripts.nmapxmltocsv as nmapparser
 import service_scripts.dirbust as dirbust
