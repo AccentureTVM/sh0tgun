@@ -394,7 +394,7 @@ def runNmap():
 				
 				csvs = glob.glob(root + "discovery"+sep+"nmap"+sep+"udp/udp*.csv")
 				with open(root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv", "wb") as outfile:
-					outfile.write('ip,hostname,port,protocol,service,version\n')
+					outfile.write("ip,hostname,port,protocol,service,version\n")
 					for f in csvs:
 						with open(f, "rb") as infile:
 							outfile.write(infile.read())
