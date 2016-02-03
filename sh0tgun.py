@@ -350,8 +350,8 @@ def runNmap():
 						else:
 							serviceDict[key] = temp[key]
 				
-				#csvs = [f for f in listdir(root + "discovery"+sep+"nmap"+sep+"tcp/") if isfile(join(root + "discovery"+sep+"nmap"+sep+"tcp/", f)) and join(root + "discovery"+sep+"nmap"+sep+"tcp/", f)[:-3] == "csv"]
-				csvs = [f for f in listdir(root + "discovery"+sep+"nmap"+sep+"tcp/") if isfile(join(root + "discovery"+sep+"nmap"+sep+"tcp/", f))]
+				csvs = [f for f in listdir(root + "discovery"+sep+"nmap"+sep+"tcp/") if isfile(join(root + "discovery"+sep+"nmap"+sep+"tcp/", f)) and join(root + "discovery"+sep+"nmap"+sep+"tcp/", f)[-3:] == "csv"]
+				#csvs = [f for f in listdir(root + "discovery"+sep+"nmap"+sep+"tcp/") if isfile(join(root + "discovery"+sep+"nmap"+sep+"tcp/", f))]
 				print (csvs)
 				try:
 					CMD = "cat " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_*.csv >> " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv"
