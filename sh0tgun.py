@@ -745,10 +745,10 @@ def findings():
 			logger.info("Opening " + root + "findings.csv")
 			subprocess.check_output(CMD.split(" "))
 		elif menuChoice == 2:
-			fi = open(root + "findings.csv", "r")
 			count = 1
 			logger.info("Showing all findings")
-			while line = fi.readline():
+			with open(root + "findings.csv", "r") as fi
+			for line in fi:
 				line = line.split(",")
 				print (line[3] + " found on " + line[0] + ":"  + line[1])
 				if count % 10 == 0:
@@ -756,14 +756,15 @@ def findings():
 				count = count + 1
 			fi.close()
 		elif menuChoice == 3:
-			fi = open(root + "findings.csv", "r")
+			
 			count = 1
 			ip = "123"
 			while not re.match(r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', ip.strip()):
 				ip = input("Enter a valid ip address: ")
 			
 			logger.info("Showing findings for" + ip)
-			while line = fi.readline():
+			with open(root + "findings.csv", "r") as fi
+			for line in fi:
 				line = line.split(",")
 				if line[0] == ip:
 					print (line[3] + " found on " + line[0] + ":" + line[1])
