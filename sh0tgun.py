@@ -749,8 +749,8 @@ def findings():
 			logger.info("Showing all findings")
 			time.sleep(.2)
 			with open(root + "findings.csv", "r") as fi:
-			    lines = fi.readlines()
-			    if len(lines) > 0:
+				lines = fi.readlines()
+				if len(lines) > 0:
 					for line in lines:
 						line = line.split(",")
 						print (line[3] + " found on " + line[0] + ":"  + line[1])
@@ -759,7 +759,7 @@ def findings():
 						count = count + 1
 				else:
 					logger.info("No findings found")
-			        time.sleep(.2)
+					time.sleep(.2)
 			input("Press ENTER to continue...")
 		elif menuChoice == 3:
 			count = 1
@@ -781,8 +781,8 @@ def findings():
 								input ("Press any button to continue")
 							count = count + 1
 					if count == 1:
-					    logger.info("No findings for " + ip)
-					    time.sleep(.2)
+						logger.info("No findings for " + ip)
+						time.sleep(.2)
 				else:
 					logger.info("No findings found")
 					time.sleep(.2)
