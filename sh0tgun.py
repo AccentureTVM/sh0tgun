@@ -750,7 +750,7 @@ def findings():
 			time.sleep(.2)
 			with open(root + "findings.csv", "r") as fi:
 			    lines = fi.readlines()
-			    if len(lines) > 0
+			    if len(lines) > 0:
 					for line in lines:
 						line = line.split(",")
 						print (line[3] + " found on " + line[0] + ":"  + line[1])
