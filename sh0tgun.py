@@ -231,11 +231,13 @@ def manageTargets():
 		"Add targets manually",
 		"Remove targets",
 		"Show targets",
+		"Remove all targets"
 	]
 	menuChoice = ""
+	message = ""
 	global targets
 	while menuChoice != 0:
-		menuChoice = executeMenu("","",options)
+		menuChoice = executeMenu("",message,options)
 		if menuChoice == 1:
 			targetfile = ""
 			while not os.path.isfile(targetfile):
@@ -271,6 +273,18 @@ def manageTargets():
 				targets = targets + addedTargets
 				targets = list(set(targets))
 				message = str(len(addedTargets)) + " IPs successfully loaded."
+		elif menuChoice == 4:
+			temp = ""
+			while temp!="y" and temp!="n":
+				temp = input("Are you sure you want to remove all targets? (Y/N): ")
+				if len(temp) != 0:
+					temp = temp[0].lower() 
+			
+			if temp == "y":
+				targets = []
+				message = "All targets removed"
+			else:
+				message = ""
 		elif menuChoice == 3:
 			count = 0
 			for ip in targets:
