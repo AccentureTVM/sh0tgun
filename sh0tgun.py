@@ -354,6 +354,7 @@ def runNmap():
 					subprocess.check_output(CMD.split(' '), stderr=subprocess.STDOUT)
 				except subprocess.CalledProcessError as e:
 					print (e.output.decode('utf-8'))
+					pool.join()
 					sys.exit(1)
 			
 				if os.path.isfile(root+"serviceDict.dat"):
@@ -1344,6 +1345,7 @@ def executeMenu(title, message, options):
 			if (choice == "y"):
 				q.put(None)
 				lp.join()
+				pool.join()
 				sys.exit()
 
 ##########################################################
