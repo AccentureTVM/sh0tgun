@@ -659,6 +659,7 @@ def responder():
 				RESPONDER = "gnome-terminal -x " + title
 				logger.info("Running Responder")
 				subprocess.check_output(RESPONDER.split(" "), stderr=subprocess.STDOUT)
+				break
 		elif menuChoice == 2:
 			f = "-"
 			while f != "":
