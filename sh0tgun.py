@@ -24,6 +24,7 @@ import logging.handlers as handlers
 import threading
 import traceback
 import sys
+import glob
 from multiprocessing import Pool, Queue
 
 sep = os.path.sep
@@ -350,19 +351,12 @@ def runNmap():
 						else:
 							serviceDict[key] = temp[key]
 				
-				csvs = [f for f in listdir(root + "discovery"+sep+"nmap"+sep+"tcp/") if isfile(join(root + "discovery"+sep+"nmap"+sep+"tcp/", f)) and join(root + "discovery"+sep+"nmap"+sep+"tcp/", f)[-3:] == "csv"]
-				#csvs = [f for f in listdir(root + "discovery"+sep+"nmap"+sep+"tcp/") if isfile(join(root + "discovery"+sep+"nmap"+sep+"tcp/", f))]
-				print (csvs)
-				try:
-					CMD = "cat " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_*.csv >> " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv"
-					print(CMD)
-					subprocess.check_output(CMD.split(' '), stderr=subprocess.STDOUT)
-					CMD = "echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"tcp_nmap_all.csv"
-					print(CMD)
-					subprocess.check_output(CMD.split(' '), stderr=subprocess.STDOUT)
-				except subprocess.CalledProcessError as e:
-					print (e.output.decode('utf-8'))
-					sys.exit(1)
+				csvs = glob.glob(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_*.csv")
+				with open(root + "discovery"+sep+"nmap"+sep+"tcp/tcp_nmap_all.csv", "wb") as outfile:
+					outfile.write('ip,hostname,port,protocol,service,version\n')
+					for f in csvs:
+						with open(f, "rb") as infile:
+							outfile.write(infile.read())
 			
 				if os.path.isfile(root+"serviceDict.dat"):
 					os.system("rm " + root + "serviceDict.dat")
@@ -397,10 +391,14 @@ def runNmap():
 							serviceDict[key] = serviceDict[key]+ temp[key]
 						else:
 							serviceDict[key] = temp[key]
-
-				subprocess.check_output("cat " + root + "discovery"+sep+"nmap"+sep+"udp/udp*.csv >> " + root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
-				subprocess.check_output("echo 'ip,hostname,port,protocol,service,version\n' | cat - " + root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv > temp && mv temp " + root + "discovery"+sep+"nmap"+sep+"udp_nmap_all.csv", shell=True, stderr=subprocess.STDOUT)
-			
+				
+				csvs = glob.glob(root + "discovery"+sep+"nmap"+sep+"udp/udp*.csv")
+				with open(root + "discovery"+sep+"nmap"+sep+"udp/udp_nmap_all.csv", "wb") as outfile:
+					outfile.write('ip,hostname,port,protocol,service,version\n')
+					for f in csvs:
+						with open(f, "rb") as infile:
+							outfile.write(infile.read())
+							
 				if os.path.isfile(root+"serviceDict.dat"):
 					os.system("rm " + root + "serviceDict.dat")
 				with open(root+"serviceDict.dat","wb") as f:
