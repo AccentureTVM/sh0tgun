@@ -405,8 +405,8 @@ def runNmap():
 				with open(root+"serviceDict.dat","wb") as f:
 					pickle.dump(serviceDict, f)
 					f.close()
-				logger.info("NMAP Scans complete for all ips.  inidividual results in discovery/nmap full results in discovery/nmap/udp_nmap_all.csv")
-				
+				logger.info("NMAP Scans complete for all ips.  inidividual results in " + root + "discovery/nmap full results in " + root + "discovery/nmap/udp_nmap_all.csv")
+				time.sleep(.5)
 				while v!="y" and v!="n":
 					v = input("Would you like to open the results file? (Y/N): ")
 					if len(v) != 0:
@@ -415,6 +415,7 @@ def runNmap():
 					CMD = "/usr/bin/leafpad " + root + "discovery/nmap/udp_nmap_all.csv"
 					subprocess.check_output(CMD.split(" "), stderr=subprocess.STDOUT)
 				logger.info("Log data available at " + root + "reconscan.log")
+				time.sleep(.5)
 				input("Press Enter to continue.")
 		
 		else:
