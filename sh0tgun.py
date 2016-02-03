@@ -752,6 +752,7 @@ def findings():
 				lines = fi.readlines()
 				if len(lines) > 0:
 					for line in lines:
+					    if count != 1:
 						line = line.split(",")
 						print (line[3] + " found on " + line[0] + ":"  + line[1])
 						if count % 10 == 0:
