@@ -748,12 +748,12 @@ def findings():
 			count = 1
 			logger.info("Showing all findings")
 			with open(root + "findings.csv", "r") as fi:
-			for line in fi:
-				line = line.split(",")
-				print (line[3] + " found on " + line[0] + ":"  + line[1])
-				if count % 10 == 0:
-					input ("Press any button to continue")
-				count = count + 1
+				for line in fi:
+					line = line.split(",")
+					print (line[3] + " found on " + line[0] + ":"  + line[1])
+					if count % 10 == 0:
+						input ("Press any button to continue")
+					count = count + 1
 			fi.close()
 		elif menuChoice == 3:
 			
@@ -764,13 +764,13 @@ def findings():
 			
 			logger.info("Showing findings for" + ip)
 			with open(root + "findings.csv", "r") as fi:
-			for line in fi:
-				line = line.split(",")
-				if line[0] == ip:
-					print (line[3] + " found on " + line[0] + ":" + line[1])
-					if count % 10 == 0:
-						input ("Press any continue to continue")
-					count = count + 1
+				for line in fi:
+					line = line.split(",")
+					if line[0] == ip:
+						print (line[3] + " found on " + line[0] + ":" + line[1])
+						if count % 10 == 0:
+							input ("Press any continue to continue")
+						count = count + 1
 			fi.close()
 		else:
 			message = "Enter a correct option"
