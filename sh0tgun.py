@@ -750,30 +750,39 @@ def findings():
 			logger.info("Showing all findings")
 			time.sleep(.2)
 			with open(root + "findings.csv", "r") as fi:
-				for line in fi:
-					line = line.split(",")
-					print (line[3] + " found on " + line[0] + ":"  + line[1])
-					if count % 10 == 0:
-						input ("Press any button to continue")
-					count = count + 1
+				num_lines = sum(1 for line in fi)
+				if num_lines > 0:
+					for line in fi:
+						line = line.split(",")
+						print (line[3] + " found on " + line[0] + ":"  + line[1])
+						if count % 10 == 0:
+							input ("Press any button to continue")
+						count = count + 1
+				else:
+					logger.info("No findings found")
 			fi.close()
 			input("Press ENTER to continue...")
 		elif menuChoice == 3:
 			count = 1
 			ip = "123"
+			flag = 0
 			while not re.match(r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', ip.strip()):
 				ip = input("Enter a valid ip address: ")
 			
-			logger.info("Showing findings for" + ip)
+			logger.info("Showing findings for " + ip)
 			time.sleep(.2)
 			with open(root + "findings.csv", "r") as fi:
-				for line in fi:
-					line = line.split(",")
-					if line[0] == ip:
-						print (line[3] + " found on " + line[0] + ":" + line[1])
-						if count % 10 == 0:
-							input ("Press any continue to continue")
-						count = count + 1
+				num_lines = sum(1 for line in fi if ip in line)
+				if num_lines > 0:
+					for line in fi:
+						line = line.split(",")
+						if line[0] == ip:
+							print (line[3] + " found on " + line[0] + ":" + line[1])
+							if count % 10 == 0:
+								input ("Press any continue to continue")
+							count = count + 1
+				else:
+					logger.info("No findings for " + ip)
 			fi.close()
 			input("Press ENTER to continue...")
 		else:
