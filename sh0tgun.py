@@ -128,11 +128,13 @@ def initialize(args):
 	parser.add_argument('-v', '--verbosity', help='Set verbosity as 1 (Silent), 2 (Normal), 3 (Verbose)')
 	parser.add_argument('-p', '--processes', help='Set the maximum concurrent processes to spawn')
 	parser.add_argument('-r', '--root', help='Set the project root directory')
+	parser.add_argument('-t', '--test', action='store_true', help='For testing purposed')
 	args = parser.parse_args()
 
 	verbArg = args.verbosity
 	procArg = args.processes
 	rootArg = args.root
+	testArg = args.test
 	
 	global root
 	if rootArg != None:
@@ -159,7 +161,7 @@ def initialize(args):
 				global serviceDict
 				serviceDict = pickle.load(f)
 	message = "Project root set to: " + root
-	initDirs()
+	initDirs(testArg)
 	message += "\nProject root directories successfully created\n"
 	
 	if not os.path.isfile(root + "findings.csv"):
@@ -1349,9 +1351,13 @@ def loggingInit(verbArg):
 	
 	return message
 		
-def initDirs():
-	# TODO REMOVE
-	os.system("rm -r " + root + "discovery")
+def initDirs(test):
+	if test:
+		os.system("rm -r " + root + "discovery")
+		os.system("rm -r " + root + "password")
+		os.system("rm " + root + "findings.csv")
+		os.system("rm " + root + "serviceDict.dat")
+		os.system("rm " + root + "sh0tgun.log")
 	checkandmk(root + 'issues')
 	checkandmk(root + 'lists')
 	checkandmk(root + 'password')
