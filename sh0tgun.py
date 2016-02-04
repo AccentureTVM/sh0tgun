@@ -152,6 +152,9 @@ def initialize(args):
 	if r[-1] != "/":
 		r = r+"/"
 	root = r
+	message = "Project root set to: " + root
+	initDirs(testArg)
+	message += "\nProject root directories successfully created\n"
 	if os.path.isfile(root+"serviceDict.dat"):
 		v = input("Previous NMAP Data was found here.  Would you like to load? If not, all previous data will be erased upon directory initialization. (Y/N): ")
 		if len(v) != 0:
@@ -160,9 +163,6 @@ def initialize(args):
 			with open(root+"serviceDict.dat","rb") as f:
 				global serviceDict
 				serviceDict = pickle.load(f)
-	message = "Project root set to: " + root
-	initDirs(testArg)
-	message += "\nProject root directories successfully created\n"
 	
 	if not os.path.isfile(root + "findings.csv"):
 		fi = open(root + "findings.csv", 'w+')
