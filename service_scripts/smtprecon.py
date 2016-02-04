@@ -20,7 +20,7 @@ def main(args):
 	port = sys.argv[2]
 
 	logging.info("Trying SMTP Enum on " + ip)
-	names = open('/usr/share/wfuzz/wordlist/fuzzdb/wordlists-user-passwd/names/namelist.txt', 'r')
+	names = open('/usr/share/metasploit-framework/data/wordlists/namelist.txt', 'r')
 	for name in names:
 		s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		connect=s.connect((ip,25))

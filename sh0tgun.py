@@ -199,9 +199,6 @@ def initialize(args):
 		
 	global knownServices
 	knownServices = {
-		"http":httpEnum, 
-		"ssl/http":httpsEnum, 
-		"https":httpsEnum, 
 		"ssh":sshEnum, 
 		"snmp":snmpEnum, 
 		"smtp":smtpEnum, 
@@ -216,6 +213,9 @@ def initialize(args):
 		"rmiregistry":rmiEnum
 	}
 	#"msrpc":smbEnum, "microsoft-ds":smbEnum,
+	#"http":httpEnum, 
+	#	"ssl/http":httpsEnum, 
+	#	"https":httpsEnum, 
 	global knownPwServices
 	knownPwServices = {
 		"http":httpPW, 
