@@ -16,7 +16,7 @@ def sshCrack(ip_address, port, root, medusaFlags):
 			line = line.split(" ")
 			un = line[6]
 			pw = line[8]
-			logger.warning(" Password for "+ip_address+":"+port+ " - "+un + "/" + pw)
+			logger.warning(" SSH Password for "+ip_address+":"+port+ " - "+un + "/" + pw)
 			fo.write(ip_address + "," + port + "," + un + "," + pw + ",ssh\n")
 	fr.close()
 	fo.close()
@@ -33,7 +33,7 @@ def mssqlCrack(ip_address, port, root, medusaFlags):
 			line = line.split(" ")
 			un = line[6]
 			pw = line[8]
-			logger.warning(" Password for "+ip_address+":"+port+ " - "+un + "/" + pw)
+			logger.warning(" MSSQL Password for "+ip_address+":"+port+ " - "+un + "/" + pw)
 			fo.write(ip_address + "," + port + "," + un + "," + pw + ",mssql\n")
 	fr.close()
 	fo.close()
@@ -49,7 +49,7 @@ def mysqlCrack(ip_address, port, root, medusaFlags):
 			line = line.split(" ")
 			un = line[6]
 			pw = line[8]
-			logger.warning(" Password for "+ip_address+":"+port+ " - "+un + "/" + pw)
+			logger.warning(" mySQL Password for "+ip_address+":"+port+ " - "+un + "/" + pw)
 			fo.write(ip_address + "," + port + "," + un + "," + pw + ",mysql\n")
 	fr.close()
 	fo.close()
@@ -65,7 +65,7 @@ def webformCrack(ip_address, port, root, medusaFlags):
 			line = line.split(" ")
 			un = line[6]
 			pw = line[8]
-			logger.warning(" Password for "+ip_address+":"+port+ " - "+un + "/" + pw)
+			logger.warning(" Web Password for "+ip_address+":"+port+ " - "+un + "/" + pw)
 			fo.write(ip_address + "," + port + "," + un + "," + pw + ",http\n")
 	fr.close()
 	fo.close()
@@ -81,7 +81,7 @@ def ftpCrack(ip_address, port, root, medusaFlags):
 			line = line.split(" ")
 			un = line[6]
 			pw = line[8]
-			logger.warning(" Password for "+ip_address+":"+port+ " - "+un + "/" + pw)
+			logger.warning(" FTP Password for "+ip_address+":"+port+ " - "+un + "/" + pw)
 			fo.write(ip_address + "," + port + "," + un + "," + pw + ",ftp\n")
 	fr.close()
 	fo.close()
@@ -97,7 +97,7 @@ def vncCrack(ip_address, port, root, medusaFlags):
 			line = line.split(" ")
 			un = line[6]
 			pw = line[8]
-			logger.warning(" Password for "+ip_address+":"+port+ " - "+un + "/" + pw)
+			logger.warning(" VNC Password for "+ip_address+":"+port+ " - "+un + "/" + pw)
 			fo.write(ip_address + "," + port + "," + un + "," + pw + ",vnc\n")
 	fr.close()
 	fo.close()

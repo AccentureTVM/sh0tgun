@@ -168,6 +168,10 @@ def initialize(args):
 		fi = open(root + "findings.csv", 'w+')
 		fi.write("ip,port,service,finding,tool,notes\n")
 		fi.close()
+	if not os.path.isfile(root + "password/passwords.csv"):
+		fi = open(root + "password/passwords.csv", 'w+')
+		fi.write("ip,port,username,password,service\n")
+		fi.close()
 	
 	message += loggingInit(verbArg)
 	
@@ -767,6 +771,7 @@ def findings():
 					logger.info("No findings found")
 					time.sleep(.2)
 			input("Press ENTER to continue...")
+			message = ""
 		elif menuChoice == 3:
 			count = 1
 			ip = "123"
@@ -793,11 +798,12 @@ def findings():
 					logger.info("No findings found")
 					time.sleep(.2)
 			input("Press ENTER to continue...")
+			message = ""
 		elif menuChoice == 4:
 			CMD = "gnome-terminal -x /usr/bin/leafpad "+ root + "password/passwords.csv"
 			logger.info("Opening " + root + "password/passwords.csv")
 			subprocess.check_output(CMD.split(" "))
-			message = "Findings opened with leafpad"
+			message = "Credentials opened with leafpad"
 		elif menuChoice == 5:
 			count = 1
 			logger.info("Showing all credentials")
@@ -816,6 +822,7 @@ def findings():
 					logger.info("No findings found")
 					time.sleep(.2)
 			input("Press ENTER to continue...")
+			message = ""
 		elif menuChoice == 6:
 			count = 1
 			ip = "123"
@@ -842,6 +849,7 @@ def findings():
 					logger.info("No credentials found")
 					time.sleep(.2)
 			input("Press ENTER to continue...")
+			message = ""
 		else:
 			message = "Enter a correct option"
 
@@ -1404,6 +1412,7 @@ def executeMenu(title, message, options):
 	while (menuChoice != "q"):
 		print(chr(27) + "[2J")
 		print (message + "\n")
+		print ("-------------------------------"
 		print (title + "\n")
 		count = 1
 		for opt in options:
