@@ -1412,7 +1412,7 @@ def executeMenu(title, message, options):
 	while (menuChoice != "q"):
 		print(chr(27) + "[2J")
 		print (message + "\n")
-		print ("-------------------------------"
+		print ("-------------------------------")
 		print (title + "\n")
 		count = 1
 		for opt in options:
