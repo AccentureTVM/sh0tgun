@@ -206,9 +206,7 @@ def initialize(args):
 		"snmp":snmpEnum, 
 		"smtp":smtpEnum, 
 		"domain":dnsEnum, 
-		"ftp":ftpEnum, 
-		"microsoft-ds":smbEnum, 
-		"msrpc":smbEnum,
+		"ftp":ftpEnum,  
 		"netbios-ssn":smbEnum,
 		"ms-sql":mssqlEnum, 
 		"ms-sql-s":mssqlEnum,
@@ -217,6 +215,7 @@ def initialize(args):
 		"ms-wbt-server":rdpEnum,
 		"rmiregistry":rmiEnum
 	}
+	#"msrpc":smbEnum, "microsoft-ds":smbEnum,
 	global knownPwServices
 	knownPwServices = {
 		"http":httpPW, 

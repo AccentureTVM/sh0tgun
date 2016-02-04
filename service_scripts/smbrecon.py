@@ -43,7 +43,7 @@ def main(args):
 		logging.error("enum4linux did no execute correctly for " + ip + ":"+port)
 
 	logging.info("Running nmap smb vuln scan on " + ip)
-	nse = "nmap -Pn -n --open -p %s --script=smb-check-vulns --script-args=unsafe=1 %s" % (port, ip)
+	nse = "nmap -Pn -n --open -p 139,445 --script=smb-check-vulns --script-args=unsafe=1 %s" % (ip)
 	try:
 		nseresults = subprocess.check_output(nse.split(' '))
 		nseresults = nseresults.decode('utf-8')
