@@ -205,17 +205,18 @@ def initialize(args):
 		"domain":dnsEnum, 
 		"ftp":ftpEnum,  
 		"netbios-ssn":smbEnum,
+		"microsoft-ds":smbEnum,
 		"ms-sql":mssqlEnum, 
 		"ms-sql-s":mssqlEnum,
 		"mysql":mysqlEnum,
 		"drda":drdaEnum,
 		"ms-wbt-server":rdpEnum,
+		"http":httpEnum, 
+		"ssl/http":httpEnum, 
+		"https":httpEnum,
 		"rmiregistry":rmiEnum
 	}
-	#"msrpc":smbEnum, "microsoft-ds":smbEnum,
-	#"http":httpEnum, 
-	#	"ssl/http":httpsEnum, 
-	#	"https":httpsEnum, 
+
 	global knownPwServices
 	knownPwServices = {
 		"http":httpPW, 
@@ -897,6 +898,14 @@ def setNmapOptions(nmapOptions):
 					nmapOptions["port"] = "Moderate"
 				elif p == 3:
 					nmapOptions["port"] = "Light"
+				elif p == 4:
+				    temp = input("Enter the desired ports")
+				    print temp
+				    v = input("Is this correct? NB if not formatted correctly, future errors will occur")
+				    if len(v) != 0:
+				        v = v[0].lower
+				    if v == "y"
+				        nmapOptions["port"] = temp
 				else:
 					print ("not valid")
 		elif menuChoice2 == 3:
@@ -954,8 +963,9 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 		ports = " --top-ports 125"
 	elif port == "Moderate":
 		ports = " --top-ports 1000"
-	else:
+	elif port == "Full":
 		ports = " -p 0-65535"
+	else ports = port
 
 	ip_address = ip_address.strip()
 	ip_format = ip_address.replace("/", "_")
@@ -1065,7 +1075,6 @@ def dnsEnum(ip_address, port, service):
 def httpEnum(ip_address, port, service):
 	logger.info("Detected http on " + ip_address + ":" + port)
 	logger.info("Performing nmap web script scan for " + ip_address + ":" + port + " see directory/http for results")
-	#HTTPSCAN = "nmap -Pn -vv -p %s --script=http-vhosts,http-userdir-enum,http-apache-negotiation,http-backup-finder,http-config-backup,http-default-accounts,http-email-harvest,http-methods,http-method-tamper,http-passwd,http-robots.txt -oN discovery/http/%s_http.nmap %s" % (port, ip_address, ip_address)
 	HTTPSCAN = nse.http(ip_address, port)
 	try:
 		nseout = subprocess.check_output(HTTPSCAN.split(' '))
@@ -1086,36 +1095,6 @@ def httpEnum(ip_address, port, service):
 		NIKTOSCAN = subprocess.check_output(NIKTOSCAN.split(' '))
 		NIKTOSCAN = NIKTOSCAN.decode('utf-8')
 		out = root + "discovery/http/" + ip_address + "NIKTO.txt"
-		niktoout = open(out, "w+")
-		niktoout.write(NIKTOSCAN)
-		niktoout.close()
-	except:
-		logger.error("NIKTO failed for " + ip + ":"+ port)
-	return  [service, ip_address, port]
-
-def httpsEnum(ip_address, port, service):
-	logger.info("Detected https on " + ip_address + ":" + port)
-	logger.info("Performing nmap web script scan for " + ip_address + ":" + port)
-	HTTPSSCAN = "nmap -Pn -vv -p %s --script=http-vhosts,http-userdir-enum,http-apache-negotiation,http-backup-finder,http-config-backup,http-default-accounts,http-email-harvest,http-methods,http-method-tamper,http-passwd,http-robots.txt -oN %sdiscovery/http/%s_https.nmap %s" % (port, root, ip_address, ip_address)
-	try:
-		nseout = subprocess.check_output(HTTPSSCAN.split(' '))
-		nseout = nseout.decode('utf-8')
-		resultsfile = root + "discovery/http/" + ip_address + ":" + port + "_ssl_nse.txt"
-		f = open(resultsfile, "w")
-		f.write(nseout)
-		f.close
-	except:
-		logger.error("NSE failed for https " + ip_address + ":"+ port)
-
-	logger.info("Using Dirbuster for " + ip_address + ":" + port + " see directory/http for results")
-	dirbust.main(["",ip_address,port, True])
-
-	logger.info("Performing NIKTO scan for " + ip_address + ":" + port + " see directory/http for results")
-	NIKTOSCAN = "nikto -host %s -p %s" % (ip_address, port)
-	try:
-		NIKTOSCAN = subprocess.check_output(NIKTOSCAN.split(' '))
-		NIKTOSCAN = NIKTOSCAN.decode('utf-8')
-		out = "discover/http/" + ip_address + "NIKTO_SSL.txt"
 		niktoout = open(out, "w+")
 		niktoout.write(NIKTOSCAN)
 		niktoout.close()
