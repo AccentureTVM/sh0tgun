@@ -88,6 +88,8 @@ def process(inputfile, fo):
 				logging.warning("No open ports on " + ip)
 				fo.write(ip + ",,no open ports")
 				
+	return serviceDict
+				
 	except ET.ParseError as e:
 		print("Parse error on file " +inputfile + "  Check for proper XML formatting")
 	except IOError as e:
@@ -95,7 +97,7 @@ def process(inputfile, fo):
 	except:
 		print("Unexpected error on file: " + inputfile)
 
-	return serviceDict
+	
 
 
 if __name__ == "__main__":
