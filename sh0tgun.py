@@ -900,7 +900,7 @@ def setNmapOptions(nmapOptions):
 					nmapOptions["port"] = "Light"
 				elif p == 4:
 				    temp = input("Enter the desired ports")
-				    print temp
+				    print(temp)
 				    v = input("Is this correct? NB if not formatted correctly, future errors will occur")
 				    if len(v) != 0:
 				        v = v[0].lower
