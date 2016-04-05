@@ -899,13 +899,13 @@ def setNmapOptions(nmapOptions):
 				elif p == 3:
 					nmapOptions["port"] = "Light"
 				elif p == 4:
-				    temp = input("Enter the desired ports")
-				    print(temp)
-				    v = input("Is this correct? NB if not formatted correctly, future errors will occur")
-				    if len(v) != 0:
-				        v = v[0].lower
-				    if v == "y":
-				        nmapOptions["port"] = temp
+					temp = input("Enter the desired ports")
+					print(temp)
+					v = input("Is this correct? NB if not formatted correctly, future errors will occur")
+					if len(v) != 0:
+						v = v[0].lower
+					if v == "y":
+						nmapOptions["port"] = temp
 				else:
 					print ("not valid")
 		elif menuChoice2 == 3:
@@ -965,7 +965,8 @@ def nmapScan(ip_address,timing,verbosity,port,versioning,online,TCP,OS,custom,Pn
 		ports = " --top-ports 1000"
 	elif port == "Full":
 		ports = " -p 0-65535"
-	else ports = port
+	else:
+		ports = port
 
 	ip_address = ip_address.strip()
 	ip_format = ip_address.replace("/", "_")
