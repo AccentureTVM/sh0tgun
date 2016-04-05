@@ -904,7 +904,7 @@ def setNmapOptions(nmapOptions):
 				    v = input("Is this correct? NB if not formatted correctly, future errors will occur")
 				    if len(v) != 0:
 				        v = v[0].lower
-				    if v == "y"
+				    if v == "y":
 				        nmapOptions["port"] = temp
 				else:
 					print ("not valid")
